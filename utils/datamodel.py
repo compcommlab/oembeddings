@@ -1,0 +1,42 @@
+from typing import Optional
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
+from datetime import datetime
+
+class Base(DeclarativeBase):
+    pass
+
+class Article(Base):
+    __tablename__ = "articles"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    source: Mapped[str] = mapped_column(index=True)
+    article_id: Mapped[int] = mapped_column(nullable=False, index=True) # native id of article (potentially duplicated)
+    article_md5: Mapped[str] = mapped_column(index=True, nullable=False, unique=True) # hashed URL of article (md5sum), has to be unique
+    url: Mapped[str] = mapped_column(nullable=False, index=True)
+    section: Mapped[Optional[str]]
+    premium: Mapped[Optional[int]]
+    date_published: Mapped[Optional[datetime]]
+    date_modified: Mapped[Optional[datetime]]
+    has_ticker: Mapped[Optional[int]]
+    description: Mapped[Optional[str]]
+    headline: Mapped[Optional[str]]
+    pretitle: Mapped[Optional[str]]
+    lead_paragraph: Mapped[Optional[str]]
+    picture_links: Mapped[Optional[str]]
+    picture_captions: Mapped[Optional[str]]
+    author: Mapped[Optional[str]]
+    body: Mapped[Optional[str]]
+    comments: Mapped[Optional[int]]
+    tweet_ids: Mapped[Optional[str]]
+    slide_show: Mapped[Optional[str]]
+    keywords: Mapped[Optional[str]]
+    tags: Mapped[Optional[str]]
+    scrape_timestamp: Mapped[Optional[datetime]]
+    article_uuid: Mapped[Optional[str]] # only used for Krone   
+
+    def __repr__(self) -> str:
+        return ((f"<Article(article_id={self.article_id}, "),
+                (f"source={self.source}, "),
+                (f"url={self.url}>"))
