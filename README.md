@@ -5,6 +5,7 @@
 # Configuration & Installation
 
 - Install `requirements.txt`
+- Drop raw feather files into `raw_data`
 - Copy `.env.template` to `.env`
 - Set your SQL Connect string in the `.env`
 - For testing, just use the default which is a sqlite database with the filename `database.db`
