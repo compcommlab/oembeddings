@@ -1,4 +1,5 @@
 from typing import Optional
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -37,6 +38,31 @@ class Article(Base):
     article_uuid: Mapped[Optional[str]] # only used for Krone   
 
     def __repr__(self) -> str:
-        return ((f"<Article(article_id={self.article_id}, "),
-                (f"source={self.source}, "),
-                (f"url={self.url}>"))
+        return (f"<Article(article_id={self.article_id}, "
+                f"source={self.source}, "
+                f"url={self.url}>")
+
+class RawSentence(Base):
+
+    __tablename__ = 'raw_sentences'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    sentence_md5: Mapped[str] = mapped_column(index=True, nullable=False, unique=True) # hash value of sentence to determine duplicates
+    sentence: Mapped[str] = mapped_column(nullable=False) # actual sentence
+    count: Mapped[int] = mapped_column(default=1) # count how many times the sentence was found in the dataset
+
+    def __repr__(self) -> str:
+        return (f"<RawSentence(sentence_md5={self.sentence_md5})>")
+
+
+class Sentence(Base):
+
+    __tablename__ = 'sentences'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    sentence_md5: Mapped[str] = mapped_column(index=True, nullable=False, unique=True) # hash value of sentence to determine duplicates
+    sentence: Mapped[str] = mapped_column(nullable=False) # actual sentence
+    count: Mapped[int] = mapped_column(default=1) # count how many times the sentence was found in the dataset
+
+    def __repr__(self) -> str:
+        return (f"<Sentence(sentence_md5={self.sentence_md5})>")

@@ -1,3 +1,5 @@
+import sys
+sys.path.append('.')
 from utils.sql import start_sqlsession
 from utils.datamodel import Article
 from utils.misc import md5sum
@@ -5,18 +7,15 @@ import pandas as pd
 from pathlib import Path
 from argparse import ArgumentParser
 
+
 if __name__ == '__main__':
     arg_parser = ArgumentParser(description="Load all feather files in 'raw_data' to the SQL Databse")
     arg_parser.add_argument('--debug', action='store_true', help='Debug flag: only load a random sample')
     arg_parser.add_argument('--clean', action='store_true', help='Clean the database before loading (delete all articles)')
-    arg_parser.add_argument('--db', type=str, dest='db', default="sqlite:///database.db",
-                    help='Maximum number of articles to scrape')
     
     input_args = arg_parser.parse_args()
-
-    connect_string = arg_parser.db
-
-    session, engine = start_sqlsession(connect_string)
+    
+    session, engine = start_sqlsession()
 
     if input_args.clean:
         print('Cleaning database...')
