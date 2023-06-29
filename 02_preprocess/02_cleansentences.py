@@ -3,6 +3,7 @@ sys.path.append('.')
 from utils.sql import start_sqlsession
 from utils.datamodel import RawSentence, Sentence
 from utils.misc import md5sum
+from utils.cleaning import *
 from argparse import ArgumentParser
 from tqdm import tqdm
 from sqlalchemy.orm import sessionmaker
@@ -15,14 +16,6 @@ from typing import Union
 
 # start sql
 session, engine = start_sqlsession()
-
-LINK_REGEX = re.compile('\b(?:https?:\/\/|www\.)(?:[\w-]+\.)*[\w-]+(?:\.(?:at|com|de|co))\b')
-EMAIL_REGEX = re.compile(r'\S+@\S+')
-QUOTATION_MARKS = re.compile(r"([“”‘’«»„“”‹›❝❞〝〞〟＂＇«»‹›〈〉《》「」『』【】〔〕〖〗〘〙〚〛‘’‚‘’‛“”„“”‟‘’“”‘’„“”‹›«»«»“”»«»“”»«»“”‹›‘’‘’‘’‚‘’‚‘’‛‘’‛‘’“”„“”„“”‟„“”‟‘’‹›‹›])")
-PUNCTUATION = re.compile(r'([!"#$%&\'()*+,-–.…/:;<=>?@\[\\\]^_`{|}~])')
-NUMBERS = re.compile(r'\d+')
-WHITESPACE = re.compile(r'\s{2,}')
-LINE_BREAKS = re.compile(r'\n')
 
 def clean_sentence(text: str,
                      lowercase=False,
@@ -116,5 +109,5 @@ if __name__ == '__main__':
                 "remove_numbers": input_args.remove_numbers}
 
     with Pool(n_threads, initializer=initializer) as p:
-        for raw_id in tqdm(raw_sentece_ids, desc="Processing", unit="sentence"):
+        for raw_id in tqdm(raw_sentece_ids, desc="Processing", unit="sentences"):
             p.apply(process_sentence, (raw_id, ), kwds=settings)
