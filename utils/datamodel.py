@@ -1,5 +1,5 @@
 from typing import Optional
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, BigInteger
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -13,7 +13,7 @@ class Article(Base):
     __tablename__ = "articles"
     id: Mapped[int] = mapped_column(primary_key=True)
     source: Mapped[str] = mapped_column(index=True)
-    article_id: Mapped[int] = mapped_column(nullable=False, index=True) # native id of article (potentially duplicated)
+    article_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True) # native id of article (potentially duplicated)
     article_md5: Mapped[str] = mapped_column(index=True, nullable=False, unique=True) # hashed URL of article (md5sum), has to be unique
     url: Mapped[str] = mapped_column(nullable=False, index=True)
     section: Mapped[Optional[str]]
@@ -29,7 +29,7 @@ class Article(Base):
     picture_captions: Mapped[Optional[str]]
     author: Mapped[Optional[str]]
     body: Mapped[Optional[str]]
-    comments: Mapped[Optional[int]]
+    comments: Mapped[Optional[int]] = mapped_column(BigInteger)
     tweet_ids: Mapped[Optional[str]]
     slide_show: Mapped[Optional[str]]
     keywords: Mapped[Optional[str]]
