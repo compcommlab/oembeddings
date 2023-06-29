@@ -22,7 +22,9 @@
 ## 02_preprocessing
 
 - split articles into sentences (uses spacy) and store them as raw sentences. Ensures each sentence is unique.
-
+- clean sentences (`02_preprocess/02_cleansentences.py`) runs all kinds of text cleaning. Each cleaning parameter can be controlled with arguments. E.g., `--lowercase` makes all text lowercase. Use `--help` for a complete list of parameters.
+    - Example usage: `python3 02_preprocess/02_cleansentences.py --remove_links --remove_emails --remove_emojis --remove_punctuation --remove_numbers --threads 8`
+    - use `clean_database` to delete all previously processed sentences (deletes all rows from table `sentences`).
 
 # Utilities
 
