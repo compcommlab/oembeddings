@@ -93,7 +93,7 @@ if __name__ == '__main__':
 
 
     # first add all headlines and pre-titles (without splitting)
-    with Pool(4, initializer=initializer) as p:
+    with Pool(n_threads, initializer=initializer) as p:
         r = list(tqdm(p.imap(process_headline, article_ids), 
                       total=len(article_ids),
                       desc="Headlines"))
@@ -104,17 +104,17 @@ if __name__ == '__main__':
     nlp.disable_pipes('ner', 'tagger')
     nlp.enable_pipe('senter')
 
-    docs = nlp.pipe(yield_article("lead_paragraph", article_ids), n_process=4)
+    docs = nlp.pipe(yield_article("lead_paragraph", article_ids), n_process=n_threads)
     for doc in tqdm(docs, total=len(article_ids), desc="Lead paragraph"):
         for s in doc.sents:
             add_if_not_duplicated(s.text.strip())
 
-    docs = nlp.pipe(yield_article("description", article_ids), n_process=4)
+    docs = nlp.pipe(yield_article("description", article_ids), n_process=n_threads)
     for doc in tqdm(docs, total=len(article_ids), desc="Description"):
         for s in doc.sents:
             add_if_not_duplicated(s.text.strip())
 
-    docs = nlp.pipe(yield_article("body", article_ids), n_process=4)
+    docs = nlp.pipe(yield_article("body", article_ids), n_process=n_threads)
     for doc in tqdm(docs, total=len(article_ids), desc="Article body"):
         for s in doc.sents:
             add_if_not_duplicated(s.text.strip())
