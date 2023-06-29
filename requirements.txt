@@ -2,3 +2,4 @@ seaborn
 SQLAlchemy
 python-dotenv
 spacy
+emoji
