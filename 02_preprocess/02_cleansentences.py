@@ -25,6 +25,8 @@ def clean_sentence(text: str,
                      remove_punctuation=True,
                      remove_numbers=True) -> str:
     
+    text = HTML_FRAGMENTS.sub(" ", text)
+    
     if lowercase:
         text = text.lower()
     if remove_links:
@@ -59,7 +61,8 @@ def process_sentence(sentence_id: int, **kwargs) -> None:
         if duplicated_sentence:
             duplicated_sentence.count += 1
         else:
-            new_sentence = Sentence(sentence_md5=sentence_md5, sentence=sentence)
+            n_tokens = len(sentence.split())
+            new_sentence = Sentence(sentence_md5=sentence_md5, sentence=sentence, n_tokens=n_tokens)
             local_session.add(new_sentence)
         local_session.commit()
     except Exception as e:
@@ -93,6 +96,7 @@ if __name__ == '__main__':
     n_threads = input_args.threads
 
     if input_args.clean_database:
+        print('Deleting all previouls processed sentences...')
         session.query(Sentence).delete()
         session.commit()
 
