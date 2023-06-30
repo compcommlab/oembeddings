@@ -62,6 +62,7 @@ class Sentence(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     sentence_md5: Mapped[str] = mapped_column(index=True, nullable=False, unique=True) # hash value of sentence to determine duplicates
     sentence: Mapped[str] = mapped_column(nullable=False) # actual sentence
+    n_tokens: Mapped[int] = mapped_column(default=0) # number of tokens
     count: Mapped[int] = mapped_column(default=1) # count how many times the sentence was found in the dataset
 
     def __repr__(self) -> str:
