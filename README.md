@@ -26,6 +26,17 @@
     - Example usage: `python3 02_preprocess/02_cleansentences.py --remove_links --remove_emails --remove_emojis --remove_punctuation --remove_numbers --threads 8`
     - use `clean_database` to delete all previously processed sentences (deletes all rows from table `sentences`).
 
+### Caveats
+
+    - hyphenated terms become separated: 
+        - "E-Mobilität" -> "E Mobilität"
+        - "E-Auto-Boom" -> "E Auto Boom"
+        - "Pamela Rendi-Wagner" -> "Pamela Rendi Wagner"
+        - "Ex-ÖVP-Chef" -> "Ex ÖVP Chef"
+    - Genderstar ("Gendersternchen") and similar suffixes get separated:
+        - "Patient*innen" -> "Patient innen"
+        - "Rentner:innen" -> "Rentner innen"
+
 # Utilities
 
 - `datamodel.py`: use SQLAlchemy to declare SQL tables
