@@ -3,3 +3,5 @@ SQLAlchemy
 python-dotenv
 spacy
 emoji
+ftfy
+swifter
