@@ -83,7 +83,13 @@ if __name__ == '__main__':
     arg_parser = ArgumentParser(description="Split articles into sentences")
     arg_parser.add_argument('--debug', action='store_true', help='Debug flag: only load a random sample')
     arg_parser.add_argument('--threads', type=int, default=1, help='Number of parallel processes (default: 1)')
+    arg_parser.add_argument('--clean_database', action='store_true', help='Remove all raw sentences')
+
     input_args = arg_parser.parse_args()
+
+    if input_args.clean_database:
+        session.query(RawSentence).delete()
+        session.commit()
 
     n_threads = input_args.threads
 
