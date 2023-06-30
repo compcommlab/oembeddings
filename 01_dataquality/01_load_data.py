@@ -41,6 +41,7 @@ if __name__ == '__main__':
     for feather in p.rglob('*.feather'):
         # get exisiting Articles by md5 id
         article_md5 = session.query(Article.article_md5).all()
+        article_md5 = [a[0] for a in article_md5]
         print('Loading feather file', feather)
         df = pd.read_feather(feather)
         if input_args.debug:
@@ -48,6 +49,7 @@ if __name__ == '__main__':
 
         print('Calculating md5 sum for URL column')
         df['article_md5'] = df.url.swifter.apply(md5sum)
+        df.drop_duplicates(subset="article_md5", inplace=True, ignore_index=True)
 
         # some texts might have the wrong encoding
         text_cols = {"headline", "description", "pretitle", "lead_paragraph", "body"}
