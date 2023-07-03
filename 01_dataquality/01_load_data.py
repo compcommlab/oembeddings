@@ -10,6 +10,7 @@ from argparse import ArgumentParser
 import re
 # run pandas apply in parallel:
 import swifter
+swifter.set_defaults(allow_dask_on_strings=True)
 # ftfy: fix text for you (solves encoding issues)
 import ftfy
 from typing import Union, Any
