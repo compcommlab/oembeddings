@@ -25,17 +25,23 @@
 - clean sentences (`02_preprocess/02_cleansentences.py`) runs all kinds of text cleaning. Each cleaning parameter can be controlled with arguments. E.g., `--lowercase` makes all text lowercase. Use `--help` for a complete list of parameters.
     - Example usage: `python3 02_preprocess/02_cleansentences.py --remove_links --remove_emails --remove_emojis --remove_punctuation --remove_numbers --threads 8`
     - use `clean_database` to delete all previously processed sentences (deletes all rows from table `sentences`).
+    - hyphenated terms where the first component is longer than one character get separated: 
+        - "Ex-ÖVP-Chef" -> "Ex ÖVP Chef"
+        - "Pamela Rendi-Wagner" -> "Pamela Rendi Wagner"
+    - but preserves:
+        - "E-Mail" -> "E-Mail"
+        - "E-Mobilität" -> "E-Mobilität"
+        - "E-Auto-Boom" -> "E-Auto Boom"
+     - Genderstar ("Gendersternchen") are normalized and preserved:
+        - "Patient*innen" -> "Patient_innen"
+        - "Rentner:innen" -> "Rentner_innen"
 
 ### Caveats
 
-    - hyphenated terms become separated: 
-        - "E-Mobilität" -> "E Mobilität"
-        - "E-Auto-Boom" -> "E Auto Boom"
-        - "Pamela Rendi-Wagner" -> "Pamela Rendi Wagner"
-        - "Ex-ÖVP-Chef" -> "Ex ÖVP Chef"
-    - Genderstar ("Gendersternchen") and similar suffixes get separated:
-        - "Patient*innen" -> "Patient innen"
-        - "Rentner:innen" -> "Rentner innen"
+   - Fixed compounds with numbers get truncated
+    - "G7-Gipfel" -> "G Gipfel"
+    - "Formel-1" -> "Formel"
+    - "F1" -> "F"
 
 # Utilities
 

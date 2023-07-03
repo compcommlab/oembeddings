@@ -9,45 +9,10 @@ from tqdm import tqdm
 from sqlalchemy.orm import sessionmaker
 from multiprocessing import Pool
 
-import emoji
-import re
-
 from typing import Union
 
 # start sql
 session, engine = start_sqlsession()
-
-def clean_sentence(text: str,
-                     lowercase=False,
-                     remove_links=True,
-                     remove_emails=True,
-                     remove_emojis=True,
-                     remove_punctuation=True,
-                     remove_numbers=True) -> str:
-    
-    text = HTML_FRAGMENTS.sub(" ", text)
-    
-    if lowercase:
-        text = text.lower()
-    if remove_links:
-        text = LINK_REGEX.sub(" ", text)
-    if remove_emails:
-        text = EMAIL_REGEX.sub(" ", text)
-    if remove_emojis:
-        text = emoji.replace_emoji(text, " ")
-    if remove_punctuation:
-        text = PUNCTUATION.sub(" ", text)
-        text = QUOTATION_MARKS.sub(" ", text)
-    else:
-        # pad punctuation with whitespace
-        text = PUNCTUATION.sub(r' \1 ', text)
-        text = QUOTATION_MARKS.sub(r' \1 ', text)
-    if remove_numbers:
-        text = NUMBERS.sub("", text)
-
-    text = LINE_BREAKS.sub(" ", text)
-    text = WHITESPACE.sub(" ", text)
-    return text.strip()
     
 def process_sentence(sentence_id: int, **kwargs) -> None:
     try:
@@ -90,6 +55,8 @@ if __name__ == '__main__':
     arg_parser.add_argument('--remove_emojis', action='store_true', help='Remove emojis')
     arg_parser.add_argument('--remove_punctuation', action='store_true', help='Remove punctutation')
     arg_parser.add_argument('--remove_numbers', action='store_true', help='Remove numbers')
+    arg_parser.add_argument('--remove_quotations', action='store_true', help='Remove quotation marks')
+    arg_parser.add_argument('--genderstar', action='store_true', help='Preserve genderstar (normalize with underscore)')
     arg_parser.add_argument('--threads', type=int, default=1, help='Number of parallel processes (default: 1)')
     input_args = arg_parser.parse_args()
 
@@ -110,7 +77,9 @@ if __name__ == '__main__':
                 "remove_emails": input_args.remove_emails,
                 "remove_emojis": input_args.remove_emojis,
                 "remove_punctuation": input_args.remove_punctuation,
-                "remove_numbers": input_args.remove_numbers}
+                "remove_numbers": input_args.remove_numbers,
+                "remove_quotations": input_args.remove_quotations,
+                "genderstar": input_args.genderstar}
 
     with Pool(n_threads, initializer=initializer) as p:
         for raw_id in tqdm(raw_sentece_ids, desc="Processing", unit="sentences"):
