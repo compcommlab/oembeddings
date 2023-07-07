@@ -8,7 +8,7 @@ from argparse import ArgumentParser
 from tqdm import tqdm
 from sqlalchemy.orm import sessionmaker
 from multiprocessing import Pool
-
+from sqlalchemy import func
 from typing import Union
 
 # start sql
@@ -63,14 +63,17 @@ if __name__ == '__main__':
     n_threads = input_args.threads
 
     if input_args.clean_database:
-        print('Deleting all previouls processed sentences...')
+        print('Deleting all previously processed sentences...')
         session.query(Sentence).delete()
         session.commit()
 
     # get all raw sentence ids and reformat to clean list
-    raw_sentece_ids = session.query(RawSentence.id).all()
-    raw_sentece_ids = [a[0] for a in raw_sentece_ids]
-    print('Got', len(raw_sentece_ids), 'raw sentences to process ...')
+    if input_args.debug:
+        raw_sentence_ids = session.query(RawSentence.id).order_by(func.random()).limit(10000).all()
+    else:
+        raw_sentence_ids = session.query(RawSentence.id).all()
+    raw_sentence_ids = [a[0] for a in raw_sentence_ids]
+    print('Got', len(raw_sentence_ids), 'raw sentences to process ...')
 
     settings = {'lowercase': input_args.lowercase,
                 "remove_links": input_args.remove_links,
@@ -82,5 +85,5 @@ if __name__ == '__main__':
                 "genderstar": input_args.genderstar}
 
     with Pool(n_threads, initializer=initializer) as p:
-        for raw_id in tqdm(raw_sentece_ids, desc="Processing", unit="sentences"):
+        for raw_id in tqdm(raw_sentence_ids, desc="Processing", unit="sentences"):
             p.apply(process_sentence, (raw_id, ), kwds=settings)
