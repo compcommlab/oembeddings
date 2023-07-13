@@ -162,3 +162,6 @@ cython_debug/
 
 raw_data/
 database.db
+data/
+tmp_models/
+nohup.out
