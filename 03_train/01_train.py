@@ -5,6 +5,12 @@ from argparse import ArgumentParser
 from pathlib import Path
 import fasttext
 
+# Args
+# training_dataset
+# minCount: word minimum occurences (default 5)
+# ws: window size (default 6); try: 6, 12, 24
+# dim: dimensions (default 300)
+
 p = Path.cwd()
 
 model_dir = p / 'tmp_models'
