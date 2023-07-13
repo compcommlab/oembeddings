@@ -29,7 +29,7 @@ CHINESE = re.compile(r'[\u2E80-\u2FD5\u3190-\u319f\u3400-\u4DBF\u4E00-\u9FCC\uF9
 ARABIC = re.compile(r'[\u0600-\u06ff]')
 HEBREW = re.compile(r'[\u0590-\u05FF]')
 
-SYMBOLS = re.compile(r'[\u2022\u25A0-\u25FF\u2607-\u2800\u2190-\u21FF\uFFFD⁄∂∅∈√∞\∣≈≠≤≥Ⓒ©]')
+SYMBOLS = re.compile(r'[\u2022\u25A0-\u25FF\u2607-\u2800\u2190-\u21FF\uFFFD⁄∂∅∈√∞\∣≈≠≤≥Ⓒ©−☆]')
 
 LINE_BREAKS = re.compile(r'\n')
 HTML_FRAGMENTS = re.compile(r'(?:<(a|br|p|span|bold) .*?>)|(?:<\/(a|br|p|span|bold)>)')
@@ -128,7 +128,7 @@ def clean_text(text: str,
         text = QUOTATION_MARKS.sub(r' " ', text)
 
     if replace_numbers:
-        text = NUMBERS.sub(lambda m: num2words.num2words(m.group(0), lang="de"), text)
+        text = NUMBERS.sub(lambda m: " " + num2words.num2words(m.group(0) + " ", lang="de"), text)
 
     if remove_numbers:
         text = NUMBERS.sub("", text)

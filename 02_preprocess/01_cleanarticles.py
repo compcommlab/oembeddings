@@ -20,6 +20,8 @@ def add_if_not_duplicated(text: str) -> None:
         if not then add new text
         if already exists, increment count by 1
     """
+    if text == "":
+        return None
     local_session = sessionmaker(bind=engine)()
     text_md5 = md5sum(text)
     duplicated_text = local_session.query(ProcessedParagraph).filter(ProcessedParagraph.md5 == text_md5).first()
@@ -37,24 +39,21 @@ def process_article(article_id: int, **kwargs) -> None:
     try:
         local_session = sessionmaker(bind=engine)()
         article = local_session.query(Article).filter(Article.id == article_id).first()
+        local_session.close()
         headline = article.pretitle or " "
         headline += " "
         headline += article.headline or ""
         headline = clean_text(headline, **kwargs)
         add_if_not_duplicated(headline)
-        description = clean_text(article.description, **kwargs)
-        add_if_not_duplicated(description)
         lead_paragraph = clean_text(article.lead_paragraph, **kwargs)
         add_if_not_duplicated(lead_paragraph)
 
-        for paragraph in article.body.split('\n'):
+        for paragraph in article.body.split('\n\n'):
             paragraph = clean_text(paragraph, **kwargs)
             add_if_not_duplicated(paragraph)
 
     except Exception as e:
         print('couldnt process', e)
-    finally:
-        local_session.close()
 
 
 def initializer():
@@ -98,7 +97,7 @@ if __name__ == '__main__':
     article_ids = [a[0] for a in article_ids]
     if input_args.debug:
         import random
-        article_ids = random.sample(article_ids, 1000)
+        article_ids = random.sample(article_ids, 10000)
 
     settings = {'lowercase': input_args.lowercase,
                 "remove_links": input_args.remove_links,
@@ -113,7 +112,7 @@ if __name__ == '__main__':
 
     # first add all headlines and pre-titles (without splitting)
     with Pool(n_threads, initializer=initializer) as p:
-        for raw_id in tqdm(article_ids, desc="Processing", unit="sentences"):
+        for raw_id in tqdm(article_ids, desc="Processing", unit="articles"):
             p.apply(process_article, (raw_id, ), kwds=settings)
     
 

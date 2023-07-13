@@ -3,7 +3,7 @@ sys.path.append('.')
 import os
 from sqlalchemy import text
 from utils.sql import start_sqlsession
-from utils.datamodel import Sentence
+from utils.datamodel import Sentence, ProcessedParagraph
 from argparse import ArgumentParser
 from tqdm import tqdm
 from sqlalchemy import func
@@ -17,10 +17,11 @@ import pandas as pd
 session, engine = start_sqlsession()
 
 if __name__ == '__main__':
-    arg_parser = ArgumentParser(description="Clean raw sentences")
+    arg_parser = ArgumentParser(description="Dump SQL to txt files")
     arg_parser.add_argument('--debug', action='store_true', help='Debug flag: only load a random sample')
-    arg_parser.add_argument('--min_length', type=int, default=5, help='Minimum length of tokens per sentence (default: 5 tokens)')
-    arg_parser.add_argument('--batch_size', type=int, default=10000, help='Number of sentences to load per batch (default: 10,000 sentences)')
+    arg_parser.add_argument('--table', type=str, default="processed_articles", help='Name of the table to take texts from (default: processed_articles)")')
+    arg_parser.add_argument('--min_length', type=int, default=5, help='Minimum length of tokens per row (default: 5 tokens)')
+    arg_parser.add_argument('--batch_size', type=int, default=10000, help='Number of rows to load per batch (default: 10,000 rows)')
     arg_parser.add_argument('--corpus_name', type=str, default="training_data", help='Name of the corpus file; file extension is added automatically (default "taining_data")')
     arg_parser.add_argument('--seed', type=int, default=1234, help='Seed for shuffling (default: 1234)')
     
@@ -40,8 +41,8 @@ if __name__ == '__main__':
 
     output_file.touch()
 
-    total_sentences = session.query(Sentence).filter(Sentence.n_tokens >= input_args.min_length).count()
-    print(f'Got {total_sentences} sentences')
+    total_units = session.query(ProcessedParagraph).filter(ProcessedParagraph.n_tokens >= input_args.min_length).count()
+    print(f'Got {total_units} text units')
 
     """ If we have PostgreSQL we can leverage its built-in export function """
     if 'postgresql' in engine.dialect.name:
@@ -50,7 +51,7 @@ if __name__ == '__main__':
         conn = psycopg2.connect(engine.url.render_as_string(hide_password=False))
         cursor = conn.cursor()
         query_string = f"SELECT setseed(0.{input_args.seed}); "
-        query_string += "COPY (SELECT sentence FROM sentences"
+        query_string += "COPY (SELECT text FROM processed_articles"
         query_string += f" WHERE n_tokens >= {input_args.min_length}"
         query_string += f" ORDER BY RANDOM()"
         if input_args.debug:
