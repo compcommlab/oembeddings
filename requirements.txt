@@ -5,3 +5,5 @@ spacy
 emoji
 ftfy
 swifter
+tqdm
+pandas
