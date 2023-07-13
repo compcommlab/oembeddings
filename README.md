@@ -36,9 +36,15 @@
         - "Patient*innen" -> "Patient_innen"
         - "Rentner:innen" -> "Rentner_innen"
 
+- generate training corpus: dumps sentences to single `.txt` file (preferred format for fasttext). One line per sentence. You can specify these options:
+    - debug: only use a random sample
+    - min_length: only use sentence with a minimum number of tokens (default: 5 tokens)
+    - corpus_name: file name for `txt` file. Training corpora files are always located in the `data` directory (is created automatically)
+    - seed: set a random seed for exporting the sentences (i.e., shuffle the dataset)  
+
 ### Caveats
 
-   - Fixed compounds with numbers get truncated
+- Fixed compounds with numbers get truncated
     - "G7-Gipfel" -> "G Gipfel"
     - "Formel-1" -> "Formel"
     - "F1" -> "F"
