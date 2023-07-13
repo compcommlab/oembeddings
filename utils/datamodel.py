@@ -67,3 +67,16 @@ class Sentence(Base):
 
     def __repr__(self) -> str:
         return (f"<Sentence(sentence_md5={self.sentence_md5})>")
+
+class ProcessedParagraph(Base):
+
+    __tablename__ = 'processed_articles'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    md5: Mapped[str] = mapped_column(index=True, nullable=False, unique=True) # hash value of article to determine duplicates
+    text: Mapped[str] = mapped_column(nullable=False) # actual sentence
+    n_tokens: Mapped[int] = mapped_column(default=0, index=True) # number of tokens
+    count: Mapped[int] = mapped_column(default=1) # count how many times the article was found in the dataset
+
+    def __repr__(self) -> str:
+        return (f"<ProcessedArticle(md5={self.md5})>")
