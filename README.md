@@ -21,6 +21,12 @@
 
 ## 02_preprocessing
 
+### Retain Whole Articles
+
+- `02_preprocess/01_cleanarticles.py`: take a whole article, clean it and add each paragraph as separate row to the DB (table `processed_articles`). Treats headlines as paragraphs. Ensures there are no duplicates with md5 sum.
+
+### Use single sentences
+
 - split articles into sentences (uses spacy) and store them as raw sentences. Ensures each sentence is unique.
 - clean sentences (`02_preprocess/02_cleansentences.py`) runs all kinds of text cleaning. Each cleaning parameter can be controlled with arguments. E.g., `--lowercase` makes all text lowercase. Use `--help` for a complete list of parameters.
     - Example usage: `python3 02_preprocess/02_cleansentences.py --remove_links --remove_emails --remove_emojis --remove_punctuation --remove_numbers --threads 8`
@@ -36,7 +42,9 @@
         - "Patient*innen" -> "Patient_innen"
         - "Rentner:innen" -> "Rentner_innen"
 
-- generate training corpus: dumps sentences to single `.txt` file (preferred format for fasttext). One line per sentence. You can specify these options:
+### Generate Training Corpus
+
+- dumps text to single `.txt` file (preferred format for fasttext). One line per sentence. You can specify these options:
     - debug: only use a random sample
     - min_length: only use sentence with a minimum number of tokens (default: 5 tokens)
     - corpus_name: file name for `txt` file. Training corpora files are always located in the `data` directory (is created automatically)
@@ -48,6 +56,10 @@
     - "G7-Gipfel" -> "G Gipfel"
     - "Formel-1" -> "Formel"
     - "F1" -> "F"
+- Adjustable via `replace_numbers`:
+    - "G7-Gipfel" -> "G sieben Gipfel"
+    - "Formel-1" -> "Formel eins"
+    - "F1" -> "F eins"
 
 # Utilities
 
