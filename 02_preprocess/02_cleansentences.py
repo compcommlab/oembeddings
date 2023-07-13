@@ -18,7 +18,7 @@ def process_sentence(sentence_id: int, **kwargs) -> None:
     try:
         local_session = sessionmaker(bind=engine)()
         raw = local_session.query(RawSentence).filter(RawSentence.id == sentence_id).first()
-        sentence = clean_sentence(raw.sentence, **kwargs)
+        sentence = clean_text(raw.sentence, **kwargs)
         if sentence == "":
             return None
         sentence_md5 = md5sum(sentence)

@@ -1,6 +1,7 @@
 import re
 import emoji
-
+import unicodedata
+import num2words
 # regular expressions to clean raw sentences.
 # We follow the procedures that the Facebook engineers used for fasttext:
 # References:
@@ -10,13 +11,32 @@ import emoji
 LINK_REGEX = re.compile(r'\b(?:https?:\/\/|www\.|pic.)(?:[\w-]+\.)*[\w-]+(?:\.(?:[a-z]{2,3}))(?:/)?(?:\w+?)?\b')
 EMAIL_REGEX = re.compile(r'\S+@\S+')
 QUOTATION_MARKS = re.compile(r"([“”«»„‹›❝❞〝〞〟＂＇〈〉《》「」『』【】〔〕〖〗〘〙〚〛‚‛‟<>])")
-PUNCTUATION = re.compile(r'([!"#$%&\'()+,.…/;<=>?@\[\\\]^`{|–}∙—~])')
-PUNCTUATION_ALL = re.compile(r'([!"#$%&\'()*+,-.…/:;<=>?@\[\\\]^_`{|–}∙—~])')
+PUNCTUATION = re.compile(r'([!"#$%&\'()+,.…/;’‘<=>?@\[\\\]^`{|–}∙—~➤©·•])')
+PUNCTUATION_ALL = re.compile(r'([!"#$%&\'()*+,-.…/:;’‘<=>?@\[\\\]^_`{|–}∙—~➤©·•])')
 NUMBERS = re.compile(r'\d+')
 WHITESPACE = re.compile(r'\s{2,}')
+UNUSUAL_WHITESPACE = ['\u200b', '\u202a', '\u202c', '\u202d', 
+                      '\u2060', '\u2063', '\u2066', '\u2069', '\u2009', 
+                      '\ufeff', '\ue019', '\ueaee', '\ueaf0', '\ueaf6', 
+                      '\ueb0d', '\uecb4', '\uf02d', '\uf03d', '\uf0a7', 
+                      '\uf0b7', '\uf0d8', '\uf8ff', '⠀']
+
+NONBREAKING = ['\xa0', '\xad']
+
+# Non-Latin scripts
+CYRILLIC = re.compile(r'[\u0400-\u04FF]')
+CHINESE = re.compile(r'[\u2E80-\u2FD5\u3190-\u319f\u3400-\u4DBF\u4E00-\u9FCC\uF900-\uFAAD]')
+ARABIC = re.compile(r'[\u0600-\u06ff]')
+HEBREW = re.compile(r'[\u0590-\u05FF]')
+
+SYMBOLS = re.compile(r'[\u2022\u25A0-\u25FF\u2607-\u2800\u2190-\u21FF\uFFFD⁄∂∅∈√∞\∣≈≠≤≥Ⓒ©]')
+
 LINE_BREAKS = re.compile(r'\n')
 HTML_FRAGMENTS = re.compile(r'(?:<(a|br|p|span|bold) .*?>)|(?:<\/(a|br|p|span|bold)>)')
+
+# Preserve genderstar writing schemes
 GENDERSTAR = re.compile(r'(\w+)([\*\:\_])([Ii]nnen\w*)')
+GENDER_SUFFIX = re.compile(r'(\b[ÄÖÜA-Z][äöüa-z]+?)(Innen)')
 STAR_COLON_UNDERSCORE = re.compile(r'([*:]|\b_)')
 
 # preserve some hyphenated words: E-Mail stays, "FPÖ-Wähler" replaced with whitespace "FPÖ Wähler"
@@ -26,33 +46,69 @@ HYPHENATED = re.compile(r'\b(\w{2,})-+(\w+)')
 HYPHEN_SUFFIX = re.compile(r'(\w+)-+(\s|$)') 
 HYPHEN_PREFIX = re.compile(r'(^|\s)-+(\w+)') 
 HYPHEN_ISOLATED = re.compile(r'(^|\W)-+(\W|$)')
+HYPHEN_STARTSEQUENCE = re.compile(r'^-+')
+HYPHEN_LEFTOVER = re.compile(r'\W-+')
 
+# Repair wrong tokens that should be separated:
+# e.g., "InÖsterreich" -> "In Österreich"
+REPAIR_SEPARATION = re.compile(r"(\b[äöüÄÖÜa-zA-Z][äöüa-z]+?)([ÄÖÜA-Z][äöüa-z]+)")
+
+# Other helper to quickly identify text with wrong encoding
 wrong_encoding = ["â€ž", "Ã¶", "Ã¼", "Ã¼", "Ã¤", "â€"]
 
 
 
-def clean_sentence(text: str,
+def clean_text(text: str,
                      lowercase=False,
                      remove_links=True,
                      remove_emails=True,
                      remove_emojis=True,
                      remove_punctuation=True,
-                     remove_numbers=True,
+                     remove_numbers=False,
+                     replace_numbers=True,
                      remove_quotations=False,
-                     genderstar=True) -> str:
+                     genderstar=True,
+                     repair_separation=True) -> str:
+    
+    if not text:
+        return ""
     
     text = HTML_FRAGMENTS.sub(" ", text)
+
+    # handle unnusual whitespace
+    for char in UNUSUAL_WHITESPACE:
+        text = text.replace(char, " ")
+    # handle non-breaking markers
+    for char in NONBREAKING:
+        text = text.replace(char, "")
+
+    text = unicodedata.normalize("NFKC", text)
     
-    if lowercase:
-        text = text.lower()
     if remove_links:
         text = LINK_REGEX.sub(" ", text)
     if remove_emails:
         text = EMAIL_REGEX.sub(" ", text)
 
+    # remove weird symbols
+    text = SYMBOLS.sub(" ", text)
+
+    # remove non-Latin scripts
+    text = HEBREW.sub(" ", text)
+    text = ARABIC.sub(" ", text)
+    text = CYRILLIC.sub(" ", text)
+    text = CHINESE.sub(" ", text)
+
+    # replace currency symbols:
+    text = text.replace("€", "Euro")
+    text = text.replace("$", "Dollar")
+    
+    if lowercase:
+        text = text.lower()
+
     if genderstar:
         # preserve genderstar (normalize with underscore)
         text = GENDERSTAR.sub(r"\1_\3", text)
+        text = GENDER_SUFFIX.sub(lambda m: m.group(1) + "_" + m.group(2).lower(), text)
     
     if remove_emojis:
         text = emoji.replace_emoji(text, " ")
@@ -71,6 +127,9 @@ def clean_sentence(text: str,
         # pad quotation marks and normalize
         text = QUOTATION_MARKS.sub(r' " ', text)
 
+    if replace_numbers:
+        text = NUMBERS.sub(lambda m: num2words.num2words(m.group(0), lang="de"), text)
+
     if remove_numbers:
         text = NUMBERS.sub("", text)
     
@@ -87,8 +146,13 @@ def clean_sentence(text: str,
     text = HYPHEN_ISOLATED.sub(r" ", text)
     text = HYPHENATED.sub(r"\1 \2", text)
     text = HYPHENATED.sub(r"\1 \2", text)
+    text = HYPHEN_STARTSEQUENCE.sub(" ", text)
+    text = HYPHEN_LEFTOVER.sub(" ", text)
 
-    
+    if repair_separation:
+        text = REPAIR_SEPARATION.sub(r"\1 \2", text)
+
+
     text = LINE_BREAKS.sub(" ", text)
     text = WHITESPACE.sub(" ", text)
     return text.strip()
@@ -159,7 +223,7 @@ if __name__ == "__main__":
 
     assert t9_d == 'Das Motto der Aktion   Demokrat_innen nicht hängen lassen  ', t9_d
 
-    assert clean_sentence(t9) == 'Das Motto der Aktion Demokrat_innen nicht hängen lassen',  clean_sentence(t9)
+    assert clean_text(t9) == 'Das Motto der Aktion Demokrat_innen nicht hängen lassen',  clean_text(t9)
 
     t10_a = GENDERSTAR.sub(r"\1_\3", t10)
     t10_b = PUNCTUATION.sub(" ", t10_a)
@@ -206,5 +270,13 @@ if __name__ == "__main__":
     assert t15_d == "EU Austritt E-Mobilität U-Ausschuss FPÖ Wähler ACLU Anwalt U-Kommission BVT U-Ausschuss „Ibiza“-U-Ausschuss E-Mail partikel Ab und Zulauf.", t15_d
 
     t16 = "Einen Tag nach Rang vier vom 1-m-Brett hat sich"
+    assert clean_text(t16) == "Einen Tag nach Rang vier vom eins m-Brett hat sich",  clean_text(t16)
+    t17 = "Die Siegesserie von Dominic Thiem auf der Tennis-ATP-Tour ist am Samstag"
+    assert clean_text(t17) == 'Die Siegesserie von Dominic Thiem auf der Tennis ATP Tour ist am Samstag',  clean_text(t17)
+    t18 = "-Abbildung ähnlich"
+    assert clean_text(t18) == 'Abbildung ähnlich',  clean_text(t18)
+
+    assert clean_text("Ćevapčići") == "Ćevapčići", clean_text("Ćevapčići")
+    assert clean_text("Über\xadleben") == "Überleben", clean_text("Über\xadleben") 
 
     print('All tests passed!')
