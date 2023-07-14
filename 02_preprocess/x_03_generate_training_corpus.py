@@ -3,7 +3,7 @@ sys.path.append('.')
 import os
 from sqlalchemy import text
 from utils.sql import start_sqlsession
-from utils.datamodel import ProcessedParagraph
+from utils.datamodel import Sentence, ProcessedParagraph
 from argparse import ArgumentParser
 from tqdm import tqdm
 from sqlalchemy import func
@@ -19,11 +19,12 @@ session, engine = start_sqlsession()
 if __name__ == '__main__':
     arg_parser = ArgumentParser(description="Dump SQL to txt files")
     arg_parser.add_argument('--debug', action='store_true', help='Debug flag: only load a random sample')
+    arg_parser.add_argument('--table', type=str, default="processed_articles", help='Name of the table to take texts from (default: processed_articles)")')
     arg_parser.add_argument('--min_length', type=int, default=5, help='Minimum length of tokens per row (default: 5 tokens)')
     arg_parser.add_argument('--batch_size', type=int, default=10000, help='Number of rows to load per batch (default: 10,000 rows)')
     arg_parser.add_argument('--corpus_name', type=str, default="training_data", help='Name of the corpus file; file extension is added automatically (default "taining_data")')
     arg_parser.add_argument('--seed', type=int, default=1234, help='Seed for shuffling (default: 1234)')
-    arg_parser.add_argument('--lowercase', action='store_true', help="Lowercase entire corpus before saving.")
+    
     input_args = arg_parser.parse_args()
 
     p = Path.cwd()
@@ -50,10 +51,7 @@ if __name__ == '__main__':
         conn = psycopg2.connect(engine.url.render_as_string(hide_password=False))
         cursor = conn.cursor()
         query_string = f"SELECT setseed(0.{input_args.seed}); "
-        if input_args.lowercase:
-            query_string += 'COPY (SELECT LOWER(text) FROM processed_articles'
-        else:
-            query_string += "COPY (SELECT text FROM processed_articles"
+        query_string += "COPY (SELECT text FROM processed_articles"
         query_string += f" WHERE n_tokens >= {input_args.min_length}"
         query_string += f" ORDER BY RANDOM()"
         if input_args.debug:
@@ -82,14 +80,12 @@ if __name__ == '__main__':
         pages = list(range(pages))
         random.shuffle(pages)
 
-        base_query = session.query(ProcessedParagraph.text).filter(ProcessedParagraph.n_tokens >= input_args.min_length)
+        base_query = session.query(Sentence.sentence).filter(Sentence.n_tokens >= input_args.min_length)
 
         for p in tqdm(pages, total=len(pages), unit="batches"):
             query = base_query.limit(input_args.batch_size).offset(input_args.batch_size * p)
             with engine.begin() as con:
                 df = pd.read_sql(query.statement, con)
-            if input_args.lowercase:
-                df.text = df.text.str.lower()
-            df.text.to_csv(output_file, index=False, header=False, mode="a")
+            df.sentence.to_csv(output_file, index=False, header=False, mode="a")
         
     session.close()
