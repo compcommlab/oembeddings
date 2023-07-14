@@ -1,5 +1,5 @@
 from typing import Optional
-from sqlalchemy import ForeignKey, BigInteger
+from sqlalchemy import ForeignKey, BigInteger, DateTime, func
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -80,3 +80,42 @@ class ProcessedParagraph(Base):
 
     def __repr__(self) -> str:
         return (f"<ProcessedArticle(md5={self.md5})>")
+
+class Model(Base):
+
+    """ We store model details with training parameters here """
+
+    __tablename__ = 'models'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(index=True, nullable=False)
+    training_corpus: Mapped[str] = mapped_column(index=True, nullable=False)
+    model_type: Mapped[str] = mapped_column(nullable=False) # cbow or skipgram
+    learning_rate: Mapped[Optional[float]]
+    epochs: Mapped[Optional[int]]
+    word_ngrams: Mapped[Optional[int]] # fasttext parameter: wordNgrams
+    loss_function: Mapped[Optional[str]] # type of loss function used
+    min_count: Mapped[Optional[int]] # word minimum occurences
+    window_size: Mapped[Optional[int]]
+    dimensions: Mapped[Optional[int]]
+    vocab_size: Mapped[Optional[int]]
+    computation_time: Mapped[Optional[float]] # time in seconds
+    avg_loss: Mapped[Optional[float]]
+    model_path: Mapped[Optional[str]] # path to model file
+    created_date: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(), server_default=func.now()
+    ) 
+
+class Evaluation(Base):
+
+    """ Keeps track on evaluation results """
+
+    __tablename__ = 'evaluations'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    model_id: Mapped[int] = mapped_column(ForeignKey("models.id"))
+    corpus: Mapped[str]
+    task: Mapped[str]
+    f1: Mapped[float]
+    precision: Mapped[float]
+    recall: Mapped[float]
