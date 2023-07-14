@@ -8,9 +8,10 @@
 - Drop raw feather files into `raw_data`
 - Copy `.env.template` to `.env`
 - Set your SQL Connect string in the `.env`
-- For testing, just use the default which is a sqlite database with the filename `database.db`
+    - For testing, just use the default which is a sqlite database with the filename `database.db`
 - Install latest version of [fasttext](https://github.com/facebookresearch/fastText/) (see their documetnation)
-- **Optional**: Install spaCy for sentence splitting. Download spacy model: `python -m spacy download de_core_news_lg`
+- *Important*: Set the path to the `fasttext` binary in your `.env` file
+- *Optional*: Install spaCy for sentence splitting. Download spacy model: `python -m spacy download de_core_news_lg`
 
 
 # Scripts
