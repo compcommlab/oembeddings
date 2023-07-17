@@ -1,0 +1,14 @@
+name: oembeddings
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - pip
+  - SQLAlchemy
+  - python-dotenv
+  - emoji
+  - ftfy
+  - swifter
+  - tqdm
+  - pandas
+  - fasttext
