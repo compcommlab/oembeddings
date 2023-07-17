@@ -57,7 +57,7 @@ if __name__ == '__main__':
         query_string += f" WHERE n_tokens >= {input_args.min_length}"
         query_string += f" ORDER BY RANDOM()"
         if input_args.debug:
-            query_string += " LIMIT 10000"
+            query_string += " LIMIT 100000"
         query_string += ") TO STDOUT"
         # query_string += str(output_file.absolute())
         # query_string += "'"
