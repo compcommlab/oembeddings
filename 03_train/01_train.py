@@ -44,7 +44,14 @@ if __name__ == '__main__':
 
     model_name = generate_random_name()
 
-    model_path = model_dir / model_name
+    model_file_name = model_name + \
+                    '_lr' + input_args.learning_rate + \
+                    '_epochs' + input_args.epochs + \
+                    '_mincount' + input_args.min_count + \
+                    '_ws' + input_args.window_size + \
+                    '_dims' + input_args.dimensions 
+
+    model_path = model_dir / model_file_name
 
     training_corpus = Path(input_args.training_corpus)
 
