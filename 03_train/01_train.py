@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from utils.sql import start_sqlsession
-from utils.datamodel import Model
+from utils.datamodel import Model, ModelTrainingProgress
 from utils.random_names import generate_random_name
 
 import fasttext
@@ -89,6 +89,7 @@ if __name__ == '__main__':
                         encoding='utf-8')
     
     loss_value = 100.0 # pre-allocate
+    progress = 0.0
     
     while True:
         realtime_output = p.stdout.readline()
@@ -97,12 +98,35 @@ if __name__ == '__main__':
             break
 
         if realtime_output:
-            print(realtime_output.strip(), flush=True)
             try:
+                new_progress = re.search(r"Progress:\s*(\d+.\d)%", realtime_output)[1]
+                new_progress = float(new_progress)
+
                 loss_value = re.search(r"avg\.loss: *(\d\.\d+) *ETA", realtime_output)[1]
                 loss_value = float(loss_value)
+
+                words_sec_thread = re.search(r"thread:\s*(\d+)\s", realtime_output)[1]
+                words_sec_thread = float(words_sec_thread)
+
+                lr = re.search(r"lr:\s*(\d+\.\d+)\s", realtime_output)[1]
+                lr = float(lr)
+
+                if new_progress != progress:
+                    # only print to console when progress increased
+                    print(realtime_output.strip(), flush=True)
+                    progress = new_progress
+                    updated = ModelTrainingProgress(model_id=model.id,
+                                                    progress=progress,
+                                                    loss=loss_value,
+                                                    learning_rate=lr,
+                                                    words_sec_thread=words_sec_thread)
+                    try:
+                        session.add(updated)
+                        session.commit()
+                    except:
+                        session.rollback()
             except:
-                pass
+                print(realtime_output.strip(), flush=True)
 
     computation_time = time.time() - training_start_time
 

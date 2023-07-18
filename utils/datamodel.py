@@ -106,6 +106,19 @@ class Model(Base):
         DateTime(), server_default=func.now()
     ) 
 
+class ModelTrainingProgress(Base):
+
+    """" Save the logs for model training progress here """
+
+    __tablename__ = 'model_training_progress'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    model_id: Mapped[int] = mapped_column(ForeignKey("models.id"))
+    progress: Mapped[Optional[float]]
+    loss: Mapped[Optional[float]]
+    learning_rate: Mapped[Optional[float]]
+    words_sec_thread: Mapped[Optional[float]] # type of loss function used
+
 class Evaluation(Base):
 
     """ Keeps track on evaluation results """
