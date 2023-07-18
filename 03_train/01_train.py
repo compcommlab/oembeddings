@@ -72,6 +72,9 @@ if __name__ == '__main__':
     session.commit()
 
     print('Training model...')
+    print('Model name:', model_name)
+    print('Model path:', model_path)
+    print('Model ID:', model.id)
 
     command = [os.environ.get('FASTTEXT_PATH'), 
                input_args.model_type, 
@@ -122,16 +125,16 @@ if __name__ == '__main__':
                     # only print to console when progress increased
                     print(realtime_output.strip(), flush=True)
                     progress = new_progress
-                    updated = ModelTrainingProgress(model_id=model.id,
-                                                    progress=progress,
-                                                    loss=loss_value,
-                                                    learning_rate=lr,
-                                                    words_sec_thread=words_sec_thread)
-                    try:
-                        session.add(updated)
-                        session.commit()
-                    except:
-                        session.rollback()
+                    # updated = ModelTrainingProgress(model_id=model.id,
+                    #                                 progress=progress,
+                    #                                 loss=loss_value,
+                    #                                 learning_rate=lr,
+                    #                                 words_sec_thread=words_sec_thread)
+                    # try:
+                    #     session.add(updated)
+                    #     session.commit()
+                    # except:
+                    #     session.rollback()
             except:
                 print(realtime_output.strip(), flush=True)
 
