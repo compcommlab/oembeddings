@@ -7,7 +7,13 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 
 class Base(DeclarativeBase):
-    pass
+    
+    def _as_dict(self) -> dict:
+        """ 
+            returns a dictionary representation of an instance
+            used for dumping an instance as JSON file 
+        """
+        return {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
 
 class Article(Base):
     __tablename__ = "articles"
@@ -132,3 +138,30 @@ class Evaluation(Base):
     f1: Mapped[float]
     precision: Mapped[float]
     recall: Mapped[float]
+
+class WithinCorrelationResults(Base):
+
+    """ Stores results for correlation tests within the same parameter settings """
+
+    __tablename__ = 'within_correlation_results'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    model_a_id: Mapped[int] = mapped_column(ForeignKey("models.id"), nullable=False)
+    model_b_id: Mapped[int] = mapped_column(ForeignKey("models.id"), nullable=False)
+    cues: Mapped[str] # what kind of cues were used (e.g., "random", "politics")
+    correlation: Mapped[float] # value for correlation between model a and b
+    correlation_type: Mapped[str] # kind of correlation metric (e.g, "Pearson's Rho")
+
+class AcrossCorrelationResults(Base):
+
+    """ Stores results for correlation tests across different parameter settigns """
+
+    __tablename__ = 'across_correlation_results'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    parameters_a: Mapped[str] = mapped_column(nullable=False) # string that identifies all parameter settings of this model "family"
+    parameters_b: Mapped[str] = mapped_column(nullable=False)
+    cues: Mapped[str] # what kind of cues were used (e.g., "random", "politics")
+    correlation: Mapped[float] # value for correlation between parameters a and b
+    correlation_type: Mapped[str] # kind of correlation metric (e.g, "Pearson's Rho")
+    correlation_sd: Mapped[float] # standard deviation
