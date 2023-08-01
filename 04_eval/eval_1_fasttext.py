@@ -5,6 +5,8 @@
 # @author: Andreas Mueller
 # @see: Bachelor Thesis 'Analyse von Wort-Vektoren deutscher Textkorpora'
 #
+# https://github.com/devmount/GermanWordEmbeddings
+#
 # Contributors:
 #  Michael Egger <michael.egger@tsn.at>
 # Adapted by:
