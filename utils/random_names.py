@@ -21,6 +21,7 @@ NAMES = pd.read_csv(p / 'names.csv')
 # Taken from the Berlin Affective Word List Reloaded (Võ et al 2009)
 # DOI: 10.3758/BRM.41.2.534
 # Link to Dataset: https://osf.io/hx6r8/
+# Plus some other adjectives
 ADJECTIVES = [
 "aktiv",
 "angeregt",
@@ -47,7 +48,15 @@ ADJECTIVES = [
 "toll",
 "topfit",
 "vital",
-"wachsam"]
+"wachsam", 
+"grantig", # Start of additional adjectives
+"urig",
+"pfiffig"
+"flott",
+"gefinkelt",
+"fesch",
+"griawig"
+]
 
 def generate_random_name(gender: Literal['female', 'male'] = None) -> str:
     if gender:
