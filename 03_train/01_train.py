@@ -2,6 +2,7 @@ import sys
 sys.path.append('.')
 import os
 import subprocess
+import json
 import re
 import time
 from argparse import ArgumentParser
@@ -148,6 +149,9 @@ if __name__ == '__main__':
     model.computation_time = computation_time
     model.avg_loss = loss_value
     model.vocab_size = vocab_size
+
+    with open(str(model_path.absolute()) + '.json', 'w') as f:
+        json.dump(model._as_dict(), f, default=str, indent=True)
 
     session.commit()
     session.close()
