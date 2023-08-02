@@ -478,7 +478,7 @@ if __name__ == '__main__':
         evaluate_model(args.model, args.topn, umlauts=args.umlauts)
     else:
         models = session.query(Model).all()
-        for model in models[:3]:
+        for model in models:
             old_results = session.query(SyntacticSemanticEvaluation).filter(SyntacticSemanticEvaluation.model_id == model.id).all()
             if len(old_results) > 0 and args.fresh:
                 logging.info(f'Found old results for model <{model.name}> and deleting them ...')
