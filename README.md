@@ -100,3 +100,10 @@ All text cleaning is handled by the function `clean_text()` (`utils/cleaning.py`
 
 - `datamodel.py`: use SQLAlchemy to declare SQL tables
 - `sql.py`: helper functions to start SQL sessions automatically
+
+# Evaluation
+
+## Semantic & Syntactic Tasks
+
+Data files in the directory `evaluation_data/devmoun` were taken from project [GermanWordEmbeddings](https://github.com/devmount/GermanWordEmbeddings), Copyright (c) 2015 Andreas Müller. These files are licensed under the MIT license. See DEVMOUNT-LICENSE.md for additional details.
+
