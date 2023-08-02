@@ -35,6 +35,8 @@
 
 
 """
+import sys
+sys.path.append('.')
 
 import typing
 
@@ -106,73 +108,74 @@ def calc_correlation(model1: fasttext.FastText._FastText,
 
 
 if __name__ == '__main__':
+    pass
 
-    # TODO: 
-    #    - load models via sql db
-    #    - automatically compare all models with each other
-    #    - store output in sql db
+# TODO: 
+#    - load models via sql db
+#    - automatically compare all models with each other
+#    - store output in sql db
 
 
-    # Within Correlations
+# Within Correlations
 
-    # Get models from same family
+# Get models from same family
 
-    
 
-    sql_query_string = """
-    select A.id as model_a, B.id as model_b
-    from models A, models B
-    where A.id != B.id AND
-            A.training_corpus = B.training_corpus AND
-            A.model_type = B.model_type and
-            A.learning_rate = B.learning_rate and 
-            A.epochs = B.epochs AND
-            A.word_ngrams = B.word_ngrams AND 
-            A.min_count = B.min_count AND
-            A.window_size = B.window_size AND 
-            A.dimensions = B.dimensions
-    """
 
-    with engine.connect() as con:
-        model_combinations = con.execute(sqlalchemy.text(sql_query_string)).all()
+sql_query_string = """
+select A.id as model_a, B.id as model_b
+from models A, models B
+where A.id < B.id AND
+        A.training_corpus = B.training_corpus AND
+        A.model_type = B.model_type and
+        A.learning_rate = B.learning_rate and 
+        A.epochs = B.epochs AND
+        A.word_ngrams = B.word_ngrams AND 
+        A.min_count = B.min_count AND
+        A.window_size = B.window_size AND 
+        A.dimensions = B.dimensions
+"""
 
-    print('Model combinations:', len(model_combinations))
+with engine.connect() as con:
+    model_combinations = con.execute(sqlalchemy.text(sql_query_string)).all()
 
-    model_a_meta = session.query(Model).where(Model.id == model_combinations[0][0]).first()
-    model_b_meta = session.query(Model).where(Model.id == model_combinations[0][1]).first()
+print('Model combinations:', len(model_combinations))
 
-    # build a string that identifies the model parameters
-    # maybe put that into a separate function
-    corpus = Path(model_a_meta.training_corpus).name.replace('.txt', '')
-    parameter_string = f"{corpus}_epochs{model_a_meta.epochs}_lr{model_a_meta.learning_rate}_mincount{model_a_meta.min_count}_ws{model_a_meta.window_size}_dims{model_a_meta.dimensions}"
+model_a_meta = session.query(Model).where(Model.id == model_combinations[0][0]).first()
+model_b_meta = session.query(Model).where(Model.id == model_combinations[0][1]).first()
 
-    model_a = fasttext.load_model(model_b_meta.model_path + '.bin')
-    model_b = fasttext.load_model(model_b_meta.model_path + '.bin')
+# build a string that identifies the model parameters
+# maybe put that into a separate function
+corpus = Path(model_a_meta.training_corpus).name.replace('.txt', '')
+parameter_string = f"{corpus}_epochs{model_a_meta.epochs}_lr{model_a_meta.learning_rate}_mincount{model_a_meta.min_count}_ws{model_a_meta.window_size}_dims{model_a_meta.dimensions}"
 
-    # ensure that we only have words that both models share
-    # get intersection of both vocabulary
-    shared_vocabulary = set(model_a.words) & set(model_b.words)
+model_a = fasttext.load_model(model_b_meta.model_path + '.bin')
+model_b = fasttext.load_model(model_b_meta.model_path + '.bin')
 
-    words_politics = ["Demokratie", "Gleichheit", "Gerechtigkeit",
-                    "Einwanderung", "Pension", "Sozialstaat", "Bildung",
-                    "Steuern", "ÖVP", "SPÖ", "FPÖ", "Grüne", "NEOS"]
-    
-    words_politics = set(words_politics) & shared_vocabulary
+# ensure that we only have words that both models share
+# get intersection of both vocabulary
+shared_vocabulary = set(model_a.words) & set(model_b.words)
 
-    words_random = random.sample(shared_vocabulary, 100)
+words_politics = ["Demokratie", "Gleichheit", "Gerechtigkeit",
+                "Einwanderung", "Pension", "Sozialstaat", "Bildung",
+                "Steuern", "ÖVP", "SPÖ", "FPÖ", "Grüne", "NEOS"]
 
-    corr_politics = calc_correlation(model_a, model_b, words_politics)
-    corr_random = calc_correlation(model_a, model_b, words_random)
+words_politics = set(words_politics) & shared_vocabulary
 
-    results = WithinCorrelationResults(model_a_id=model_a_meta.id, model_b_id=model_b_meta.id,
-                                       cues='politics',
-                                       correlation=corr_politics.mean(),
-                                       correlation_type="Pearson's Rho")
-    session.add(results)
-    session.commit()
+words_random = random.sample(shared_vocabulary, 100)
 
-    # 2. compare different initializations
-    avg_sim_vectors1 = average_cosine_distance([model_a, model_b], words_politics)
-    # avg_sim_vectors2 = average_cosine_distance([model3, model4], words_politics)
+corr_politics = calc_correlation(model_a, model_b, words_politics)
+corr_random = calc_correlation(model_a, model_b, words_random)
 
-    # correlation = [pearsonr(avg_sim_vectors1[i], avg_sim_vectors2[i])[0] for i in range(len(words_politics))]
+results = WithinCorrelationResults(model_a_id=model_a_meta.id, model_b_id=model_b_meta.id,
+                                    cues='politics',
+                                    correlation=corr_politics.mean(),
+                                    correlation_type="Pearson's Rho")
+session.add(results)
+session.commit()
+
+# 2. compare different initializations
+avg_sim_vectors1 = average_cosine_distance([model_a, model_b], words_politics)
+# avg_sim_vectors2 = average_cosine_distance([model3, model4], words_politics)
+
+# correlation = [pearsonr(avg_sim_vectors1[i], avg_sim_vectors2[i])[0] for i in range(len(words_politics))]
