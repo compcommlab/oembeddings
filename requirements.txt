@@ -8,3 +8,4 @@ swifter
 tqdm
 pandas
 scipy
+gensim
