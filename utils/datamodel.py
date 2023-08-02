@@ -165,3 +165,21 @@ class AcrossCorrelationResults(Base):
     correlation: Mapped[float] # value for correlation between parameters a and b
     correlation_type: Mapped[str] # kind of correlation metric (e.g, "Pearson's Rho")
     correlation_sd: Mapped[float] # standard deviation
+
+
+class SyntacticSemanticEvaluation(Base):
+
+    """ Keeps track on evaluation results """
+
+    __tablename__ = 'syntactic_semantic_evaluation'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    model_id: Mapped[int] = mapped_column(ForeignKey("models.id"))
+    task_group: Mapped[str] # Syntactic or Semantic
+    task: Mapped[str] # nouns; adjectives; doesn't fit; etc
+    correct: Mapped[int] # count how many are correct
+    top_n: Mapped[int] = mapped_column(nullable=True) # was answer correct if taking top N words?
+    n: Mapped[int] = mapped_column(nullable=True) # N for top_n
+    coverage: Mapped[int] # total questions that could be answered (ie. model "knows" the words)
+    total_questions: Mapped[int] # total number of questions
+    duration: Mapped[float]
