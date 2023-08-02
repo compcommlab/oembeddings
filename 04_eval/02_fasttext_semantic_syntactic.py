@@ -4,7 +4,9 @@
 # 
 # @author: Andreas Mueller
 # @see: Bachelor Thesis 'Analyse von Wort-Vektoren deutscher Textkorpora'
-#
+# 
+# Available under MIT License, Copyright (c) 2015 Andreas Müller. 
+# For original source and full license details, see:
 # https://github.com/devmount/GermanWordEmbeddings
 #
 # Contributors:
@@ -14,35 +16,41 @@
 #
 # @example: python evaluation.py model/my.model -u -t 10
 # where model/my.model is the path to the model 
+# model needs to be .vec file 
+# to get .vec file from .bin file see the code here: 
+#   https://stackoverflow.com/questions/67679162/how-can-i-get-a-vec-file-from-a-bin-file 
+#   https://stackoverflow.com/questions/58337469/how-to-save-fasttext-model-in-vec-format 
 
+import sys
+sys.path.append('.')
+import typing
 
 import gensim
 import random
+import time
 import argparse
 import logging
 from pathlib import Path
+import json
 
-# configuration
-parser = argparse.ArgumentParser(description='Script for creating testsets and evaluating word vector models')
-parser.add_argument('model', type=str, help='source file with trained model')
-parser.add_argument('-c', '--create', action='store_true', help='if set, create testsets before evaluating')
-parser.add_argument('-u', '--umlauts', action='store_true', help='if set, create additional testsets with transformed umlauts and use them instead')
-parser.add_argument('-t', '--topn', type=int, default=10, help='check the top n result (correct answer under top n answeres)')
+from utils.sql import start_sqlsession
+from utils.datamodel import Model, SyntacticSemanticEvaluation
 
+# start sql
+session, engine = start_sqlsession()
 
-path = 'path_to_folder'
+p = Path.cwd()
 
-args, unknown = parser.parse_known_args()
-TARGET_SYN = f'{path}/data/syntactic.questions'
-TARGET_SEM_OP = f'{path}/data/semantic_op.questions'
-TARGET_SEM_BM = f'{path}/data/semantic_bm.questions'
-TARGET_SEM_DF = f'{path}/data/semantic_df.questions'
-SRC_NOUNS = f'{path}/src/nouns.txt'
-SRC_ADJECTIVES = f'{path}/src/adjectives.txt'
-SRC_VERBS = f'{path}/src/verbs.txt'
-SRC_BESTMATCH = f'{path}/src/bestmatch.txt'
-SRC_DOESNTFIT = f'{path}/src/doesntfit.txt'
-SRC_OPPOSITE = f'{path}/src/opposite.txt'
+TARGET_SYN = p / 'evaluation_data' / 'devmount' / 'syntactic.questions'
+TARGET_SEM_OP = p / 'evaluation_data' / 'devmount' / 'semantic_op.questions'
+TARGET_SEM_BM = p / 'evaluation_data' / 'devmount' / 'semantic_bm.questions'
+TARGET_SEM_DF = p / 'evaluation_data' / 'devmount' / 'semantic_df.questions'
+SRC_NOUNS = p / 'evaluation_data' / 'devmount' / 'nouns.txt'
+SRC_ADJECTIVES = p / 'evaluation_data' / 'devmount' / 'adjectives.txt'
+SRC_VERBS = p / 'evaluation_data' / 'devmount' / 'verbs.txt'
+SRC_BESTMATCH = p / 'evaluation_data' / 'devmount' / 'bestmatch.txt'
+SRC_DOESNTFIT = p / 'evaluation_data' / 'devmount' / 'doesntfit.txt'
+SRC_OPPOSITE = p / 'evaluation_data' / 'devmount' / 'opposite.txt'
 PATTERN_SYN = [
     ('nouns', 'SI/PL', SRC_NOUNS, 0, 1),
     ('nouns', 'PL/SI', SRC_NOUNS, 1, 0),
@@ -65,13 +73,8 @@ PATTERN_SYN = [
     ('verbs (past)', '3SV/3PV', SRC_VERBS, 3, 4),
     ('verbs (past)', '3PV/3SV', SRC_VERBS, 4, 3)
 ]
-logging.basicConfig(filename=args.model.strip() + '.result', format='%(asctime)s : %(message)s', level=logging.INFO)
 
-consoleHandler = logging.StreamHandler()
-logging.getLogger().addHandler(consoleHandler)
-
-
-def replace_umlauts(text):
+def replace_umlauts(text: str) -> str:
     """
     Replaces german umlauts and sharp s in given text.
 
@@ -89,14 +92,14 @@ def replace_umlauts(text):
     return res
 
 
-def create_syntactic_testset():
+def create_syntactic_testset() -> None:
     """
     Creates syntactic test set and writes it into a file.
 
     :return: None
     """
     if args.umlauts:
-        u = open(TARGET_SYN + '.nouml', 'w')
+        u = open(str(TARGET_SYN) + '.nouml', 'w')
     with open(TARGET_SYN, 'w') as t:
         for label, short, src, index1, index2 in PATTERN_SYN:
             t.write(': {}: {}\n'.format(label, short))
@@ -107,9 +110,11 @@ def create_syntactic_testset():
                 if args.umlauts:
                     u.write(replace_umlauts(q) + '\n')
             logging.info('created pattern ' + short)
+    if args.umlauts:
+        u.close()
 
 
-def create_semantic_testset():
+def create_semantic_testset() -> None:
     """
     Creates semantic test set and writes it into a file.
 
@@ -154,7 +159,7 @@ def create_semantic_testset():
         logging.info('created doesn\'t-fit questions')
 
 
-def create_questions(src, index1=0, index2=1, combinate=5):
+def create_questions(src: Path, index1=0, index2=1, combinate=5) -> typing.List[str]:
     """
     Creates single questions from given source.
 
@@ -184,7 +189,10 @@ def create_questions(src, index1=0, index2=1, combinate=5):
     return questions
 
 
-def test_most_similar(model, src, label='most similar', topn=10):
+def test_most_similar(model: gensim.models.KeyedVectors, 
+                      src: Path, 
+                      label='most similar', 
+                      topn=10) -> dict:
     """
     Tests given model to most similar word.
 
@@ -192,12 +200,13 @@ def test_most_similar(model, src, label='most similar', topn=10):
     :param src: source file to load words from
     :param label: label to print current test case
     :param topn: number of top matches
-    :return:
+    :return: dict with results
     """
     num_lines = sum(1 for _ in open(src))
     num_questions = 0
     num_right = 0
     num_topn = 0
+    t = time.time()
     # get questions
     with open(src) as f:
         questions = f.readlines()
@@ -221,25 +230,39 @@ def test_most_similar(model, src, label='most similar', topn=10):
     correct_matches = round(num_right/float(num_questions)*100, 1) if num_questions > 0 else 0.0
     topn_matches = round(num_topn/float(num_questions)*100, 1) if num_questions > 0 else 0.0
     coverage = round(num_questions/float(num_lines)*100, 1) if num_lines > 0 else 0.0
+    duration = time.time() - t
     # log result
     logging.info(label + ' correct:  {0}% ({1}/{2})'.format(correct_matches, num_right, num_questions))
     logging.info(label + ' top {0}:   {1}% ({2}/{3})'.format(topn, topn_matches, num_topn, num_questions))
     logging.info(label + ' coverage: {0}% ({1}/{2})'.format(coverage, num_questions, num_lines))
+    result = {'task_group': 'most_similar',
+                      'task': label,
+                      'correct': num_right,
+                      'top_n': num_topn,
+                      'n': topn,
+                      'coverage': num_questions,
+                      'total_questions': num_lines,
+                      'duration': duration}
+    return result
 
 
-def test_most_similar_groups(model, src, topn=10):
+def test_most_similar_groups(model: gensim.models.KeyedVectors, 
+                             src: Path, 
+                             topn=10) -> typing.List[dict]:
     """
     Tests given model to most similar word.
 
     :param model: model to test
     :param src: source file to load words from
     :param topn: number of top matches
-    :return: None
+    :return: A list of dicts, where each dict is an evaluation result
     """
     num_lines = 0
     num_questions = 0
     num_right = 0
     num_topn = 0
+    total_duration = 0
+    results = []
     # test each group
     with open(src) as groups_fp:
         groups = groups_fp.read().split('\n: ')
@@ -251,6 +274,8 @@ def test_most_similar_groups(model, src, topn=10):
             num_group_questions = 0
             num_group_right = 0
             num_group_topn = 0
+            # time the duration
+            t = time.time()
             # test each question of current group
             for question in questions:
                 words = question.split()
@@ -271,43 +296,67 @@ def test_most_similar_groups(model, src, topn=10):
             topn_group_matches = round(num_group_topn/float(num_group_questions)*100, 1) if num_group_questions > 0 else 0.0
             group_coverage = round(num_group_questions/float(num_group_lines)*100, 1) if num_group_lines > 0 else 0.0
             # log result
+            duration = time.time() - t
             logging.info(label + ': {0}% ({1}/{2}), {3}% ({4}/{5}), {6}% ({7}/{8})'.format(
-                correct_group_matches,
-                num_group_right,
-                num_group_questions,
-                topn_group_matches,
-                num_group_topn,
-                num_group_questions,
-                group_coverage,
-                num_group_questions,
-                num_group_lines
+                correct_group_matches, # %-correct
+                num_group_right, # int
+                num_group_questions, # total questions asked
+                topn_group_matches, # %-correct
+                num_group_topn, # int
+                num_group_questions, # total questions asked
+                group_coverage, # %-covered
+                num_group_questions, # total questions asked
+                num_group_lines # total number of questions
             ))
+            result = {'task_group': 'most_similar_groups',
+                      'task': label,
+                      'correct': num_group_right,
+                      'top_n': num_group_topn,
+                      'n': topn,
+                      'coverage': num_group_questions,
+                      'total_questions': num_group_lines,
+                      'duration': duration}
+            results.append(result)
             # total numbers
             num_lines += num_group_lines
             num_questions += num_group_questions
             num_right += num_group_right
             num_topn += num_group_topn
+            total_duration += duration
         # calculate result
         correct_matches = round(num_right/float(num_questions)*100, 1) if num_questions > 0 else 0.0
         topn_matches = round(num_topn/float(num_questions)*100, 1) if num_questions > 0 else 0.0
         coverage = round(num_questions/float(num_lines)*100, 1) if num_lines > 0 else 0.0
+        result = {'task_group': 'most_similar_groups',
+                      'task': "total",
+                      'correct': num_right,
+                      'top_n': num_topn,
+                      'n': topn,
+                      'coverage': num_questions,
+                      'total_questions': num_lines,
+                      'duration': total_duration}
+        results.append(result)
         # log result
         logging.info('total correct:  {0}% ({1}/{2})'.format(correct_matches, num_right, num_questions))
         logging.info('total top {0}:   {1}% ({2}/{3})'.format(topn, topn_matches, num_topn, num_questions))
         logging.info('total coverage: {0}% ({1}/{2})'.format(coverage, num_questions, num_lines))
+        return results
 
 
-def test_doesnt_fit(model, src):
+def test_doesnt_fit(model: gensim.models.KeyedVectors, 
+                    src: Path) -> dict:
     """
     Tests given model to most not fitting word.
 
     :param model: model to test
     :param src: source file to load words from
-    :return:
+    :return: dict with results
     """
+
     num_lines = sum(1 for _ in open(src))
     num_questions = 0
     num_right = 0
+    t = time.time()
     # get questions
     with open(src) as f:
         questions = f.readlines()
@@ -323,28 +372,120 @@ def test_doesnt_fit(model, src):
     # calculate result
     correct_matches = round(num_right/float(num_questions)*100, 1) if num_questions > 0 else 0.0
     coverage = round(num_questions/float(num_lines)*100, 1) if num_lines > 0 else 0.0
+    duration = time.time() - t
     # log result
     logging.info('doesn\'t fit correct:  {0}% ({1}/{2})'.format(correct_matches, num_right, num_questions))
     logging.info('doesn\'t fit coverage: {0}% ({1}/{2})'.format(coverage, num_questions, num_lines))
+    result = {'task_group': 'word intrusion',
+                'task': "doesnt fit",
+                'correct': num_right,
+                'coverage': num_questions,
+                'total_questions': num_lines,
+                'duration': duration}
+    return result
 
-if args.create:
-    logging.info('> CREATING SYNTACTIC TESTSET')
-    create_syntactic_testset()
-    logging.info('> CREATING SEMANTIC TESTSET')
-    create_semantic_testset()
+def evaluate_model(model_path: str, 
+                   topn: int, 
+                   model_id: int = None,
+                   umlauts = False) -> None:
 
-# get trained model, needs to be .vec file 
-# to get .vec file from .bin file see the code here: 
-#   https://stackoverflow.com/questions/67679162/how-can-i-get-a-vec-file-from-a-bin-file 
-#   https://stackoverflow.com/questions/58337469/how-to-save-fasttext-model-in-vec-format 
+    if not model_path.endswith('.vec'):
+        model_path = model_path + '.vec'
 
-model = gensim.models.KeyedVectors.load_word2vec_format('path_to_vec_file')
+    assert Path(model_path).exists(), f"Cannot find model at path {model_path}"
+
+    model = gensim.models.KeyedVectors.load_word2vec_format(model_path)
+
+    # execute evaluation
+    logging.info(f'Model: {model_path}')
+    logging.info('> EVALUATING SYNTACTIC FEATURES')
+    most_similar_results = test_most_similar_groups(model, TARGET_SYN + '.nouml' if args.umlauts else TARGET_SYN, args.topn)
+    if model_id:
+        for result in most_similar_results:
+            r = SyntacticSemanticEvaluation(model_id=model_id, **result)
+            session.add(r)
+        session.commit()
+
+    with open(model_path.replace('.vec', '_most_similar.json'), "w") as f:
+        json.dump(most_similar_results, f, indent=True)
+
+    logging.info('> EVALUATING SEMANTIC FEATURES')
+    result = test_most_similar(model, TARGET_SEM_OP + '.nouml' if umlauts else TARGET_SEM_OP, 'opposite', topn)
+    if model_id:
+        r = SyntacticSemanticEvaluation(model_id=model_id, **result)
+        session.add(r)
+        session.commit()
+
+    with open(model_path.replace('.vec', '_opposite.json'), "w") as f:
+        json.dump(result, f, indent=True)
+
+    result = test_most_similar(model, TARGET_SEM_BM + '.nouml' if umlauts else TARGET_SEM_BM, 'best match', topn)
+    if model_id:
+        r = SyntacticSemanticEvaluation(model_id=model_id, **result)
+        session.add(r)
+        session.commit()
+
+    with open(model_path.replace('.vec', '_best_match.json'), "w") as f:
+        json.dump(result, f, indent=True)
+
+    result = test_doesnt_fit(model, TARGET_SEM_DF + '.nouml' if umlauts else TARGET_SEM_DF)
+    if model_id:
+        r = SyntacticSemanticEvaluation(model_id=model_id, **result)
+        session.add(r)
+        session.commit()
+
+    with open(model_path.replace('.vec', '_word_intrusion.json'), "w") as f:
+        json.dump(result, f, indent=True)
+
+    logging.info('------------------------------')
 
 
-# execute evaluation
-logging.info('> EVALUATING SYNTACTIC FEATURES')
-test_most_similar_groups(model, TARGET_SYN + '.nouml' if args.umlauts else TARGET_SYN, args.topn)
-logging.info('> EVALUATING SEMANTIC FEATURES')
-test_most_similar(model, TARGET_SEM_OP + '.nouml' if args.umlauts else TARGET_SEM_OP, 'opposite', args.topn)
-test_most_similar(model, TARGET_SEM_BM + '.nouml' if args.umlauts else TARGET_SEM_BM, 'best match', args.topn)
-test_doesnt_fit(model, TARGET_SEM_DF + '.nouml' if args.umlauts else TARGET_SEM_DF)
+if __name__ == '__main__':
+    # configuration
+    parser = argparse.ArgumentParser(description='Script for creating testsets and evaluating word vector models')
+    parser.add_argument('-m', '--model', type=str, help='source file with trained model')
+    parser.add_argument('-f', '--fresh', action='store_true', help='Get fresh results; delete old results')
+    parser.add_argument('-u', '--umlauts', action='store_true', help='if set, create additional testsets with transformed umlauts and use them instead')
+    parser.add_argument('-t', '--topn', type=int, default=10, help='check the top n result (correct answer under top n answeres)')
+    parser.add_argument('--debug', action='store_true', help='Debug flag')
+
+    args, unknown = parser.parse_known_args()
+
+    if args.model:
+        logging.basicConfig(filename=args.model.strip() + '.result', format='%(asctime)s : %(message)s', level=logging.INFO)
+    else:  
+        logging.basicConfig(filename='syntactic_evaluation_results.log', format='%(asctime)s : %(message)s', level=logging.INFO)
+
+    if args.debug:
+        consoleHandler = logging.StreamHandler()
+        logging.getLogger().addHandler(consoleHandler)
+
+    # If question files do not exist, create them automatically
+    if not all([TARGET_SYN.exists(), TARGET_SEM_OP.exists(), TARGET_SEM_BM.exists(), TARGET_SEM_DF.exists()]):
+        assert SRC_ADJECTIVES.exists()
+        assert SRC_NOUNS.exists()
+        assert SRC_ADJECTIVES.exists()
+        assert SRC_VERBS.exists()
+        assert SRC_BESTMATCH.exists()
+        assert SRC_DOESNTFIT.exists()
+        assert SRC_OPPOSITE.exists()
+        logging.info('> CREATING SYNTACTIC TESTSET')
+        create_syntactic_testset()
+        logging.info('> CREATING SEMANTIC TESTSET')
+        create_semantic_testset()
+    
+    if args.model:
+        evaluate_model(args.model, args.topn, umlauts=args.umlauts)
+    else:
+        models = session.query(Model).all()
+        for model in models[:3]:
+            old_results = session.query(SyntacticSemanticEvaluation).filter(SyntacticSemanticEvaluation.model_id == model.id).all()
+            if len(old_results) > 0 and args.fresh:
+                logging.info(f'Found old results for model <{model.name}> and deleting them ...')
+                session.query(SyntacticSemanticEvaluation).filter(SyntacticSemanticEvaluation.model_id == model.id).delete()
+                session.commit()
+                evaluate_model(model.model_path, args.topn, model_id=model.id)
+            elif len(old_results) == 0:
+                evaluate_model(model.model_path, args.topn, model_id=model.id)
+            else:
+                continue
