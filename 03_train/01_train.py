@@ -58,6 +58,9 @@ if __name__ == '__main__':
 
     assert training_corpus.exists(), f'Could not find training data at: {training_corpus}'
 
+    corpus = training_corpus.name.replace('.txt', '')
+    parameter_string = f"{corpus}_{input_args.model_type}_epochs{input_args.epochs}_lr{input_args.learning_rate}_mincount{input_args.min_count}_ws{input_args.window_size}_dims{input_args.dimensions}"
+
     model = Model(name=model_name,
                   training_corpus=str(training_corpus.absolute()),
                   model_type=input_args.model_type,
@@ -67,6 +70,7 @@ if __name__ == '__main__':
                   min_count=input_args.min_count,
                   window_size=input_args.window_size,
                   dimensions=input_args.dimensions,
+                  parameter_string=parameter_string,
                   model_path=str(model_path.absolute()))
     
     session.add(model)
