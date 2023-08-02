@@ -108,9 +108,13 @@ class Model(Base):
     computation_time: Mapped[Optional[float]] # time in seconds
     avg_loss: Mapped[Optional[float]]
     model_path: Mapped[Optional[str]] # path to model file
+    parameter_string: Mapped[Optional[str]] # string representation of all parameters for quick grouping
     created_date: Mapped[Optional[datetime]] = mapped_column(
         DateTime(), server_default=func.now()
     ) 
+
+    def __repr__(self) -> str:
+        return f'<Model: {self.name}>'
 
 class ModelTrainingProgress(Base):
 
@@ -148,8 +152,10 @@ class WithinCorrelationResults(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     model_a_id: Mapped[int] = mapped_column(ForeignKey("models.id"), nullable=False)
     model_b_id: Mapped[int] = mapped_column(ForeignKey("models.id"), nullable=False)
+    parameter_string: Mapped[str]
     cues: Mapped[str] # what kind of cues were used (e.g., "random", "politics")
     correlation: Mapped[float] # value for correlation between model a and b
+    correlation_sd: Mapped[float] # standard deviation
     correlation_type: Mapped[str] # kind of correlation metric (e.g, "Pearson's Rho")
 
 class AcrossCorrelationResults(Base):
@@ -159,12 +165,12 @@ class AcrossCorrelationResults(Base):
     __tablename__ = 'across_correlation_results'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    parameters_a: Mapped[str] = mapped_column(nullable=False) # string that identifies all parameter settings of this model "family"
-    parameters_b: Mapped[str] = mapped_column(nullable=False)
+    model_a_family: Mapped[str]
+    model_b_family: Mapped[str]
     cues: Mapped[str] # what kind of cues were used (e.g., "random", "politics")
     correlation: Mapped[float] # value for correlation between parameters a and b
+    correlation_sd: Mapped[float]
     correlation_type: Mapped[str] # kind of correlation metric (e.g, "Pearson's Rho")
-    correlation_sd: Mapped[float] # standard deviation
 
 
 class SyntacticSemanticEvaluation(Base):
@@ -178,8 +184,8 @@ class SyntacticSemanticEvaluation(Base):
     task_group: Mapped[str] # Syntactic or Semantic
     task: Mapped[str] # nouns; adjectives; doesn't fit; etc
     correct: Mapped[int] # count how many are correct
-    top_n: Mapped[int] = mapped_column(nullable=True) # was answer correct if taking top N words?
-    n: Mapped[int] = mapped_column(nullable=True) # N for top_n
+    top_n: Mapped[Optional[int]] # was answer correct if taking top N words?
+    n: Mapped[Optional[int]] # N for top_n
     coverage: Mapped[int] # total questions that could be answered (ie. model "knows" the words)
     total_questions: Mapped[int] # total number of questions
     duration: Mapped[float]
