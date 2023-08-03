@@ -9,3 +9,4 @@ tqdm
 pandas
 scipy
 gensim
+psycopg2
