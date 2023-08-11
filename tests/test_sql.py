@@ -7,7 +7,9 @@ import random
 from datetime import datetime
 import platform
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import select
 
+import pandas as pd
 
 class TestTable(Base):
 
@@ -32,5 +34,17 @@ for i in range(100):
                      row_int=random.randint(0, 10000))
     session.add(test)
     session.commit()
+
+# read rows
+
+test = session.query(TestTable).first()
+
+print(test.id, test.machine, test.timestamp)
+
+with engine.begin() as conn:
+    stmt = select(TestTable)
+    df = pd.read_sql_query(stmt, conn)
+
+print(df)
 
 session.close()
