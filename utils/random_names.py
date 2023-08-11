@@ -51,7 +51,7 @@ ADJECTIVES = [
 "wachsam", 
 "grantig", # Start of additional adjectives
 "urig",
-"pfiffig"
+"pfiffig",
 "flott",
 "gefinkelt",
 "fesch",
