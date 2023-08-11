@@ -10,15 +10,15 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 
-from utils.sql import start_sqlsession
-from utils.datamodel import Model, ModelTrainingProgress
+# from utils.sql import start_sqlsession
+# from utils.datamodel import Model, ModelTrainingProgress
 from utils.random_names import generate_random_name
 
 import fasttext
 
 p = Path.cwd()
 
-session, engine = start_sqlsession()
+# session, engine = start_sqlsession()
 
 if __name__ == '__main__':
 
@@ -38,30 +38,39 @@ if __name__ == '__main__':
     
     input_args = arg_parser.parse_args()
 
-    model_dir = p / 'tmp_models'
-
-    if not model_dir.exists():
-        model_dir.mkdir()
-
-    model_name = generate_random_name()
-
-    model_file_name = model_name + \
-                    '_lr' + str(input_args.learning_rate) + \
-                    '_epochs' + str(input_args.epochs) + \
-                    '_mincount' + str(input_args.min_count) + \
-                    '_ws' + str(input_args.window_size) + \
-                    '_dims' + str(input_args.dimensions) 
-
-    model_path = model_dir / model_file_name
-
     training_corpus = Path(input_args.training_corpus)
 
     assert training_corpus.exists(), f'Could not find training data at: {training_corpus}'
 
-    corpus = training_corpus.name.replace('.txt', '')
-    parameter_string = f"{corpus}_{input_args.model_type}_epochs{input_args.epochs}_lr{input_args.learning_rate}_mincount{input_args.min_count}_ws{input_args.window_size}_dims{input_args.dimensions}"
+    model_basedir = p / 'tmp_models'
 
-    model = Model(name=model_name,
+    if not model_basedir.exists():
+        model_basedir.mkdir()
+
+    model_name = generate_random_name()
+
+    corpus = training_corpus.name.replace('.txt', '')
+
+    parameter_string = str(corpus) + '_' + \
+                        str(input_args.model_type) + \
+                        '_lr' + str(input_args.learning_rate) + \
+                        '_epochs' + str(input_args.epochs) + \
+                        '_mincount' + str(input_args.min_count) + \
+                        '_ws' + str(input_args.window_size) + \
+                        '_dims' + str(input_args.dimensions) 
+    
+    # create a directory for all models with same parameter settings
+    model_dir = model_basedir / parameter_string
+    if not model_dir.exists():
+        model_dir.mkdir(parents=True)
+
+    model_file_name = model_name + '_' + parameter_string
+
+    model_path = model_dir / model_file_name
+
+    # we store parameters / results also in a meta dictionary
+    # saved later as json file, for convenient reading of results
+    model_meta = dict(name=model_name,
                   training_corpus=str(training_corpus.absolute()),
                   model_type=input_args.model_type,
                   learning_rate=input_args.learning_rate,
@@ -73,13 +82,12 @@ if __name__ == '__main__':
                   parameter_string=parameter_string,
                   model_path=str(model_path.absolute()))
     
-    session.add(model)
-    session.commit()
+    # session.add(model)
+    # session.commit()
 
     print('Training model...')
     print('Model name:', model_name)
     print('Model path:', model_path)
-    print('Model ID:', model.id)
 
     command = [os.environ.get('FASTTEXT_PATH'), 
                input_args.model_type, 
@@ -150,12 +158,12 @@ if __name__ == '__main__':
 
     vocab_size = len(loaded_model.words)
 
-    model.computation_time = computation_time
-    model.avg_loss = loss_value
-    model.vocab_size = vocab_size
+    model_meta['computation_time'] = computation_time
+    model_meta['avg_loss'] = loss_value
+    model_meta['vocab_size'] = vocab_size
 
     with open(str(model_path.absolute()) + '.json', 'w') as f:
-        json.dump(model._as_dict(), f, default=str, indent=True)
+        json.dump(model_meta, f, default=str, indent=True)
 
-    session.commit()
-    session.close()
+    # session.commit()
+    # session.close()

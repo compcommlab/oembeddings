@@ -37,99 +37,93 @@
 import sys
 sys.path.append('.')
 
+import typing
+import itertools
+from multiprocessing import Pool
+from argparse import ArgumentParser
+
+import json
 import random
 from pathlib import Path
 import fasttext
-import sqlalchemy
 
 from evaluation_data.cues import CUES
-from utils.datamodel import Model, WithinCorrelationResults
-from utils.sql import start_sqlsession
-from utils.similarity import cosine_distance, calc_correlation
+from utils.similarity import calc_correlation
 
 p = Path.cwd()
 
-session, engine = start_sqlsession()
+
+def compare_models(models: typing.Tuple[Path]) -> typing.List[dict]:
+    results = []
+    model_a_meta = json.load(models[0].open())
+    model_b_meta = json.load(models[1].open())
+
+    model_a = fasttext.load_model(model_a_meta["model_path"] + '.bin')
+    model_b = fasttext.load_model(model_b_meta["model_path"] + '.bin')
+
+    shared_vocabulary = set(model_a.words) & set(model_b.words)
+
+    words_random = random.sample(shared_vocabulary, 100)
+
+    corr_random = calc_correlation(model_a, model_b,
+                                words_random, vocabulary=shared_vocabulary)
+
+    results_random = dict(model_a_name=model_a_meta['name'],
+                    model_b_name=model_b_meta['name'],
+                    parameter_string=model_a_meta["parameter_string"],
+                    cues='random',
+                    correlation=corr_random.mean(),
+                    correlation_sd=corr_random.std(),
+                    correlation_type="Pearson's Rho")
+    
+    results.append(results_random)
+
+    for cue, wordlist in CUES.items():
+
+        shared_wordlist = set(wordlist) & shared_vocabulary
+        corr = calc_correlation(model_a, model_b,
+                                shared_wordlist, vocabulary=shared_vocabulary)
+
+        cue_results = dict(model_a_name=model_a_meta['name'],
+                    model_b_name=model_b_meta['name'],
+                    parameter_string=model_a_meta["parameter_string"],
+                    cues=cue,
+                    correlation=corr.mean(),
+                    correlation_sd=corr.std(),
+                    correlation_type="Pearson's Rho")
+        
+        results.append(cue_results)
+        return results
+
 
 
 if __name__ == '__main__':
 
+    arg_parser = ArgumentParser(description="Evaluate correlations within the same parameter settings")
+    arg_parser.add_argument('--debug', action='store_true', help='Debug flag')
+    arg_parser.add_argument('--threads', type=int, default=12, help='Number of parallel processes (default: 12)')
+    input_args = arg_parser.parse_args()
+
     print('Within Correlations')
 
-    # Get models from same family
+    results_dir = p / 'eval_results' / 'within_correlations'
+    if not results_dir.exists():
+        results_dir.mkdir(parents=True)
 
-    sql_query_string = """
-        select A.id as model_a, B.id as model_b
-        from models A, models B
-        where A.id < B.id AND
-            A.parameter_string = B.parameter_string
-    """
+    # Get different kinds of parameter settings
+    parameter_groups = [d for d in p.glob('tmp_models/*') if d.is_dir()]
+    for group in parameter_groups:
+        print('Evaluating Group:', group.name)
+        model_meta = [m for m in group.glob('*.json')]
+        model_combinations = itertools.combinations(model_meta, 2)
 
-    with engine.connect() as con:
-        model_combinations = con.execute(
-            sqlalchemy.text(sql_query_string)).all()
+        results_name = results_dir / f'{group.name}.json'
 
-    print('Model combinations:', len(model_combinations))
+        with Pool(input_args.threads) as pool:
+            group_results = pool.map(compare_models, model_combinations)
+        
+        group_results = list(itertools.chain(*group_results))
 
-    for combination in model_combinations:
+        with open(results_name, 'w') as f:
+            json.dump(group_results, f)
 
-        model_a_meta = session.query(Model).where(
-            Model.id == combination[0]).first()
-        model_b_meta = session.query(Model).where(
-            Model.id == combination[1]).first()
-
-        # delete previous result
-        old_result = session.query(WithinCorrelationResults).filter_by(model_a_id=model_a_meta.id,
-                                                                       model_b_id=model_b_meta.id).first()
-        if old_result:
-            print('Found old result, deleting...')
-            session.delete(old_result)
-            session.commit()
-
-        old_result = session.query(WithinCorrelationResults).filter_by(model_b_id=model_a_meta.id,
-                                                                       model_a_id=model_b_meta.id).first()
-        if old_result:
-            print('Found old result, deleting...')
-            session.delete(old_result)
-            session.commit()
-
-
-        model_a = fasttext.load_model(model_a_meta.model_path + '.bin')
-        model_b = fasttext.load_model(model_b_meta.model_path + '.bin')
-
-        shared_vocabulary = set(model_a.words) & set(model_b.words)
-
-        words_random = random.sample(shared_vocabulary, 100)
-
-        corr_random = calc_correlation(model_a, model_b,
-                                       words_random, vocabulary=shared_vocabulary)
-
-        results = WithinCorrelationResults(model_a_id=model_a_meta.id,
-                                           model_b_id=model_b_meta.id,
-                                           parameter_string=model_a_meta.parameter_string,
-                                           cues='random',
-                                           correlation=corr_random.mean(),
-                                           correlation_sd=corr_random.std(),
-                                           correlation_type="Pearson's Rho")
-        session.add(results)
-        session.commit()
-
-        for cue, wordlist in CUES.items():
-
-            shared_wordlist = set(wordlist) & shared_vocabulary
-            corr = calc_correlation(model_a, model_b,
-                                    shared_wordlist, vocabulary=shared_vocabulary)
-
-            results = WithinCorrelationResults(model_a_id=model_a_meta.id,
-                                               model_b_id=model_b_meta.id,
-                                               parameter_string=model_a_meta.parameter_string,
-                                               cues=cue,
-                                               correlation=corr.mean(),
-                                               correlation_sd=corr.std(),
-                                               correlation_type="Pearson's Rho")
-
-            session.add(results)
-            session.commit()
-
-
-    session.close()
