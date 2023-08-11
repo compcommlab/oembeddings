@@ -38,111 +38,113 @@ import sys
 sys.path.append('.')
 
 import itertools
+import typing
 import random
 from pathlib import Path
+import json
+from multiprocessing import Pool
+from argparse import ArgumentParser
 
 from scipy.stats import pearsonr
 import numpy as np
 import fasttext
 
 from evaluation_data.cues import CUES
-from utils.datamodel import Model, AcrossCorrelationResults
-from utils.sql import start_sqlsession
 from utils.similarity import average_cosine_distance
 
 p = Path.cwd()
 
-session, engine = start_sqlsession()
+def compare_model_groups(models: typing.Tuple[Path]) -> typing.List[dict]:
+    results = []
 
+    models_a_meta = [json.load(m.open()) for m in models[0].glob('*.json')]
+    models_b_meta = [json.load(m.open()) for m in models[1].glob('*.json')]
 
+    # print(
+    #     f'Evaluating combination: {models[0].name} and {models[1].name}')
+    
+    models_a = [fasttext.load_model(m["model_path"] + '.bin') for m in models_a_meta]
+    models_b = [fasttext.load_model(m["model_path"] + '.bin') for m in models_b_meta]
+
+    # ensure that we only have words that both models share
+    # get intersection of both vocabularies
+    shared_vocabulary = set(models_a[0].words)
+    for m in models_a:
+        shared_vocabulary = shared_vocabulary & set(m.words)
+    for m in models_b:
+        shared_vocabulary = shared_vocabulary & set(m.words)
+
+    words_random = random.sample(shared_vocabulary, 100)
+
+    d_a = average_cosine_distance(models_a, words_random,
+                                    vocabulary=shared_vocabulary)
+    
+    d_b = average_cosine_distance(models_b, words_random,
+                                    vocabulary=shared_vocabulary)
+
+    corr_random = [pearsonr(d_a[i], d_b[i])[0] for i in range(len(words_random))]
+    corr_random = np.array(corr_random)
+
+    random_results = dict(model_a_family=models[0].name, 
+                    model_b_family=models[1].name,
+                    cues='random',
+                    correlation=corr_random.mean(),
+                    correlation_sd=corr_random.std(),
+                    correlation_type="Pearson's Rho")
+    
+    results.append(random_results)
+    
+    for cue, wordlist in CUES.items():
+
+        shared_wordlist = set(wordlist) & shared_vocabulary
+
+        d_a = average_cosine_distance(models_a, shared_wordlist,
+                                    vocabulary=shared_vocabulary)
+    
+        d_b = average_cosine_distance(models_b, shared_wordlist,
+                                        vocabulary=shared_vocabulary)
+
+        corr_cues = [pearsonr(d_a[i], d_b[i])[0] for i in range(len(shared_wordlist))]
+        corr_cues = np.array(corr_cues)
+
+        cue_results = dict(model_a_family=models[0].name, 
+                        model_b_family=models[1].name,
+                        cues=cue,
+                        correlation=corr_cues.mean(),
+                        correlation_sd=corr_cues.std(),
+                        correlation_type="Pearson's Rho")
+        
+        results.append(cue_results)
+
+        return results
 
 if __name__ == '__main__':
 
+    arg_parser = ArgumentParser(description="Evaluate correlations across different parameter settings")
+    arg_parser.add_argument('--debug', action='store_true', help='Debug flag')
+    arg_parser.add_argument('--threads', type=int, default=12, help='Number of parallel processes (default: 12)')
+    input_args = arg_parser.parse_args()
+
+
     print('Across Correlations')
+    results_dir = p / 'eval_results' / 'across_correlations'
+    if not results_dir.exists():
+        results_dir.mkdir(parents=True)
 
-    # Get models with different parameters
-    parameter_families = session.query(Model.parameter_string).all()
-    parameter_families = set([p[0] for p in parameter_families])
+    results_name = results_dir / 'results.json'
 
-    model_combinations = list(itertools.combinations(parameter_families, 2))
+    # Get different kinds of parameter settings
+    parameter_groups = [d for d in p.glob('tmp_models/*') if d.is_dir()]
+
+    model_combinations = list(itertools.combinations(parameter_groups, 2))
 
     print('Model combinations:', len(model_combinations))
 
-    for combination in model_combinations:
+    with Pool(input_args.threads) as pool:
+        results = pool.map(compare_model_groups, model_combinations)
 
-        models_a_meta = session.query(Model).where(
-            Model.parameter_string == combination[0]).all()
-        models_b_meta = session.query(Model).where(
-            Model.parameter_string == combination[1]).all()
+    results = list(itertools.chain(*results))
 
-        print(
-            f'Evaluating combination: {combination[0]} and {combination[1]}')
-        
-        models_a = [fasttext.load_model(m.model_path + '.bin') for m in models_a_meta]
-        models_b = [fasttext.load_model(m.model_path + '.bin') for m in models_b_meta]
-        # delete previous result
-        old_result = session.query(AcrossCorrelationResults).filter_by(model_a_family=combination[0],
-                                                                       model_b_family=combination[1]).first()
-        if old_result:
-            print('Found old result, deleting...')
-            session.delete(old_result)
-            session.commit()
-
-        old_result = session.query(AcrossCorrelationResults).filter_by(model_b_family=combination[0],
-                                                                       model_a_family=combination[1]).first()
-        if old_result:
-            print('Found old result, deleting...')
-            session.delete(old_result)
-            session.commit()
-
-        # ensure that we only have words that both models share
-        # get intersection of both vocabularies
-        shared_vocabulary = set(models_a[0].words)
-        for m in models_a:
-            shared_vocabulary = shared_vocabulary & set(m.words)
-        for m in models_b:
-            shared_vocabulary = shared_vocabulary & set(m.words)
-
-        words_random = random.sample(shared_vocabulary, 100)
-
-        d_a = average_cosine_distance(models_a, words_random,
-                                        vocabulary=shared_vocabulary)
-        
-        d_b = average_cosine_distance(models_b, words_random,
-                                        vocabulary=shared_vocabulary)
-
-        corr_random = [pearsonr(d_a[i], d_b[i])[0] for i in range(len(words_random))]
-        corr_random = np.array(corr_random)
-
-        results = AcrossCorrelationResults(model_a_family=combination[0], 
-                                           model_b_family=combination[1],
-                                           cues='random',
-                                           correlation=corr_random.mean(),
-                                           correlation_sd=corr_random.std(),
-                                           correlation_type="Pearson's Rho")
-        session.add(results)
-        session.commit()
-
-        for cue, wordlist in CUES.items():
-
-            shared_wordlist = set(wordlist) & shared_vocabulary
-
-            d_a = average_cosine_distance(models_a, shared_wordlist,
-                                        vocabulary=shared_vocabulary)
-        
-            d_b = average_cosine_distance(models_b, shared_wordlist,
-                                            vocabulary=shared_vocabulary)
-
-            corr_cues = [pearsonr(d_a[i], d_b[i])[0] for i in range(len(shared_wordlist))]
-            corr_cues = np.array(corr_cues)
-
-            results = AcrossCorrelationResults(model_a_family=combination[0], 
-                                            model_b_family=combination[1],
-                                            cues=cue,
-                                            correlation=corr_cues.mean(),
-                                            correlation_sd=corr_cues.std(),
-                                            correlation_type="Pearson's Rho")
-            session.add(results)
-            session.commit()
-
-    session.close()
+    with open(results_name, 'w') as f:
+        json.dump(results, f)
+ 
