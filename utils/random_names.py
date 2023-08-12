@@ -13,7 +13,7 @@ from typing import Literal
 
 p = Path(os.path.split(__file__)[0])
 
-# Names are the 2000 most common first names in austria
+# Names are the 2000 most common first names in Austria
 # Taken from https://www.statistik.at/atlas/vornamen/
 NAMES = pd.read_csv(p / 'names.csv')
 
@@ -55,7 +55,12 @@ ADJECTIVES = [
 "flott",
 "gefinkelt",
 "fesch",
-"griawig"
+"griawig",
+"wunderbar",
+"wundervoll",
+"bezaubernd",
+"entzückend",
+"gescheit"
 ]
 
 def generate_random_name(gender: Literal['female', 'male'] = None) -> str:
