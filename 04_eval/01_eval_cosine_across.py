@@ -59,9 +59,6 @@ def compare_model_groups(models: typing.Tuple[Path]) -> typing.List[dict]:
 
     models_a_meta = [json.load(m.open()) for m in models[0].glob('*.json')]
     models_b_meta = [json.load(m.open()) for m in models[1].glob('*.json')]
-
-    # print(
-    #     f'Evaluating combination: {models[0].name} and {models[1].name}')
     
     models_a = [fasttext.load_model(m["model_path"] + '.bin') for m in models_a_meta]
     models_b = [fasttext.load_model(m["model_path"] + '.bin') for m in models_b_meta]
@@ -125,9 +122,9 @@ if __name__ == '__main__':
     arg_parser.add_argument('--threads', type=int, default=12, help='Number of parallel processes (default: 12)')
     input_args = arg_parser.parse_args()
 
-
     print('Across Correlations')
-    results_dir = p / 'eval_results' / 'across_correlations'
+
+    results_dir = p / 'evaluation_results' / 'across_correlations'
     if not results_dir.exists():
         results_dir.mkdir(parents=True)
 
