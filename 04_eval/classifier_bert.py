@@ -2,9 +2,13 @@ import pandas as pd
 import torch
 from transformers import BertTokenizer, BertForSequenceClassification
 from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data.dataloader import default_collate
 
 
-df = pd.read_feather('/content/drive/MyDrive/testdata/pressreleases.feather')
+import os
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = ""
+
+df = pd.read_feather('evaluation_data/pressreleases.feather')
 
 # sample for testing
 #df = df.sample(n = 100)
@@ -52,24 +56,24 @@ model = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_l
 learning_rate = 1e-5
 batch_size = 32
 num_epochs = 5
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # Create DataLoader for the training data
 train_dataset = TensorDataset(train_encodings.input_ids, train_encodings.attention_mask, train_labels)
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True,
+                          collate_fn=lambda x: tuple(x_.to(device) for x_ in default_collate(x)))
 
 # Define loss function and optimizer
 loss_fn = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
 
 # Training loop
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model.to(device)
 for epoch in range(num_epochs):
     model.train()
     for batch in train_loader:
         input_ids, attention_mask, labels = batch
         input_ids, attention_mask, labels = input_ids.to(device), attention_mask.to(device), labels.to(device)
-
         optimizer.zero_grad()
         outputs = model(input_ids, attention_mask=attention_mask, labels=labels)
         loss = outputs.loss
