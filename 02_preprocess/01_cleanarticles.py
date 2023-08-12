@@ -111,8 +111,8 @@ if __name__ == '__main__':
 
 
     # first add all headlines and pre-titles (without splitting)
-    with Pool(n_threads, initializer=initializer) as p:
+    with Pool(n_threads, initializer=initializer) as pool:
         for raw_id in tqdm(article_ids, desc="Processing", unit="articles"):
-            p.apply(process_article, (raw_id, ), kwds=settings)
+            pool.apply(process_article, (raw_id, ), kwds=settings)
     
 
