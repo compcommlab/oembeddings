@@ -167,3 +167,6 @@ tmp_models/
 nohup.out
 
 evaluation_data/devmount/*.questions*
+evaluation_data/classification
+
+evaluation_results/*
