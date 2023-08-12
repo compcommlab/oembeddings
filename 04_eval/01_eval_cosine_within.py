@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
     print('Within Correlations')
 
-    results_dir = p / 'eval_results' / 'within_correlations'
+    results_dir = p / 'evaluation_results' / 'within_correlations'
     if not results_dir.exists():
         results_dir.mkdir(parents=True)
 
