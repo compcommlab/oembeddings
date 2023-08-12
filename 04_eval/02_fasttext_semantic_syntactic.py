@@ -33,13 +33,20 @@ import logging
 from pathlib import Path
 import json
 
-from utils.sql import start_sqlsession
-from utils.datamodel import Model, SyntacticSemanticEvaluation
+# gensim already uses all cores
+# should make multiprocessing redundant
+# from multiprocessing import Pool
 
-# start sql
-session, engine = start_sqlsession()
+""" Set up pathing """
 
 p = Path.cwd()
+
+RESULTS_DIR = p / "evaluation_results" / "semantic_syntactic"
+MOST_SIMILAR_DIR = RESULTS_DIR / 'mostsimilar'
+BEST_MATCH_DIR = RESULTS_DIR / 'bestmatch'
+OPPOSITE_DIR = RESULTS_DIR / 'opposite'
+WORD_INTRUSION_DIR = RESULTS_DIR / 'wordintrusion'
+
 
 TARGET_SYN = p / 'evaluation_data' / 'devmount' / 'syntactic.questions'
 TARGET_SEM_OP = p / 'evaluation_data' / 'devmount' / 'semantic_op.questions'
@@ -386,8 +393,8 @@ def test_doesnt_fit(model: gensim.models.KeyedVectors,
 
 def evaluate_model(model_path: str, 
                    topn: int, 
-                   model_id: int = None,
-                   umlauts = False) -> None:
+                   umlauts = False,
+                   meta: dict = None) -> None:
 
     if not model_path.endswith('.vec'):
         model_path = model_path + '.vec'
@@ -400,53 +407,65 @@ def evaluate_model(model_path: str,
     logging.info(f'Model: {model_path}')
     logging.info('> EVALUATING SYNTACTIC FEATURES')
     most_similar_results = test_most_similar_groups(model, TARGET_SYN + '.nouml' if args.umlauts else TARGET_SYN, args.topn)
-    if model_id:
-        for result in most_similar_results:
-            r = SyntacticSemanticEvaluation(model_id=model_id, **result)
-            session.add(r)
-        session.commit()
+    
+    if meta:
+        for r in most_similar_results:
+            r['name'] = meta['name']
+            r['parameter_string'] = meta['parameter_string']
 
-    with open(model_path.replace('.vec', '_most_similar.json'), "w") as f:
+    results_destination = MOST_SIMILAR_DIR / Path(model_path).name.replace('.vec', '_most_similar.json')
+    with open(results_destination, "w") as f:
         json.dump(most_similar_results, f, indent=True)
 
     logging.info('> EVALUATING SEMANTIC FEATURES')
     result = test_most_similar(model, TARGET_SEM_OP + '.nouml' if umlauts else TARGET_SEM_OP, 'opposite', topn)
-    if model_id:
-        r = SyntacticSemanticEvaluation(model_id=model_id, **result)
-        session.add(r)
-        session.commit()
+    if meta:
+        result['name'] = meta['name']
+        result['parameter_string'] = meta['parameter_string']
 
-    with open(model_path.replace('.vec', '_opposite.json'), "w") as f:
+    results_destination = OPPOSITE_DIR / Path(model_path).name.replace('.vec', '_opposite.json')
+    with open(results_destination, "w") as f:
         json.dump(result, f, indent=True)
 
     result = test_most_similar(model, TARGET_SEM_BM + '.nouml' if umlauts else TARGET_SEM_BM, 'best match', topn)
-    if model_id:
-        r = SyntacticSemanticEvaluation(model_id=model_id, **result)
-        session.add(r)
-        session.commit()
+    if meta:
+        result['name'] = meta['name']
+        result['parameter_string'] = meta['parameter_string']
 
-    with open(model_path.replace('.vec', '_best_match.json'), "w") as f:
+    results_destination = BEST_MATCH_DIR / Path(model_path).name.replace('.vec', '_best_match.json')
+    with open(results_destination, "w") as f:
         json.dump(result, f, indent=True)
 
     result = test_doesnt_fit(model, TARGET_SEM_DF + '.nouml' if umlauts else TARGET_SEM_DF)
-    if model_id:
-        r = SyntacticSemanticEvaluation(model_id=model_id, **result)
-        session.add(r)
-        session.commit()
+    if meta:
+        result['name'] = meta['name']
+        result['parameter_string'] = meta['parameter_string']
 
-    with open(model_path.replace('.vec', '_word_intrusion.json'), "w") as f:
+    results_destination = WORD_INTRUSION_DIR / Path(model_path).name.replace('.vec', '_word_intrusion.json')
+    with open(results_destination, "w") as f:
         json.dump(result, f, indent=True)
 
     logging.info('------------------------------')
 
 
 if __name__ == '__main__':
+    if not RESULTS_DIR.exists():
+        RESULTS_DIR.mkdir(parents=True)
+    if not MOST_SIMILAR_DIR.exists():
+        MOST_SIMILAR_DIR.mkdir(parents=True)
+    if not OPPOSITE_DIR.exists():
+        OPPOSITE_DIR.mkdir(parents=True)
+    if not BEST_MATCH_DIR.exists():
+        BEST_MATCH_DIR.mkdir(parents=True)
+    if not WORD_INTRUSION_DIR.exists():
+        WORD_INTRUSION_DIR.mkdir(parents=True)
     # configuration
-    parser = argparse.ArgumentParser(description='Script for creating testsets and evaluating word vector models')
+    parser = argparse.ArgumentParser(description='Script for creating testsets and evaluating word vector models. If no "model" parameter is specified, the script will evaluate all models in the tmp_models directory.')
     parser.add_argument('-m', '--model', type=str, help='source file with trained model')
     parser.add_argument('-f', '--fresh', action='store_true', help='Get fresh results; delete old results')
     parser.add_argument('-u', '--umlauts', action='store_true', help='if set, create additional testsets with transformed umlauts and use them instead')
-    parser.add_argument('-t', '--topn', type=int, default=10, help='check the top n result (correct answer under top n answeres)')
+    parser.add_argument('-n', '--topn', type=int, default=10, help='check the top n result (correct answer under top n answeres)')
+    parser.add_argument('--threads', type=int, default=1, help='Number of parallel processes (default: 1)')
     parser.add_argument('--debug', action='store_true', help='Debug flag')
 
     args, unknown = parser.parse_known_args()
@@ -477,15 +496,9 @@ if __name__ == '__main__':
     if args.model:
         evaluate_model(args.model, args.topn, umlauts=args.umlauts)
     else:
-        models = session.query(Model).all()
-        for model in models:
-            old_results = session.query(SyntacticSemanticEvaluation).filter(SyntacticSemanticEvaluation.model_id == model.id).all()
-            if len(old_results) > 0 and args.fresh:
-                logging.info(f'Found old results for model <{model.name}> and deleting them ...')
-                session.query(SyntacticSemanticEvaluation).filter(SyntacticSemanticEvaluation.model_id == model.id).delete()
-                session.commit()
-                evaluate_model(model.model_path, args.topn, model_id=model.id)
-            elif len(old_results) == 0:
-                evaluate_model(model.model_path, args.topn, model_id=model.id)
-            else:
-                continue
+        models_meta = [json.load(f.open()) for f in p.glob('tmp_models/*/*.json')]
+        # with Pool(args.threads) as pool:
+        #     for model in models_meta:
+        #         r = pool.apply(evaluate_model, (model["model_path"], args.topn, ), kwds={'meta': model})
+        for model in models_meta:
+            evaluate_model(model['model_path'], args.topn, meta=model)
