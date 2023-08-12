@@ -107,3 +107,12 @@ All text cleaning is handled by the function `clean_text()` (`utils/cleaning.py`
 
 Data files in the directory `evaluation_data/devmoun` were taken from project [GermanWordEmbeddings](https://github.com/devmount/GermanWordEmbeddings), Copyright (c) 2015 Andreas Müller. These files are licensed under the MIT license. See DEVMOUNT-LICENSE.md for additional details.
 
+## Classification
+
+Datasets for classification tasks cannot be shared because a) file size is too large, and b) copyright issues (e.g., press releases by parties).
+
+- Drop all feather files in the directory `evaluation_data/classification`
+- Run the script `04_eval/classification.py`
+    - automatically generates data format required for fasttext
+    - evaluates all models one by one
+    - stores results in `evaluation_results/classification`
