@@ -71,7 +71,6 @@ if __name__ == '__main__':
     arg_parser.add_argument('--threads', type=int, default=1, help='Number of parallel processes (default: 1)')
     arg_parser.add_argument('--clean_database', action='store_true', help='Remove all previously processed articles')
 
-    arg_parser.add_argument('--lowercase', action='store_true', help='Lowercase text')
     arg_parser.add_argument('--remove_links', action='store_true', help='Remove hyperlinks')
     arg_parser.add_argument('--remove_emails', action='store_true', help='Remove emails')
     arg_parser.add_argument('--remove_emojis', action='store_true', help='Remove emojis')
@@ -99,8 +98,7 @@ if __name__ == '__main__':
         import random
         article_ids = random.sample(article_ids, 10000)
 
-    settings = {'lowercase': input_args.lowercase,
-                "remove_links": input_args.remove_links,
+    settings = {"remove_links": input_args.remove_links,
                 "remove_emails": input_args.remove_emails,
                 "remove_emojis": input_args.remove_emojis,
                 "remove_punctuation": input_args.remove_punctuation,
