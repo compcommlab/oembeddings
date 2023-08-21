@@ -133,15 +133,28 @@ if __name__ == '__main__':
     # Get different kinds of parameter settings
     parameter_groups = [d for d in p.glob('tmp_models/*') if d.is_dir()]
 
-    model_combinations = list(itertools.combinations(parameter_groups, 2))
+    lowercase_groups = [g for g in parameter_groups if 'lower' in g.name]
+    parameter_groups = list(set(parameter_groups) - set(lowercase_groups))
 
-    print('Model combinations:', len(model_combinations))
+    model_combinations = list(itertools.combinations(parameter_groups, 2))
+    model_combinations_lowercase = list(itertools.combinations(lowercase_groups, 2))
+
+    print('Model combinations:', len(model_combinations) + len(model_combinations_lowercase))
 
     with Pool(input_args.threads) as pool:
         results = pool.map(compare_model_groups, model_combinations)
 
     results = list(itertools.chain(*results))
 
+    with Pool(input_args.threads) as pool:
+        results_lower = pool.map(compare_model_groups, model_combinations_lowercase)
+
+    results_lower = list(itertools.chain(*results_lower))
+
+    results += results_lower
+
     with open(results_name, 'w') as f:
         json.dump(results, f)
+
+    
  
