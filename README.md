@@ -5,7 +5,8 @@
 # Configuration & Installation
 
 - Install `requirements.txt`
-- Drop raw feather files into `raw_data`
+- Drop raw feather files for training data into `raw_data`
+- Drop evaluation data files in `evaluation_data/classification`
 - Copy `.env.template` to `.env`
 - Set your SQL Connect string in the `.env`
     - For testing, just use the default which is a sqlite database with the filename `database.db`
@@ -70,7 +71,7 @@ All text cleaning is handled by the function `clean_text()` (`utils/cleaning.py`
 - Recommended settings: `python3 02_preprocess/01_cleanarticles.py --remove_links --remove_emails --remove_emojis --remove_punctuation --replace_numbers --genderstar --threads 12`
 - Parameters are documented, use `python3 02_preprocess/01_cleanarticles.py --help` to get a description of each parameter.
 
-### Use single sentences
+### Use single sentences (unused)
 
 `02_preprocess/x_01_splitsentences.py`: split articles into sentences (uses spacy) and store them as raw sentences. Ensures each sentence is unique.
 
@@ -87,6 +88,7 @@ All text cleaning is handled by the function `clean_text()` (`utils/cleaning.py`
 - min_length: only use sentence with a minimum number of tokens (default: 5 tokens)
 - corpus_name: file name for `txt` file. Training corpora files are always located in the `data` directory (is created automatically)
 - lowercase: apply lowercasing to corpus
+    - It is recommended to include `lower` in the file name of the training corpus. This way, the evaluation scripts can infer whether the model is lowercased or not.
 - seed: set a random seed for exporting the sentences (i.e., shuffle the dataset)  
 
 ## Training
@@ -94,20 +96,41 @@ All text cleaning is handled by the function `clean_text()` (`utils/cleaning.py`
 `03_train/01_train.py`: a wrapper around the fasttext library. You can adjust any training parameter. Example usage: `python3 03_train/01_train.py cbow data/training_data.txt --window_size 10 --min_count 50 --dimensions 300 --threads 12`
 
 - The script automatically assigns a random name to the model and stores it in the `tmp_models` directory
-- Model parameters are stored in the SQL database alongside their meta information  
+- It creates a subdirectory based on the model parameters.
+    - for the example above, it will create the directory `tmp_models/training_data_cbow_lr0.1_epochs5_mincount50_dims300` and store the model in this path.
+    - With this we conveniently sort all model parameter families in seaparate directories 
+- Model parameters are stored in JSON files alongside their meta information
+    - the JSON file has the same name as the model, and is stored in the same directory
+- The training should result in three files:
+    - Model as `.bin`
+    - Model as `.vec`
+    - Model meta as `.json` 
 
-# Utilities
+## Evaluation
 
-- `datamodel.py`: use SQLAlchemy to declare SQL tables
-- `sql.py`: helper functions to start SQL sessions automatically
+- All results are stored in the directory `evaluation_results`. 
+- The subdirectories correspond to each specific task.
+- Results are stored as JSON files, can later be read with pandas for running statistical analysis
 
-# Evaluation
+### Cosine Similarity
 
-## Semantic & Syntactic Tasks
+The scripts `01_eval_cosine_across.py` and `01_eval_cosine_within.py` evaluate the stability of the models. For each model, they calculate the cosine distance of cue words against the every word in the entire vocabulary of the model. Then they compare the cosine distances pairwise with other models
 
-Data files in the directory `evaluation_data/devmoun` were taken from project [GermanWordEmbeddings](https://github.com/devmount/GermanWordEmbeddings), Copyright (c) 2015 Andreas Müller. These files are licensed under the MIT license. See DEVMOUNT-LICENSE.md for additional details.
+For example, there is Model A and Model B. First we take the cue word "Politik" and calculate its cosine similarity to all other words of the Model A's vocabulary. Next, we do the same for Model B. So we get two sets of cosine similarity metrics. Finally, we measure the correlation between both sets of cosine similarities. If the correlation is high, it means the models are stable, and not subject to randomness. If the correlation is low, it means that random factors strongly influence the models.
 
-## Classification
+The two scripts scan the `tmp_models` directory and automatically make the pairwise comparisons based on the directory structure and also the JSON metadata files.
+
+Model pairs where one model is lowercased and the other is not are not compared!
+
+### Semantic & Syntactic Tasks
+
+Data files in the directory `evaluation_data/devmount` were taken from project [GermanWordEmbeddings](https://github.com/devmount/GermanWordEmbeddings), Copyright (c) 2015 Andreas Müller. These files are licensed under the MIT license. See DEVMOUNT-LICENSE.md for additional details.
+
+The script was enhanced to automatically scan the `tmp_models` directory for all models and to evaluate them one by one. The results are stored in `evaluation_results/semantic_syntactic` with subdirectories for each sub-task.
+
+The evaluation also handles models with lowercased training data automatically (as long as `lower` is in the training data file name)
+
+### Classification
 
 Datasets for classification tasks cannot be shared because a) file size is too large, and b) copyright issues (e.g., press releases by parties).
 
@@ -116,3 +139,8 @@ Datasets for classification tasks cannot be shared because a) file size is too l
     - automatically generates data format required for fasttext
     - evaluates all models one by one
     - stores results in `evaluation_results/classification`
+
+## Utilities
+
+- `datamodel.py`: use SQLAlchemy to declare SQL tables
+- `sql.py`: helper functions to start SQL sessions automatically
