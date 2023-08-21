@@ -120,6 +120,14 @@ def create_syntactic_testset() -> None:
     if args.umlauts:
         u.close()
 
+    # Create lowercase version of dataset
+    with open(str(TARGET_SYN) + '.lower', 'w') as t:
+        for label, short, src, index1, index2 in PATTERN_SYN:
+            t.write(': {}: {}\n'.format(label, short))
+            for q in create_questions(src, index1, index2):
+                t.write(q.lower() + '\n')
+            logging.info('created lowercase pattern ' + short)
+
 
 def create_semantic_testset() -> None:
     """
@@ -135,6 +143,11 @@ def create_semantic_testset() -> None:
                 with open(TARGET_SEM_OP + '.nouml', 'w') as u:
                     u.write(replace_umlauts(q) + '\n')
         logging.info('created opposite questions')
+    
+    with open(str(TARGET_SEM_OP) + '.lower', 'w') as t:
+        for q in create_questions(SRC_OPPOSITE, combinate=10):
+            t.write(q.lower() + '\n')
+        logging.info('created opposite questions (lowercase)')
 
     # best match
     with open(TARGET_SEM_BM, 'w') as t:
@@ -153,6 +166,21 @@ def create_semantic_testset() -> None:
                 questions.pop(0)
         logging.info('created best-match questions')
 
+    # best match (lowercase version)
+    with open(str(TARGET_SEM_BM) + '.lower', 'w') as t:
+        groups = open(SRC_BESTMATCH).read().split(':')
+        groups.pop(0)  # remove first empty group
+        for group in groups:
+            questions = group.splitlines()
+            _ = questions.pop(0)
+            while questions:
+                for i in range(1, len(questions)):
+                    question = questions[0].split('-') + questions[i].split('-')
+                    question = [q.lower() for q in question]
+                    t.write(' '.join(question) + '\n')
+                questions.pop(0)
+        logging.info('created best-match questions (lowercase)')
+
     # doesn't fit
     with open(TARGET_SEM_DF, 'w') as t:
         for line in open(SRC_DOESNTFIT):
@@ -164,6 +192,15 @@ def create_semantic_testset() -> None:
                     with open(TARGET_SEM_DF + '.nouml', 'w') as u:
                         u.write(replace_umlauts(question) + '\n')
         logging.info('created doesn\'t-fit questions')
+
+    # doesn't fit (lowercase version)
+    with open(str(TARGET_SEM_DF) + '.lower', 'w') as t:
+        for line in open(SRC_DOESNTFIT):
+            words = line.split()
+            for wrongword in words[-1].split('-'):
+                question = ' '.join(words[:3] + [wrongword])
+                t.write(question.lower() + '\n')
+        logging.info('created doesn\'t-fit questions (lowercase)')
 
 
 def create_questions(src: Path, index1=0, index2=1, combinate=5) -> typing.List[str]:
@@ -394,6 +431,7 @@ def test_doesnt_fit(model: gensim.models.KeyedVectors,
 def evaluate_model(model_path: str, 
                    topn: int, 
                    umlauts = False,
+                   lowercase = False,
                    meta: dict = None) -> None:
 
     if not model_path.endswith('.vec'):
@@ -406,7 +444,7 @@ def evaluate_model(model_path: str,
     # execute evaluation
     logging.info(f'Model: {model_path}')
     logging.info('> EVALUATING SYNTACTIC FEATURES')
-    most_similar_results = test_most_similar_groups(model, TARGET_SYN + '.nouml' if args.umlauts else TARGET_SYN, args.topn)
+    most_similar_results = test_most_similar_groups(model, str(TARGET_SYN) + '.lower' if lowercase else TARGET_SYN, args.topn)
     
     if meta:
         for r in most_similar_results:
@@ -418,7 +456,7 @@ def evaluate_model(model_path: str,
         json.dump(most_similar_results, f, indent=True)
 
     logging.info('> EVALUATING SEMANTIC FEATURES')
-    result = test_most_similar(model, TARGET_SEM_OP + '.nouml' if umlauts else TARGET_SEM_OP, 'opposite', topn)
+    result = test_most_similar(model, str(TARGET_SEM_OP) + '.lower' if lowercase else TARGET_SEM_OP, 'opposite', topn)
     if meta:
         result['name'] = meta['name']
         result['parameter_string'] = meta['parameter_string']
@@ -427,7 +465,7 @@ def evaluate_model(model_path: str,
     with open(results_destination, "w") as f:
         json.dump(result, f, indent=True)
 
-    result = test_most_similar(model, TARGET_SEM_BM + '.nouml' if umlauts else TARGET_SEM_BM, 'best match', topn)
+    result = test_most_similar(model, str(TARGET_SEM_BM) + '.lower' if lowercase else TARGET_SEM_BM, 'best match', topn)
     if meta:
         result['name'] = meta['name']
         result['parameter_string'] = meta['parameter_string']
@@ -436,7 +474,7 @@ def evaluate_model(model_path: str,
     with open(results_destination, "w") as f:
         json.dump(result, f, indent=True)
 
-    result = test_doesnt_fit(model, TARGET_SEM_DF + '.nouml' if umlauts else TARGET_SEM_DF)
+    result = test_doesnt_fit(model, str(TARGET_SEM_DF) + '.lower' if lowercase else TARGET_SEM_DF)
     if meta:
         result['name'] = meta['name']
         result['parameter_string'] = meta['parameter_string']
@@ -494,11 +532,11 @@ if __name__ == '__main__':
         create_semantic_testset()
     
     if args.model:
-        evaluate_model(args.model, args.topn, umlauts=args.umlauts)
+        evaluate_model(args.model, args.topn, umlauts=args.umlauts, lowercase= 'lower' in args.model)
     else:
         models_meta = [json.load(f.open()) for f in p.glob('tmp_models/*/*.json')]
         # with Pool(args.threads) as pool:
         #     for model in models_meta:
         #         r = pool.apply(evaluate_model, (model["model_path"], args.topn, ), kwds={'meta': model})
         for model in models_meta:
-            evaluate_model(model['model_path'], args.topn, meta=model)
+            evaluate_model(model['model_path'], args.topn, meta=model, lowercase = 'lower' in model['parameter_string'])
