@@ -7,12 +7,11 @@ from utils.cleaning import clean_text
 from argparse import ArgumentParser
 from tqdm import tqdm
 from sqlalchemy.orm import sessionmaker
+import sqlalchemy
 from multiprocessing import Pool
-
 
 # start sql
 session, engine = start_sqlsession()
-
 
 def add_if_not_duplicated(text: str) -> None:
     """ Take a text (string) then calc md5 sum 
@@ -34,12 +33,15 @@ def add_if_not_duplicated(text: str) -> None:
     local_session.commit()
     local_session.close()
 
+def get_article(article_id: int) -> Article:
+    local_session = sessionmaker(bind=engine)()
+    article = local_session.query(Article).filter(Article.id == article_id).first()
+    local_session.close()
+    return article
 
 def process_article(article_id: int, **kwargs) -> None:
     try:
-        local_session = sessionmaker(bind=engine)()
-        article = local_session.query(Article).filter(Article.id == article_id).first()
-        local_session.close()
+        article = get_article(article_id)
         headline = article.pretitle or " "
         headline += " "
         headline += article.headline or ""
@@ -96,7 +98,7 @@ if __name__ == '__main__':
     article_ids = [a[0] for a in article_ids]
     if input_args.debug:
         import random
-        article_ids = random.sample(article_ids, 10000)
+        article_ids = random.sample(article_ids, 1000)
 
     settings = {"remove_links": input_args.remove_links,
                 "remove_emails": input_args.remove_emails,
@@ -107,10 +109,37 @@ if __name__ == '__main__':
                 "remove_quotations": input_args.remove_quotations,
                 "genderstar": input_args.genderstar}
 
+    print('Start cleaning ...')
 
-    # first add all headlines and pre-titles (without splitting)
     with Pool(n_threads, initializer=initializer) as pool:
         for raw_id in tqdm(article_ids, desc="Processing", unit="articles"):
             pool.apply(process_article, (raw_id, ), kwds=settings)
-    
 
+    print('Calculating token counts')
+    clear_table = r"""
+        DO $$ 
+        BEGIN
+            IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'token_counts') THEN
+                -- If it exists, delete the table
+                DROP TABLE token_counts;
+            END IF;
+        END $$;
+    """
+
+    count_tokens = """
+        CREATE TABLE token_counts AS
+        SELECT
+            word,
+            COUNT(*) AS count
+        FROM (
+            SELECT regexp_split_to_table(text, E'\\s') AS word
+            FROM processed_articles
+        ) AS subquery
+        GROUP BY word;
+    """
+
+    with engine.connect() as con:
+        con.begin()
+        r1 = con.execute(sqlalchemy.text(clear_table))
+        r2 = con.execute(sqlalchemy.text(count_tokens))
+        con.commit()
