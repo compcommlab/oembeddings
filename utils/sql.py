@@ -10,7 +10,7 @@ import os
 dbstring = os.environ.get('OEMBEDDINGS_DB', 'sqlite:///database.db')
 
 def start_sqlsession(connect_string=dbstring, echo=False, **kwargs):
-    engine = create_engine(connect_string, echo=echo)
+    engine = create_engine(connect_string, echo=echo, pool_size=100)
 
     Session = sessionmaker(bind=engine)
     session = Session()
