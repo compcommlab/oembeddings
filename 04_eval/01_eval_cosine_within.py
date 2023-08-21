@@ -80,6 +80,9 @@ def compare_models(models: typing.Tuple[Path]) -> typing.List[dict]:
 
     for cue, wordlist in CUES.items():
 
+        if 'lower' in model_a_meta['parameter_string']:
+            wordlist = [w.lower() for w in wordlist]
+
         shared_wordlist = set(wordlist) & shared_vocabulary
         corr = calc_correlation(model_a, model_b,
                                 shared_wordlist, vocabulary=shared_vocabulary)
