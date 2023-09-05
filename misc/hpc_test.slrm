@@ -1,10 +1,13 @@
 #!/bin/bash
 #
 #SBATCH --job-name=oembeddings_test
-#SBATCH --ntasks=2
+#SBATCH -N 1
+#SBATCH --ntasks-per-core=2
+
 #SBATCH --qos=zen3_1024
 #SBATCH --partition=zen3_1024
-
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=<paul.balluff@univie.ac.at> 
 
 echo "start"
 
@@ -15,6 +18,6 @@ conda activate oembeddings
 cd oembeddings
 
 # now actually run the program
-python3 03_train/01_train.py cbow data/training_data.txt --threads 128
+python3 03_train/01_train.py cbow data/training_data.txt --threads 256
 
 echo "done."
