@@ -13,8 +13,10 @@ window_size_values=(5 6 12 24)
 for training_data_file in "${training_data_files[@]}"; do
   for min_count in "${min_count_values[@]}"; do
     for window_size in "${window_size_values[@]}"; do
+      # Remove forward slashes from the training data file name.
+      training_data_file_no_slashes=$(echo "${training_data_file}" | sed 's|/||g')
       # Generate the SLURM script.
-      slurm_script_file="slurm_script_${training_data_file}_${min_count}_${window_size}.slurm"
+      slurm_script_file="slurm_script_${training_data_file_no_slashes}_${min_count}_${window_size}.slurm"
       cat << EOF > ${slurm_script_file}
 #!/bin/bash
 
