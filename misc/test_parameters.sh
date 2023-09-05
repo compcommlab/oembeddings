@@ -32,7 +32,7 @@ for training_data_file in "${training_data_files[@]}"; do
 echo "start"
 
 module load miniconda3
-eval "$(conda shell.bash hook)"
+eval "\$(conda shell.bash hook)"
 conda activate oenv
 
 cd oembeddings
