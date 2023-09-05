@@ -32,6 +32,7 @@ import argparse
 import logging
 from pathlib import Path
 import json
+from utils.misc import get_data_dir
 
 # gensim already uses all cores
 # should make multiprocessing redundant
@@ -534,7 +535,8 @@ if __name__ == '__main__':
     if args.model:
         evaluate_model(args.model, args.topn, umlauts=args.umlauts, lowercase= 'lower' in args.model)
     else:
-        models_meta = [json.load(f.open()) for f in p.glob('tmp_models/*/*.json')]
+        model_dir = get_data_dir()
+        models_meta = [json.load(f.open()) for f in model_dir.glob('tmp_models/*/*.json')]
         # with Pool(args.threads) as pool:
         #     for model in models_meta:
         #         r = pool.apply(evaluate_model, (model["model_path"], args.topn, ), kwds={'meta': model})
