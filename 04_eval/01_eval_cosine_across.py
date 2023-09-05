@@ -51,6 +51,7 @@ import fasttext
 
 from evaluation_data.cues import CUES
 from utils.similarity import average_cosine_distance
+from utils.misc import get_data_dir
 
 p = Path.cwd()
 
@@ -130,8 +131,10 @@ if __name__ == '__main__':
 
     results_name = results_dir / 'results.json'
 
+    model_dir = get_data_dir()
+
     # Get different kinds of parameter settings
-    parameter_groups = [d for d in p.glob('tmp_models/*') if d.is_dir()]
+    parameter_groups = [d for d in model_dir.glob('tmp_models/*') if d.is_dir()]
 
     lowercase_groups = [g for g in parameter_groups if 'lower' in g.name]
     parameter_groups = list(set(parameter_groups) - set(lowercase_groups))

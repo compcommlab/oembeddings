@@ -49,6 +49,7 @@ import fasttext
 
 from evaluation_data.cues import CUES
 from utils.similarity import calc_correlation
+from utils.misc import get_data_dir
 
 p = Path.cwd()
 
@@ -114,7 +115,8 @@ if __name__ == '__main__':
         results_dir.mkdir(parents=True)
 
     # Get different kinds of parameter settings
-    parameter_groups = [d for d in p.glob('tmp_models/*') if d.is_dir()]
+    model_dir = get_data_dir()
+    parameter_groups = [d for d in model_dir.glob('tmp_models/*') if d.is_dir()]
     for group in parameter_groups:
         print('Evaluating Group:', group.name)
         model_meta = [m for m in group.glob('*.json')]

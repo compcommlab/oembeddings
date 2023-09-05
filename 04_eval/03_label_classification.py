@@ -1,7 +1,7 @@
 import sys
 sys.path.append('.')
 
-from utils.misc import harmonic_mean
+from utils.misc import harmonic_mean, get_data_dir
 import json
 from pathlib import Path
 import fasttext
@@ -65,8 +65,8 @@ if __name__ == '__main__':
         with open(prcocessed_name, 'w') as f:
             f.writelines(evaluation_data.fasttext_lower.to_list())
 
-
-    for model_info in p.glob('tmp_models/*/*.json'):
+    model_dir = get_data_dir()
+    for model_info in model_dir.glob('tmp_models/*/*.json'):
         model_meta = json.load(model_info.open())
         print('Evaluating:', model_meta['name'])
 

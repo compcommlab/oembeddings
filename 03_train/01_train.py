@@ -13,10 +13,9 @@ load_dotenv()
 # from utils.sql import start_sqlsession
 # from utils.datamodel import Model, ModelTrainingProgress
 from utils.random_names import generate_random_name
+from utils.misc import get_data_dir
 
 import fasttext
-
-p = Path.cwd()
 
 # session, engine = start_sqlsession()
 
@@ -42,10 +41,12 @@ if __name__ == '__main__':
 
     assert training_corpus.exists(), f'Could not find training data at: {training_corpus}'
 
-    model_basedir = p / 'tmp_models'
+    data_dir = get_data_dir()
+
+    model_basedir = data_dir / 'tmp_models'
 
     if not model_basedir.exists():
-        model_basedir.mkdir()
+        model_basedir.mkdir(parents=True)
 
     model_name = generate_random_name()
 
