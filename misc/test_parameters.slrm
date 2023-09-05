@@ -12,7 +12,7 @@ WINDOW_SIZE=("5" "6" "12" "24")
 # Load necessary modules and activate conda environment
 module load miniconda3
 eval "$(conda shell.bash hook)"
-conda activate oembeddings
+conda activate oenv
 
 # Loop through each combination of parameters
 for training_data in "${TRAINING_DATA[@]}"; do
