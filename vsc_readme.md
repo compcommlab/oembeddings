@@ -19,3 +19,10 @@ conda env create -n env-oembeddings --file oembeddings/conda.yml
 
 This takes a while!
 
+# Fasttext
+
+Installing fasttext works the same as on any Linux machine. Just follow the steps in the Fasttext documentation and build the latest release (v0.9.2) from source with `make`
+
+# SLURM Jobs
+
+All scripts for SLURM jobs are in the misc directory. 
