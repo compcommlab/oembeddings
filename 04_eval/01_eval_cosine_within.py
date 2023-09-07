@@ -47,6 +47,10 @@ import random
 from pathlib import Path
 import fasttext
 
+# Supress Fasttext warnings when loading a model
+import warnings
+warnings.filterwarnings('ignore')
+
 from evaluation_data.cues import CUES
 from utils.similarity import calc_correlation
 from utils.misc import get_data_dir
