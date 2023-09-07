@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=oembeddings_${iteration}_${training_data_file_no_slashes}_${min_count}_${window_size}
+#SBATCH --job-name=oembeddings_evaluate_models
 #SBATCH -N 1
 #SBATCH --ntasks-per-core=2
 
