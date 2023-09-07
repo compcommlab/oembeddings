@@ -18,16 +18,16 @@ conda activate oenv
 cd oembeddings
 
 echo "Cosine Similarity: Within"
-python3 04_eval/01_eval_cosine_within.py --threads 128
+python3 04_eval/01_eval_cosine_within.py --threads 32
 
 echo "Cosine Similarity: Across"
-python3 04_eval/01_eval_cosine_across.py --threads 128
+python3 04_eval/01_eval_cosine_across.py --threads 32
 
 echo "Syntactic and Semantic Tests"
 python3 04_eval/02_fasttext_semantic_syntactic.py
 
 echo "Label Classification"
-python3 04_eval/03_label_classification.py --threads 128
+python3 04_eval/03_label_classification.py --threads 32
 
 
 echo "done."
