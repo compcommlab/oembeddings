@@ -144,15 +144,25 @@ if __name__ == '__main__':
 
     print('Model combinations:', len(model_combinations) + len(model_combinations_lowercase))
 
-    with Pool(input_args.threads) as pool:
-        results = pool.map(compare_model_groups, model_combinations)
+    # with Pool(input_args.threads) as pool:
+    #     results = pool.map(compare_model_groups, model_combinations)
 
-    results = list(itertools.chain(*results))
+    # results = list(itertools.chain(*results))
+    
+    results = []
 
-    with Pool(input_args.threads) as pool:
-        results_lower = pool.map(compare_model_groups, model_combinations_lowercase)
+    for combination in model_combinations:
+        results += compare_model_groups(combination)
 
-    results_lower = list(itertools.chain(*results_lower))
+
+    # with Pool(input_args.threads) as pool:
+    #     results_lower = pool.map(compare_model_groups, model_combinations_lowercase)
+
+    # results_lower = list(itertools.chain(*results_lower))
+
+    results_lower = []
+    for combination in model_combinations_lowercase:
+        results_lower += compare_model_groups(combination)
 
     results += results_lower
 
