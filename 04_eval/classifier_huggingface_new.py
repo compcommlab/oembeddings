@@ -1,103 +1,121 @@
-### import needed datasets 
+import os
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:64"
+
+# Supress warnings when loading a model
+import warnings
+warnings.filterwarnings('ignore')
+
 import pandas as pd
-from datasets import load_dataset #, load_metric, Dataset
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer #, EvalPrediction
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from datasets import Dataset
+import evaluate
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, TrainingArguments, Trainer
 import json
+import torch
+from pathlib import Path
+from argparse import ArgumentParser
+import numpy as np
 
-### dataset loop
-datasets = ['facebook', 'twitter', 'nationalrat', 'pressreleases']
+p = Path.cwd()
+DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
 
-for d in datasets:
-    ### reformat the data so that it fits the huggingface architecture
-    # load dataset
-    df = pd.read_feather(f'/Users/janabernhard/Documents/Projekte/2023_Embedding/code/data_preproc/{d}.feather', columns=['label','text_pre-proc'])
-    # rename columns & make the labels strings
-    df.rename(columns={'text_pre-proc': 'text', 'label':'labels'}, inplace=True)
-    mapping = {'SPOE': 0, 'OEVP': 1, 'FPOE': 2, 'NEOS': 3, 'GRUE':4}
-    df['labels'] = df['labels'].replace(mapping)
-    # drop NAs (we don't have any but just in case)
-    df = df.dropna()
-    # draw sample for pre-testing 
-    #df = df.sample(n=100)
-    # save to csv
-    df.to_csv(f'{d}.csv', index=False)
+# Metrics
+metric_f1 = evaluate.load('f1')
+metric_precision = evaluate.load('precision')
+metric_recall = evaluate.load('recall')
+
+# models = ['xlm-roberta-large', 'distilbert-base-multilingual-cased', 'uklfr/gottbert-base', 'microsoft/mdeberta-v3-base']
 
 
-    ### Load the CSV dataset
-    csv_path = f'{d}.csv'
-    dataset = load_dataset('csv', data_files=csv_path)
+def compute_metrics(eval_pred):
+
+    logits, labels = eval_pred
+    predictions = np.argmax(logits, axis=-1)
+    f1 = metric_f1.compute(predictions=predictions, references=labels, average='macro')
+    precision = metric_precision.compute(predictions=predictions, references=labels, average='macro')
+    recall = metric_recall.compute(predictions=predictions, references=labels, average='macro')
+    results = {'f1': f1['f1'],
+               'precision': precision['precision'],
+               'recall': recall['recall']}
+    return results
+
+if __name__ == "__main__":
+    arg_parser = ArgumentParser(description="Evaluate Transformer models on a classification task")
+    arg_parser.add_argument('--debug', action='store_true', help='Debug flag: only load a random sample')
+    arg_parser.add_argument('--seed', type=int, default=1234, help='Seed for random state (default: 1234)')
+    arg_parser.add_argument('--model', type=str, default="xlm-roberta-large", help="Name / Path to the huggingface model")
+
+    input_args = arg_parser.parse_args()
+
+    print('Evaluating model', input_args.model)
 
     # tokenize the pre-processed data
-    tokenizer = AutoTokenizer.from_pretrained("bert-base-cased")
+    tokenizer = AutoTokenizer.from_pretrained(input_args.model)
+    model = AutoModelForSequenceClassification.from_pretrained(input_args.model, num_labels=5)
+    model.to(DEVICE)
 
     def tokenize_function(examples):
-        return tokenizer(examples["text"], padding="max_length", truncation=True)
+        return tokenizer(examples["text"], padding="max_length", truncation=True, return_tensors="pt", max_length=512).to(DEVICE)
 
-    tokenized_dataset = dataset.map(tokenize_function, batched=True)
 
-    # Use the 'train' split
-    train_dataset = tokenized_dataset["train"].shuffle(seed=42)
+    results_path = p / 'evaluation_results' / f'classification_bert_{input_args.model.replace("/", "_")}.json'
 
-    # Split the 'train' data into training and validation sets
-    train_size = int(0.8 * len(train_dataset))
-    validation_size = len(train_dataset) - train_size
+    datasets = ['facebook', 'twitter', 'nationalrat', 'pressreleases']
+    results = []
 
-    small_train_dataset, small_validation_dataset = train_dataset.train_test_split(
-        test_size=validation_size, shuffle=True, seed=42)
+    for d in datasets:
+        print('Processing dataset', d)
+        ### reformat the data so that it fits the huggingface architecture
+        # load dataset
+        dataset_path = p / 'evaluation_data' / 'classification' / f'{d}.feather'
+        df = pd.read_feather(dataset_path, columns=['label','text_pre-proc'])
+        # rename columns & make the labels strings
+        df.rename(columns={'text_pre-proc': 'text', 'label':'labels'}, inplace=True)
+        mapping = {'SPOE': 0, 'OEVP': 1, 'FPOE': 2, 'NEOS': 3, 'GRUE':4}
+        df['labels'] = df['labels'].replace(mapping)
+        # drop NAs (we don't have any but just in case)
+        df = df.dropna().reset_index(drop=True)
 
-    # loop through models 
-    models = ['xlm-roberta-large', 'distilbert-base-multilingual-cased', 'uklfr/gottbert-base', 'microsoft/mdeberta-v3-base']
-    results = {}
+        # draw sample for debugging 
+        if input_args.debug:
+            df = df.sample(n=100)
 
-    for m in models:
-        model = AutoModelForSequenceClassification.from_pretrained(m, num_labels=5)
-        training_args = TrainingArguments(output_dir="test_trainer")
+        dataset = Dataset.from_pandas(df)
+        
+        # free up memory
+        del df
+
+        tokenized_dataset = dataset.map(tokenize_function, batched=True)
+
+        # Split the 'train' data into training and validation sets
+        train_size = int(0.8 * len(tokenized_dataset))
+        validation_size = len(tokenized_dataset) - train_size
+
+        splits = tokenized_dataset.train_test_split(
+            test_size=validation_size, shuffle=True, seed=input_args.seed)
+        
+        training_dataset = splits['train']
+        test_dataset = splits['test']
+
+        training_args = TrainingArguments(output_dir="test_trainer",
+                                          per_device_train_batch_size=4,
+                                          learning_rate=3e-5,
+                                          num_train_epochs=1)
         
         trainer = Trainer(
             model=model,
             args=training_args,
-            train_dataset=small_train_dataset,
+            train_dataset=training_dataset,
+            eval_dataset=test_dataset,
+            compute_metrics=compute_metrics
         )
-        
-        # Load the validation dataset from the CSV file
-        validation_csv_path = 'pressreleases.csv'  # Update with the correct path
-        validation_dataset = load_dataset('csv', data_files=validation_csv_path)['train']
-        
-        # Tokenize the validation dataset
-        tokenized_validation_dataset = validation_dataset.map(
-            lambda example: tokenizer(example["text"], padding="max_length", truncation=True),
-            batched=True,
-        )
-        
-        # Evaluate the model on the validation dataset
-        eval_results = trainer.predict(tokenized_validation_dataset)
-        
-        # Calculate metrics
-        predictions = eval_results.predictions.argmax(axis=1)
-        ground_truth = tokenized_validation_dataset['labels']
-        
-        accuracy = accuracy_score(ground_truth, predictions)
-        precision = precision_score(ground_truth, predictions, average='weighted')
-        recall = recall_score(ground_truth, predictions, average='weighted')
-        f1_macro = f1_score(ground_truth, predictions, average='macro')
 
-        # save metrics for json output
-        results[m] = {
-            "Accuracy": accuracy,
-            "Precision": precision,
-            "Recall": recall,
-            "F1 Macro": f1_macro
-        }
+        trainer.train()
+        r = trainer.evaluate()
+        r['dataset'] = d
+        r['model'] = input_args.model
+        print('results', r)
+        results.append(r)
         
-        # Print the evaluation results
-        print(f"Model: {m}")
-        print('\n')
-        print(f"Accuracy: {accuracy}")
-        print(f"Precision: {precision}")
-        print(f"Recall: {recall}")
-        print(f"F1 Macro: {f1_macro}")
-
-    # create one json per dataset
-    with open(f'evaluation_results_{d}.json', 'w') as json_file:
+    # create one json per model
+    with open(results_path, 'w') as json_file:
         json.dump(results, json_file, indent=4)
