@@ -59,14 +59,26 @@ from utils.misc import get_data_dir
 
 p = Path.cwd()
 
+def load_model(model_path: str) -> fasttext.FastText._FastText:
+    """ Wrapper for Multiprocessing """
+    if not model_path.endswith('.bin'):
+        model_path = model_path + '.bin'
+    return fasttext.load_model(model_path)
+
 def compare_model_groups(models: typing.Tuple[Path]) -> typing.List[dict]:
     results = []
 
     models_a_meta = [json.load(m.open()) for m in models[0].glob('*.json')]
     models_b_meta = [json.load(m.open()) for m in models[1].glob('*.json')]
+
+    with Pool(input_args.threads) as pool:
+        models_a = pool.map(load_model, [m['model_path'] for m in models_a_meta])
     
-    models_a = [fasttext.load_model(m["model_path"] + '.bin') for m in models_a_meta]
-    models_b = [fasttext.load_model(m["model_path"] + '.bin') for m in models_b_meta]
+    with Pool(input_args.threads) as pool:
+        models_b = pool.map(load_model, [m['model_path'] for m in models_b_meta])
+    
+    # models_a = [fasttext.load_model(m["model_path"] + '.bin') for m in models_a_meta]
+    # models_b = [fasttext.load_model(m["model_path"] + '.bin') for m in models_b_meta]
 
     # ensure that we only have words that both models share
     # get intersection of both vocabularies
@@ -124,7 +136,7 @@ if __name__ == '__main__':
 
     arg_parser = ArgumentParser(description="Evaluate correlations across different parameter settings")
     arg_parser.add_argument('--debug', action='store_true', help='Debug flag')
-    arg_parser.add_argument('--threads', type=int, default=12, help='Number of parallel processes (default: 12)')
+    arg_parser.add_argument('--threads', type=int, default=10, help='Number of parallel processes (default: 12)')
     input_args = arg_parser.parse_args()
 
     print('Across Correlations')
