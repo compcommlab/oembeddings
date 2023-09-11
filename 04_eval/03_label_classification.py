@@ -82,7 +82,8 @@ if __name__ == '__main__':
             t = time()
             model = fasttext.train_supervised(str(training_file),
                                                 pretrainedVectors=model_path,
-                                                thread=input_args.threads)
+                                                thread=input_args.threads,
+                                                dim=model_meta["dimensions"])
 
             test_file = str(training_file).replace('.train', '.test')
             # n samples, precision, recall
