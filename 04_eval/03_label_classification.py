@@ -5,6 +5,11 @@ from utils.misc import harmonic_mean, get_data_dir
 import json
 from pathlib import Path
 import fasttext
+
+# Supress Fasttext warnings when loading a model
+import warnings
+warnings.filterwarnings('ignore')
+
 import pandas as pd
 from argparse import ArgumentParser
 from time import time
