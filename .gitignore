@@ -165,7 +165,7 @@ database.db
 data/
 tmp_models/
 nohup.out
-
+test_trainer/
 evaluation_data/devmount/*.questions*
 evaluation_data/classification
 
