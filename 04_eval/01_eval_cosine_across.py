@@ -43,6 +43,7 @@ import random
 from pathlib import Path
 import json
 from multiprocessing import Pool
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 from argparse import ArgumentParser
 
 from scipy.stats import pearsonr
@@ -63,6 +64,7 @@ def load_model(model_path: str) -> fasttext.FastText._FastText:
     """ Wrapper for Multiprocessing """
     if not model_path.endswith('.bin'):
         model_path = model_path + '.bin'
+    print('Loading model', model_path)
     return fasttext.load_model(model_path)
 
 def compare_model_groups(models: typing.Tuple[Path]) -> typing.List[dict]:
@@ -71,15 +73,14 @@ def compare_model_groups(models: typing.Tuple[Path]) -> typing.List[dict]:
     models_a_meta = [json.load(m.open()) for m in models[0].glob('*.json')]
     models_b_meta = [json.load(m.open()) for m in models[1].glob('*.json')]
 
-    with Pool(input_args.threads) as pool:
-        models_a = pool.map(load_model, [m['model_path'] for m in models_a_meta])
+    print('Loading Model Group', models[0])
+    print('Number of models in Group', len(models_a_meta))
+    models_a = [fasttext.load_model(m["model_path"] + '.bin') for m in models_a_meta]
     
-    with Pool(input_args.threads) as pool:
-        models_b = pool.map(load_model, [m['model_path'] for m in models_b_meta])
+    print('Loading Model Group', models[1])
+    print('Number of models in Group', len(models_b_meta))
+    models_b = [fasttext.load_model(m["model_path"] + '.bin') for m in models_b_meta]
     
-    # models_a = [fasttext.load_model(m["model_path"] + '.bin') for m in models_a_meta]
-    # models_b = [fasttext.load_model(m["model_path"] + '.bin') for m in models_b_meta]
-
     # ensure that we only have words that both models share
     # get intersection of both vocabularies
     shared_vocabulary = set(models_a[0].words)
