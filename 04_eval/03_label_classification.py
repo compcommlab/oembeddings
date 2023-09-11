@@ -17,9 +17,11 @@ from time import time
 p = Path.cwd()
 
 DATA_DIR = p / 'evaluation_data' / 'classification'
-PROCESSED_DIR = DATA_DIR / 'fasttext'
 
-RESULTS_DIR = p / 'evaluation_results' / 'classification'
+data_partition = get_data_dir()
+
+PROCESSED_DIR = data_partition / 'evaluation_data' / 'classification' / 'fasttext'
+RESULTS_DIR = data_partition / 'evaluation_results' / 'classification'
 
 if __name__ == '__main__':
 
