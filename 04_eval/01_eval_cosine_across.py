@@ -156,6 +156,7 @@ if __name__ == '__main__':
     results = []
 
     for combination in model_combinations:
+        print('Combination', combination)
         results += compare_model_groups(combination)
 
 
@@ -166,6 +167,7 @@ if __name__ == '__main__':
 
     results_lower = []
     for combination in model_combinations_lowercase:
+        print('Combination', combination)
         results_lower += compare_model_groups(combination)
 
     results += results_lower
