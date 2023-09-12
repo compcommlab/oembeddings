@@ -161,27 +161,25 @@ if __name__ == '__main__':
 
     print('Model combinations:', len(model_combinations) + len(model_combinations_lowercase))
 
-    # with Pool(input_args.threads) as pool:
-    #     results = pool.map(compare_model_groups, model_combinations)
-
-    # results = list(itertools.chain(*results))
-    
     results = []
 
     for combination in model_combinations:
         print('Combination', combination)
-        results += compare_model_groups(combination)
-
-
-    # with Pool(input_args.threads) as pool:
-    #     results_lower = pool.map(compare_model_groups, model_combinations_lowercase)
-
-    # results_lower = list(itertools.chain(*results_lower))
+        try:
+            results += compare_model_groups(combination)
+        except Exception as e:
+            print('Could not calculate across correlations')
+            print(e.with_traceback())
 
     results_lower = []
     for combination in model_combinations_lowercase:
         print('Combination', combination)
-        results_lower += compare_model_groups(combination)
+        try:
+            results_lower += compare_model_groups(combination)
+        except Exception as e:
+            print('Could not calculate across correlations')
+            print(e.with_traceback())
+
 
     results += results_lower
 
