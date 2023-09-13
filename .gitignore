@@ -170,3 +170,4 @@ evaluation_data/devmount/*.questions*
 evaluation_data/classification
 
 evaluation_results/*
+wandb/
