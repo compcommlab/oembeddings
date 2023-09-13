@@ -67,7 +67,8 @@ def load_model(model_path: str) -> fasttext.FastText._FastText:
     print('Loading model', model_path)
     return fasttext.load_model(model_path)
 
-def compare_model_groups(models: typing.Tuple[Path]) -> typing.List[dict]:
+def compare_model_groups(models: typing.Tuple[Path],
+                         lowercase: bool = False) -> typing.List[dict]:
     results = []
 
     models_a_meta = [json.load(m.open()) for m in models[0].glob('*.json')]
@@ -110,6 +111,8 @@ def compare_model_groups(models: typing.Tuple[Path]) -> typing.List[dict]:
     results.append(random_results)
     
     for cue, wordlist in CUES.items():
+        if lowercase:
+            wordlist = [w.lower() for w in wordlist]
 
         shared_wordlist = set(wordlist) & shared_vocabulary
 
@@ -169,16 +172,16 @@ if __name__ == '__main__':
             results += compare_model_groups(combination)
         except Exception as e:
             print('Could not calculate across correlations')
-            print(e.with_traceback())
+            print(e)
 
     results_lower = []
     for combination in model_combinations_lowercase:
         print('Combination', combination)
         try:
-            results_lower += compare_model_groups(combination)
+            results_lower += compare_model_groups(combination, lowercase=True)
         except Exception as e:
             print('Could not calculate across correlations')
-            print(e.with_traceback())
+            print(e)
 
 
     results += results_lower
