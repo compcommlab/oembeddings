@@ -23,22 +23,10 @@ data_partition = get_data_dir()
 PROCESSED_DIR = data_partition / 'evaluation_data' / 'classification' / 'fasttext'
 RESULTS_DIR = data_partition / 'evaluation_results' / 'classification'
 
-if __name__ == '__main__':
-
+def preprocess_data():
+    print('Preprocessing data')
     if not PROCESSED_DIR.exists():
         PROCESSED_DIR.mkdir(parents=True)
-
-    if not RESULTS_DIR.exists():
-        RESULTS_DIR.mkdir(parents=True)
-
-    arg_parser = ArgumentParser(description="Evaluate fasttext models on a classification task")
-    arg_parser.add_argument('--debug', action='store_true', help='Debug flag: only load a random sample')
-    arg_parser.add_argument('--threads', type=int, default=12, help='Number of parallel processes (default: 12)')
-    arg_parser.add_argument('--seed', type=int, default=1234, help='Seed for random state (default: 1234)')
-
-    input_args = arg_parser.parse_args()
-
-    print('Preprocessing data')
 
     for feather in DATA_DIR.glob('*.feather'):
         print(feather)
@@ -72,8 +60,35 @@ if __name__ == '__main__':
         with open(prcocessed_name, 'w') as f:
             f.writelines(evaluation_data.fasttext_lower.to_list())
 
-    model_dir = get_data_dir()
-    for model_info in model_dir.glob('tmp_models/*/*.json'):
+
+if __name__ == '__main__':
+
+    if not RESULTS_DIR.exists():
+        RESULTS_DIR.mkdir(parents=True)
+
+    if not PROCESSED_DIR.exists():
+        raise Exception('Could not find pre-processed data. Run this script first with the parameter `--preprocess`')
+
+    arg_parser = ArgumentParser(description="Evaluate fasttext models on a classification task")
+    arg_parser.add_argument('--debug', action='store_true', help='Debug flag: only load a random sample')
+    arg_parser.add_argument('--preprocess', action='store_true', help='Preprocess raw data into fasttext format')
+    arg_parser.add_argument('--threads', type=int, default=12, help='Number of parallel processes (default: 12)')
+    arg_parser.add_argument('--seed', type=int, default=1234, help='Seed for random state (default: 1234)')
+    arg_parser.add_argument('--modelfamily', type=str, default=None, help="Specificy a directory of models to evaluate")
+
+    input_args = arg_parser.parse_args()
+
+    if input_args.preprocess:
+        preprocess_data()
+
+    if input_args.modelfamily:
+        model_dir = Path(input_args.modelfamily)
+        glob_pattern = "*.json"
+    else:
+        model_dir = get_data_dir()
+        glob_pattern = 'tmp_models/*/*.json'
+
+    for model_info in model_dir.glob(glob_pattern):
         model_meta = json.load(model_info.open())
         print('Evaluating:', model_meta['name'])
 
