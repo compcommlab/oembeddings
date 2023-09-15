@@ -7,11 +7,11 @@
 for dir in $DATA/tmp_models/*; do 
     echo $dir; 
     # Generate the SLURM script.
-    slurm_script_file="slurm_script_label_classification_${dir}.slurm"
+    slurm_script_file="slurm_script_label_classification_${dir##*/}.slurm"
     cat << EOF > ${slurm_script_file}
 #!/bin/bash
 
-#SBATCH --job-name=oembeddings_clsf_${dir}
+#SBATCH --job-name=oembeddings_clsf_${dir##*/}
 #SBATCH -N 1
 #SBATCH --ntasks-per-core=2
 
@@ -22,7 +22,7 @@ for dir in $DATA/tmp_models/*; do
 
 
 module load miniconda3
-eval "$(conda shell.bash hook)"
+eval "\$(conda shell.bash hook)"
 conda activate oenv
 
 cd oembeddings
