@@ -134,7 +134,7 @@ def compare_model_groups(models: typing.Tuple[Path],
         
         results.append(cue_results)
 
-        return results
+    return results
 
 if __name__ == '__main__':
 
