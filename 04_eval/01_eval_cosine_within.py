@@ -101,7 +101,7 @@ def compare_models(models: typing.Tuple[Path]) -> typing.List[dict]:
                     correlation_type="Pearson's Rho")
         
         results.append(cue_results)
-        return results
+    return results
 
 
 
