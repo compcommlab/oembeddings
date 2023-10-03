@@ -1,5 +1,5 @@
 import os
-os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:64"
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:512"
 
 # Supress warnings when loading a model
 import warnings
@@ -103,7 +103,9 @@ if __name__ == "__main__":
     training_args = TrainingArguments(output_dir="test_trainer",
                                         per_device_train_batch_size=16,
                                         learning_rate=3e-5,
-                                        num_train_epochs=1)
+                                        num_train_epochs=1,
+                                        torch_compile=True,
+                                        save_strategy="no")
     
     trainer = Trainer(
         model=model,
