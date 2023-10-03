@@ -42,8 +42,6 @@ import typing
 import random
 from pathlib import Path
 import json
-from multiprocessing import Pool
-from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, as_completed
 from argparse import ArgumentParser
 
 from scipy.stats import pearsonr
@@ -138,9 +136,16 @@ def compare_model_groups(models: typing.Tuple[Path],
 
 if __name__ == '__main__':
 
-    arg_parser = ArgumentParser(description="Evaluate correlations across different parameter settings")
-    arg_parser.add_argument('--debug', action='store_true', help='Debug flag')
+    arg_parser = ArgumentParser(description=("Evaluate correlations across different parameter settings. "
+                                            "If no further arguments are provided then the script will automatically "
+                                            "scan the tmp_models directory and calculate all possible combinations "
+                                            "across different model families.\n"
+                                            "If you specify parameters --model_a and --model_b, the script will only "
+                                            "calculate the across correlations between those two groups"))
+    arg_parser.add_argument('--debug', action='store_true', help='Debug flag: dry run the script (do not actually run the calculations)')
     arg_parser.add_argument('--threads', type=int, default=10, help='Number of parallel processes (default: 12)')
+    arg_parser.add_argument('--model_a', type=str, help='Specify a directory with Model A group')
+    arg_parser.add_argument('--model_b', type=str, help='Specify a directory with Model B group')
     input_args = arg_parser.parse_args()
 
     print('Across Correlations')
@@ -149,45 +154,67 @@ if __name__ == '__main__':
     if not results_dir.exists():
         results_dir.mkdir(parents=True)
 
-    results_name = results_dir / 'results.json'
-
     model_dir = get_data_dir()
 
-    # Get different kinds of parameter settings
-    parameter_groups = [d for d in model_dir.glob('tmp_models/*') if d.is_dir()]
+    if input_args.model_a and input_args.model_b:
+        model_a_dir = Path(input_args.model_a)
+        assert model_a_dir.is_dir(), f'Model A is not a directory! Model A path: {model_a_dir}'
+        model_b_dir = Path(input_args.model_b)
+        assert model_b_dir.is_dir(), f'Model B is not a directory! Model B path: {model_b_dir}'
+        assert model_a_dir.name != model_b_dir.name, f'Both model families are the same! Can only calculate across correlation between different model families'
 
-    lowercase_groups = [g for g in parameter_groups if 'lower' in g.name]
-    parameter_groups = list(set(parameter_groups) - set(lowercase_groups))
+        print('Comparing models:', model_a_dir.name, 'and', model_b_dir.name)
 
-    model_combinations = list(itertools.combinations(parameter_groups, 2))
-    model_combinations_lowercase = list(itertools.combinations(lowercase_groups, 2))
-
-    print('Model combinations:', len(model_combinations) + len(model_combinations_lowercase))
-
-    results = []
-
-    for combination in model_combinations:
-        print('Combination', combination)
+        results_name = results_dir / f'{model_a_dir.name}_{model_b_dir.name}.json'
+        lowercase = "lower" in model_a_dir.name
         try:
-            results += compare_model_groups(combination)
+            if not input_args.debug:
+                results = compare_model_groups((model_a_dir, model_b_dir), lowercase=lowercase)
+            else:
+                results = []
         except Exception as e:
             print('Could not calculate across correlations')
             print(e)
+        with open(results_name, 'w') as f:
+            json.dump(results, f)
+    else:
+        print('Comparing all possible combinations ...')
+        results_name = results_dir / f'results.json'
 
-    results_lower = []
-    for combination in model_combinations_lowercase:
-        print('Combination', combination)
-        try:
-            results_lower += compare_model_groups(combination, lowercase=True)
-        except Exception as e:
-            print('Could not calculate across correlations')
-            print(e)
+        # Get different kinds of parameter settings
+        parameter_groups = [d for d in model_dir.glob('tmp_models/*') if d.is_dir()]
+
+        lowercase_groups = [g for g in parameter_groups if 'lower' in g.name]
+        parameter_groups = list(set(parameter_groups) - set(lowercase_groups))
+
+        model_combinations = list(itertools.combinations(parameter_groups, 2))
+        model_combinations_lowercase = list(itertools.combinations(lowercase_groups, 2))
+
+        print('Model combinations:', len(model_combinations) + len(model_combinations_lowercase))
+
+        results = []
+
+        for combination in model_combinations:
+            print('Combination', combination)
+            try:
+                if not input_args.debug:
+                    results += compare_model_groups(combination)
+            except Exception as e:
+                print('Could not calculate across correlations')
+                print(e)
+
+        results_lower = []
+        for combination in model_combinations_lowercase:
+            print('Combination', combination)
+            try:
+                if not input_args.debug:
+                    results_lower += compare_model_groups(combination, lowercase=True)
+            except Exception as e:
+                print('Could not calculate across correlations')
+                print(e)
 
 
-    results += results_lower
+        results += results_lower
 
-    with open(results_name, 'w') as f:
-        json.dump(results, f)
-
-    
- 
+        with open(results_name, 'w') as f:
+            json.dump(results, f)
