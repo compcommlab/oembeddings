@@ -142,5 +142,6 @@ Datasets for classification tasks cannot be shared because a) file size is too l
 
 ## Utilities
 
+- `get_third_party_embeddings.py`: automatically downloads fastText pre-trained models (German)
 - `datamodel.py`: use SQLAlchemy to declare SQL tables
 - `sql.py`: helper functions to start SQL sessions automatically
