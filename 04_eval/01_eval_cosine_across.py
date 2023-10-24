@@ -172,11 +172,11 @@ if __name__ == '__main__':
                 results = compare_model_groups((model_a_dir, model_b_dir), lowercase=lowercase)
             else:
                 results = []
+            with open(results_name, 'w') as f:
+                json.dump(results, f)
         except Exception as e:
             print('Could not calculate across correlations')
             print(e)
-        with open(results_name, 'w') as f:
-            json.dump(results, f)
     else:
         print('Comparing all possible combinations ...')
         results_name = results_dir / f'results.json'
