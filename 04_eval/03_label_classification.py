@@ -64,7 +64,10 @@ def preprocess_data():
 if __name__ == '__main__':
 
     if not RESULTS_DIR.exists():
-        RESULTS_DIR.mkdir(parents=True)
+        try:
+            RESULTS_DIR.mkdir(parents=True)
+        except FileExistsError:
+            pass
 
     if not PROCESSED_DIR.exists():
         raise Exception('Could not find pre-processed data. Run this script first with the parameter `--preprocess`')
