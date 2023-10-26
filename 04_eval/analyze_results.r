@@ -6,6 +6,7 @@ library(ggthemes)
 library(viridis)
 library(stringr)
 library(reshape2)
+library(Matrix)
 
 model_meta <- RcppSimdJson::fload(Sys.glob('tmp_models/*/*.json'))
 model_meta <- dplyr::bind_rows(model_meta)
@@ -54,18 +55,25 @@ p <- correlations_within |>
          `Minimum Count` = min_count) |>
   ggplot(aes(y=`Within-Correlation`, x=`Window Size`, fill=lowercase)) +
   geom_boxplot() +
-  coord_cartesian(ylim = c(0.9, 1.0)) +
+  coord_cartesian(ylim = c(0.93, 1.0)) +
   facet_wrap(~`Minimum Count`, labeller = "label_both") +
   theme_clean() +
   scale_fill_viridis(discrete = TRUE, option = 'mako', begin = 0.4, end = 0.6) +
   ggtitle('Within Correlations (Random Cues)')
 
 ggsave('plots/within_correlation.png', p, width = 1920, height = 1080, units = 'px', scale = 2)
+ggsave('plots/within_correlation.pdf', p, width = 1920, height = 1080, units = 'px', scale = 1.5)
 
 
 # Correlations: Across
 
-correlations_across <- RcppSimdJson::fload(Sys.glob('evaluation_results/across_correlations/results.json'))
+correlations_across <- RcppSimdJson::fload(Sys.glob('evaluation_results/across_correlations/*.json'),
+  parse_error_ok = TRUE)
+
+correlations_across <- bind_rows(correlations_across)
+
+# only use random cues (for now)
+correlations_across <- correlations_across[correlations_across$cues == 'random', ]
 
 # create duplicate that is flipped
 correlations_across_b <- correlations_across
@@ -74,21 +82,29 @@ correlations_across_b$model_b_family <- correlations_across$model_a_family
 
 correlations_across <- rbind(correlations_across, correlations_across_b)
 
+filta <- correlations_across$model_a_family == 'cc_de_300'
+filtb <- correlations_across$model_b_family == 'cc_de_300'
+
 correlations_across$model_a_min_count <- str_extract(correlations_across$model_a_family, "mincount(\\d{1,3})_", group = 1)
+correlations_across$model_a_min_count[filta] <- 5
 correlations_across$model_a_min_count <- str_pad(correlations_across$model_a_min_count, 3, "left", pad = "0")
 
 correlations_across$model_b_min_count <- str_extract(correlations_across$model_b_family, "mincount(\\d{1,3})_", group = 1)
+correlations_across$model_b_min_count[filtb] <- 5
 correlations_across$model_b_min_count <- str_pad(correlations_across$model_b_min_count, 3, "left", pad = "0")
 
 correlations_across$model_a_window_size <- str_extract(correlations_across$model_a_family, "ws(\\d{1,3})_", group = 1)
+correlations_across$model_a_window_size[filta] <- 5
 correlations_across$model_a_window_size <- str_pad(correlations_across$model_a_window_size, 2, "left", pad = "0")
 
 correlations_across$model_b_window_size <- str_extract(correlations_across$model_b_family, "ws(\\d{1,3})_", group = 1)
+correlations_across$model_b_window_size[filtb] <- 5
 correlations_across$model_b_window_size <- str_pad(correlations_across$model_b_window_size, 2, "left", pad = "0")
-
 
 correlations_across$model_a_short <- paste(correlations_across$model_a_min_count, correlations_across$model_a_window_size, sep = "_")
 correlations_across$model_b_short <- paste(correlations_across$model_b_min_count, correlations_across$model_b_window_size, sep = "_")
+correlations_across$model_a_short[filta] <- "CC_DE_300"
+correlations_across$model_b_short[filtb] <- "CC_DE_300"
 
 models_names <- unique(correlations_across$model_a_short)
 models_names <- models_names[order(models_names)]
@@ -119,11 +135,13 @@ p <- correlations |>
   theme_clean() +
   theme(axis.text.x = element_text(angle = 45, vjust = 1,
                                      size = 12, hjust = 1),
-        panel.grid.major.y = element_blank()) +
-  scale_fill_viridis(option = 'mako') +
+        panel.grid.major.y = element_blank(),
+        legend.position = "bottom") +  
+  scale_fill_viridis("Pearson's Rho", option = 'mako', direction = -1) +
   ggtitle('Across Correlations (Random Cues)')
 
-ggsave('plots/across_correlation.png', p, width = 1920, height = 1080, units = 'px', scale = 2)
+ggsave('plots/across_correlation.png', p, width = 1080, height = 1080, units = 'px', scale = 2)
+ggsave('plots/across_correlation.pdf', p, width = 1080, height = 1080, units = 'px', scale = 2)
 
 # syntactic / semantic
 
@@ -156,6 +174,7 @@ p <- syntactic |>
   ggtitle('Syntactic / Semantic (strict)')
 
 ggsave('plots/results_syntactic_semantic_strict.png', p, width = 1920, height = 1080, units = 'px', scale = 2)
+ggsave('plots/results_syntactic_semantic_strict.pdf', p, width = 1920, height = 1080, units = 'px', scale = 1.5)
 
 
 p <- syntactic |>
@@ -173,6 +192,7 @@ p <- syntactic |>
   ggtitle('Syntactic / Semantic (Top 10)')
 
 ggsave('plots/results_syntactic_semantic_top10.png', p, width = 1920, height = 1080, units = 'px', scale = 2)
+ggsave('plots/results_syntactic_semantic_top10.pdf', p, width = 1920, height = 1080, units = 'px', scale = 1.5)
 
 
 # Classification
