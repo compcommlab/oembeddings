@@ -1,3 +1,5 @@
+import typing
+import os
 import sys
 sys.path.append('.')
 
@@ -60,6 +62,38 @@ def preprocess_data():
         with open(prcocessed_name, 'w') as f:
             f.writelines(evaluation_data.fasttext_lower.to_list())
 
+def evaluate(model_path: str, 
+             training_file: Path,
+             dims: int,
+             threads: int = 12) -> typing.List[dict]:
+    print('Using corpus', training_file)
+    t = time()
+    model = fasttext.train_supervised(str(training_file),
+                                        pretrainedVectors=model_path,
+                                        thread=threads,
+                                        dim=dims)
+
+    test_file = str(training_file).replace('.train', '.test')
+    # n samples, precision, recall
+    results_overall = model.test(test_file)
+    results_labels = model.test_label(test_file)
+    duration = time() - t
+
+    results = [{'task': training_file.name.replace('.train', '').replace('_lower', ''),
+                    'label': 'overall',
+                    'precision': results_overall[1],
+                    'recall': results_overall[2],
+                    'f1score': harmonic_mean(results_overall[1], results_overall[2]),
+                    'duation': duration
+                    }]
+
+    for label, vals in results_labels.items():
+        results.append({'task': training_file.name.replace('.train', ''),
+                        'label': label.replace('__label__', ''),
+                        'duation': duration,
+                        **vals})
+    return results
+
 
 if __name__ == '__main__':
 
@@ -78,7 +112,8 @@ if __name__ == '__main__':
     arg_parser.add_argument('--threads', type=int, default=12, help='Number of parallel processes (default: 12)')
     arg_parser.add_argument('--seed', type=int, default=1234, help='Seed for random state (default: 1234)')
     arg_parser.add_argument('--modelfamily', type=str, default=None, help="Specificy a directory of models to evaluate")
-
+    arg_parser.add_argument('--corpus', type=str, default=None, help="Filename of corpus to evaluate. (needs to end with '.train')")
+    
     input_args = arg_parser.parse_args()
 
     if input_args.preprocess:
@@ -97,43 +132,38 @@ if __name__ == '__main__':
 
         model_path = model_meta['model_path'] + '.vec'
 
-        if 'lower' in model_meta['parameter_string']:
-            glob_pattern = '*.train_lower'
+        if input_args.corpus:
+            corpus_path = Path(input_args.corpus)
+            assert corpus_path.exists(), f'Training corpus not found at this location: {corpus_path}'
+            results = evaluate(model_path, 
+                               corpus_path, 
+                               model_meta["dimensions"],
+                               threads=input_args.threads)
+
+            results_file = RESULTS_DIR / f"{model_meta['name']}_{model_meta['parameter_string']}_{corpus_path.name.removesuffix('.train')}.json"
+
         else:
-            glob_pattern = '*.train'
+            if 'lower' in model_meta['parameter_string']:
+                glob_pattern = '*.train_lower'
+            else:
+                glob_pattern = '*.train'
+            results = []
+            for training_file in PROCESSED_DIR.glob(glob_pattern):
+                results += evaluate(model_path, 
+                                training_file, 
+                                model_meta["dimensions"],
+                                threads=input_args.threads)
 
-        results = []
-        for training_file in PROCESSED_DIR.glob(glob_pattern):
-            t = time()
-            model = fasttext.train_supervised(str(training_file),
-                                                pretrainedVectors=model_path,
-                                                thread=input_args.threads,
-                                                dim=model_meta["dimensions"])
-
-            test_file = str(training_file).replace('.train', '.test')
-            # n samples, precision, recall
-            results_overall = model.test(test_file)
-            results_labels = model.test_label(test_file)
-            duration = time() - t
-
-            results.append({'task': training_file.name.replace('.train', '').replace('_lower', ''),
-                            'label': 'overall',
-                            'precision': results_overall[1],
-                            'recall': results_overall[2],
-                            'f1score': harmonic_mean(results_overall[1], results_overall[2]),
-                            'duation': duration
-                            })
-
-            for label, vals in results_labels.items():
-                results.append({'task': training_file.name.replace('.train', ''),
-                                'label': label.replace('__label__', ''),
-                                'duation': duration,
-                                **vals})
+            results_file = RESULTS_DIR / f"{model_meta['name']}_{model_meta['parameter_string']}.json"
+            
         for r in results:
             r['model_name'] = model_meta['name']
             r['parameter_string'] = model_meta['parameter_string']
             r['model_path'] = model_meta['model_path']
         
-        results_file = RESULTS_DIR / f"{model_meta['name']}_{model_meta['parameter_string']}.json"
+        # delete results file first
+        if results_file.exists():
+            print('Found existing results file, deleting it ...')
+            os.remove(results_file)
         with open(results_file, 'w') as f:
             json.dump(results, f, indent=True)
