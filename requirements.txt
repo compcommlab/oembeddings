@@ -10,3 +10,4 @@ pandas
 scipy
 gensim
 psycopg2
+scikit-learn
