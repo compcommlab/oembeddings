@@ -1,5 +1,3 @@
-import typing
-import os
 import sys
 sys.path.append('.')
 
@@ -37,9 +35,18 @@ for feather in DATA_DIR.glob('*.feather'):
     df = pd.read_feather(feather)
 
     # convert to fasttext format: e.g., __label__spoe Sentence starts here.
-    df['fasttext_label'] = '__label__' + df['label'].str.lower()
+    if 'labels' in df.columns:
+        # handle multi-label data, which is a list of labels
+        filt = df.labels.apply(lambda x: len(x) == 0)
+        df.loc[filt, 'labels'] = df.loc[filt, 'labels'].apply(lambda x: ['none'])
+        df['fasttext_label'] = df.labels.apply(lambda x: " ".join(['__label__' + label for label in x]))
+        df['label'] = df.labels.apply(lambda x: " ".join([label for label in x]))
+    else:
+        # regular case: only one label per sample
+        df['fasttext_label'] = '__label__' + df['label'].str.lower()
+
     df['fasttext_str'] = df.fasttext_label  + ' ' + \
-        df['text'].str.replace('\n', ' ', regex=False).str.replace('\r', ' ') + '\n'
+        df['text'].str.replace('\n', ' ', regex=False).str.replace('\r', ' ').str.replace('\\n', ' ', regex=False) + '\n'
     df['fasttext_lower'] = df.fasttext_str.str.lower()
 
     training_data = df.sample(frac=0.75, random_state=input_args.seed)
