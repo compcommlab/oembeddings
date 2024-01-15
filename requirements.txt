@@ -11,3 +11,4 @@ scipy
 gensim
 psycopg2
 scikit-learn
+num2words
