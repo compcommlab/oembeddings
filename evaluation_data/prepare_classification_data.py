@@ -2,10 +2,14 @@ import sys
 sys.path.append('.')
 
 from utils.misc import get_data_dir
+from utils.cleaning import clean_text
+
 import re
 from pathlib import Path
 
 import pandas as pd
+import swifter
+
 from argparse import ArgumentParser
 
 arg_parser = ArgumentParser()
@@ -30,6 +34,7 @@ for d in [FASTTEXT_DIR, VALIDATION_DIR, TRAINING_DIR]:
         d.mkdir(parents=True)
 
 print('Preprocessing data')
+
 for feather in DATA_DIR.glob('*.feather'):
     print(feather)
     df = pd.read_feather(feather)
@@ -45,8 +50,19 @@ for feather in DATA_DIR.glob('*.feather'):
         # regular case: only one label per sample
         df['fasttext_label'] = '__label__' + df['label'].str.lower()
 
+    
+    df['text_cleaned'] = df['text'].swifter.apply(clean_text, 
+                                                        remove_links=True, 
+                                                        remove_emails=True,
+                                                        remove_emojis=True, 
+                                                        remove_punctuation=True,
+                                                        replace_numbers=True,
+                                                        genderstar=True)
+
     df['fasttext_str'] = df.fasttext_label  + ' ' + \
-        df['text'].str.replace('\n', ' ', regex=False).str.replace('\r', ' ').str.replace('\\n', ' ', regex=False) + '\n'
+        df['text_cleaned'].str.replace('\n', ' ', regex=False).str.replace('\r', ' ').str.replace('\\n', ' ', regex=False) + '\n'
+    
+    
     df['fasttext_lower'] = df.fasttext_str.str.lower()
 
     training_data = df.sample(frac=0.75, random_state=input_args.seed)
@@ -58,7 +74,7 @@ for feather in DATA_DIR.glob('*.feather'):
         f.writelines(training_data.fasttext_str.to_list())
 
     training_name = TRAINING_DIR / f"{feather.name}"
-    training_data.loc[:, ['label', 'fasttext_label', 'text']].reset_index(drop=True).to_feather(training_name, compression='uncompressed')
+    training_data.loc[:, ['label', 'fasttext_label', 'text', 'text_cleaned']].reset_index(drop=True).to_feather(training_name, compression='uncompressed')
 
     fasttext_name = FASTTEXT_DIR / \
         f"{feather.name.replace('.feather', '.train_lower')}"
@@ -71,7 +87,7 @@ for feather in DATA_DIR.glob('*.feather'):
         f.writelines(evaluation_data.fasttext_str.to_list())
 
     evaluation_name = VALIDATION_DIR / f"{feather.name}"
-    evaluation_data.loc[:, ['label', 'fasttext_label', 'text']].reset_index(drop=True).to_feather(evaluation_name, compression='uncompressed')
+    evaluation_data.loc[:, ['label', 'fasttext_label', 'text', 'text_cleaned']].reset_index(drop=True).to_feather(evaluation_name, compression='uncompressed')
 
     fasttext_name = FASTTEXT_DIR / \
         f"{feather.name.replace('.feather', '.test_lower')}"
@@ -84,6 +100,6 @@ uppercase = re.compile(r'[A-ZÄÖÜ]')
 for text_file in FASTTEXT_DIR.glob('*'):
     with open(text_file) as f:
         for line in f.readlines():
-            assert line.startswith('__label__'), text_file
+            assert line.startswith('__label__'), f'File: {text_file}, line: {line}'
             if 'lower' in text_file.name:
                 assert not uppercase.match(line), f'File: {text_file}, line: {line}'

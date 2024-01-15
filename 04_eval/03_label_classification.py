@@ -4,6 +4,7 @@ sys.path.append('.')
 
 from utils.misc import get_data_dir
 from sklearn.metrics import precision_recall_fscore_support
+from sklearn.preprocessing import MultiLabelBinarizer
 import json
 from pathlib import Path
 import fasttext
@@ -33,59 +34,70 @@ def evaluate(model_path: str,
              dims: int,
              threads: int = 12) -> dict:
     print('Using corpus', training_file)
-    t = time()
-    model = fasttext.train_supervised(str(training_file),
-                                        pretrainedVectors=model_path,
-                                        thread=threads,
-                                        dim=dims)
-
     test_file = training_file.name.split('.')[0] + '.feather'
     validation_corpus = pd.read_feather(VALIDATION_DIR / test_file)
     validation_corpus["text"] = validation_corpus['text'].str.replace('\n', ' ', regex=False).str.replace('\r', ' ', regex=False)
-    labels = validation_corpus.fasttext_label.unique().tolist()
+    labels = validation_corpus.fasttext_label.str.split().explode().unique().tolist()
+    # for multi-label classification, we need to tell fasttext how
+    # many labels to predict per sample (`k` parameter)
+    # we take the validation sample with the highest number of labels
+    max_num_labels = max(validation_corpus.fasttext_label.str.findall('__label_').apply(lambda x: len(x)))
+
+    if max_num_labels > 1:
+        # multi-label classification problem
+        loss = 'ova'
+        threshold = 0.5
+    else:
+        # single-label classification problem
+        loss = 'softmax'
+        threshold = 0.0
+
+    mlb = MultiLabelBinarizer(classes=labels)
 
     if 'lower' in model_path:
         validation_sentences = validation_corpus.text.str.lower().to_list()
     else:
         validation_sentences = validation_corpus.text.to_list()
 
-    predictions = model.predict(validation_sentences)
+    t = time()
+    model = fasttext.train_supervised(str(training_file),
+                                        pretrainedVectors=model_path,
+                                        thread=threads,
+                                        dim=dims,
+                                        loss=loss)
+
+
+    predictions = model.predict(validation_sentences, k=max_num_labels, threshold=threshold)
     duration = time() - t
 
     # results is a tuple with len 2: first are the predicted labels
     # second are the probabilities for the labels; we only need the first one
     # get first element of each list
-    predicted_labels = list(map(lambda x: x[0], predictions[0]))
-    true_labels = validation_corpus.fasttext_label.to_list()
-    
+    if max_num_labels > 1:
+        _predicted_labels = predictions[0]
+        predicted_labels = mlb.fit_transform(_predicted_labels)
+        _true_labels = validation_corpus.fasttext_label.str.split().to_list()
+        true_labels = mlb.fit_transform(_true_labels)
+    else:
+        predicted_labels = list(map(lambda x: x[0], predictions[0]))
+        true_labels = validation_corpus.fasttext_label.to_list()
+        _predicted_labels = predicted_labels
+        _true_labels = true_labels
+        
     scores = precision_recall_fscore_support(true_labels, 
                                              predicted_labels,
-                                             labels=labels,
+                                            #  labels=labels,
                                              average='macro')
 
-    results = [{'task': training_file.name.replace('.train', '').replace('_lower', ''),
+    results = {'task': training_file.name.replace('.train', '').replace('_lower', ''),
                 'label': 'overall (macro)',
                 'precision': scores[0],
                 'recall': scores[1],
                 'f1score': scores[2],
                 'duration': duration
-            }]
-    
-    scores_labels = precision_recall_fscore_support(true_labels, 
-                                                    predicted_labels,
-                                                    labels=labels)
-    
-    results_labels = {label: dict() for label in labels}
-    for metric, values in zip(['precision', 'recall', 'f1'], scores_labels[:3]):
-        for label, value in zip(labels, values):
-            results_labels[label][metric] = value
-
-    for label, vals in results_labels.items():
-        results.append({'task': training_file.name.replace('.train', ''),
-                        'label': label.replace('__label__', ''),
-                        'duration': duration,
-                        **vals})
-    return {'metrics': results, 'predicted_labels': predicted_labels, 'true_labels': true_labels}
+            }
+        
+    return {'metrics': results, 'predicted_labels': _predicted_labels, 'true_labels': _true_labels}
 
 
 if __name__ == '__main__':
@@ -120,6 +132,7 @@ if __name__ == '__main__':
         print('Evaluating:', model_meta['name'])
 
         model_path = model_meta['model_path'] + '.vec'
+        results = {}
 
         if input_args.corpus:
             corpus_path = Path(input_args.corpus)
@@ -149,11 +162,9 @@ if __name__ == '__main__':
             results_file = RESULTS_DIR / f"{model_meta['name']}_{model_meta['parameter_string']}.json"
             
         for result in results.values():
-            for r in result['metrics']:
-                # error here
-                r['model_name'] = model_meta['name']
-                r['parameter_string'] = model_meta['parameter_string']
-                r['model_path'] = model_meta['model_path']
+                result['metrics']['model_name'] = model_meta['name']
+                result['metrics']['parameter_string'] = model_meta['parameter_string']
+                result['metrics']['model_path'] = model_meta['model_path']
         
         # delete results file first
         if results_file.exists():
