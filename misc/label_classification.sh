@@ -23,7 +23,7 @@ for dir in $DATA/tmp_models/*; do
 
 module load miniconda3
 eval "\$(conda shell.bash hook)"
-conda activate oenv
+conda activate oembeddings
 
 cd oembeddings
 
