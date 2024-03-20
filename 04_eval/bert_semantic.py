@@ -36,8 +36,8 @@ except:
 # https://github.com/LorenzoSerina-UniBS/Synonyms-Antonyms-GeneralKnowledge-BERT-Heads/tree/main
 
 templates = {
-    "best match": '"{}" verhält sich zu "{}" wie "{}" zu "{}".',
     "opposite": 'Du hast es als "{}" beschrieben, aber ich würde eher das Gegenteil sagen, ich würde es als "{}" beschreiben.',
+    "best match": 'Das Verhältnis zwischen "{}" und "{}" ist ähnlich wie das Verhältnis zwischen "{}" und "{}".',
 }
 tasks = {"opposite": TARGET_SEM_OP, "best match": TARGET_SEM_BM}
 
