@@ -131,7 +131,7 @@ if __name__ == "__main__":
     # fill samples without label
     df.labels = df.labels.apply(lambda x: ["none"] if len(x) == 0 else x)
 
-    labels = df.labels.explode().unique().to_list()
+    labels = df.labels.explode().unique().tolist()
     labels.sort()
     id2label = {idx: label for idx, label in enumerate(labels)}
     label2id = {label: idx for idx, label in enumerate(labels)}
