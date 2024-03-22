@@ -9,7 +9,6 @@ warnings.filterwarnings("ignore")
 
 import pandas as pd
 from datasets import Dataset
-import evaluate
 from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification,
@@ -22,6 +21,7 @@ import torch
 from pathlib import Path
 from argparse import ArgumentParser
 import numpy as np
+from sklearn.metrics import f1_score, precision_score, recall_score
 
 # import wandb
 
@@ -33,11 +33,6 @@ import numpy as np
 p = Path.cwd()
 DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
 
-# Metrics
-metric_f1 = evaluate.load("f1")
-metric_precision = evaluate.load("precision")
-metric_recall = evaluate.load("recall")
-
 # models = ['xlm-roberta-base', 'distilbert-base-multilingual-cased', 'uklfr/gottbert-base', 'microsoft/mdeberta-v3-base']
 
 def multi_label_metrics(predictions, labels, threshold=0.5):
@@ -47,19 +42,13 @@ def multi_label_metrics(predictions, labels, threshold=0.5):
     # next, use threshold to turn them into integer predictions
     predictions = np.zeros(probs.shape)
     predictions[np.where(probs >= threshold)] = 1
-    # finally, compute metrics
-    f1_micro_average = metric_f1.compute(predictions=predictions, references=labels, average='micro')
-    precision = metric_precision.compute(
-        predictions=predictions, references=labels, average="micro"
-    )
-    recall = metric_recall.compute(
-        predictions=predictions, references=labels, average="micro"
-    )
-    # return as dictionary
-    metrics = {'f1': f1_micro_average,
+
+    f1_micro_average = f1_score(y_pred=predictions, y_true=labels, average='micro')
+    precision = precision_score(y_pred=predictions, y_true=labels, average="micro")
+    recall = recall_score(y_pred=predictions, y_true=labels, average="micro")
+    return {'f1': f1_micro_average,
                'precision': precision,
                'recall': recall}
-    return metrics
 
 def compute_metrics(p: EvalPrediction):
     preds = p.predictions[0] if isinstance(p.predictions, 
@@ -177,7 +166,7 @@ if __name__ == "__main__":
         labels_matrix = np.zeros((len(encoded["input_ids"]), len(labels)))
         for idx, label in enumerate(labels):
             labels_matrix[:, idx] = labels_batch[label]
-        encoded["labels"] = labels_matrix.tolist()
+        encoded["labels"] = labels_matrix.astype(np.int32).tolist()
         return encoded
 
     tokenized_dataset = dataset.map(
