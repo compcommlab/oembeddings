@@ -1,6 +1,6 @@
 import os
 
-os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "max_split_size_mb:512"
+os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
 # Supress warnings when loading a model
 import warnings
@@ -22,12 +22,12 @@ from pathlib import Path
 from argparse import ArgumentParser
 import numpy as np
 
-import wandb
+# import wandb
 
-wandb.init(
-    # set the wandb project where this run will be logged
-    project="OEmbeddings"
-    )
+# wandb.init(
+#     # set the wandb project where this run will be logged
+#     project="OEmbeddings"
+#     )
 
 p = Path.cwd()
 DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
@@ -83,9 +83,8 @@ if __name__ == "__main__":
             "facebook",
             "twitter",
             "nationalrat",
-            "pressreleases",
-            "million_posts_sentiment",
-        ],
+            "pressreleases"        
+            ],
     )
 
     arg_parser.add_argument('-l', '--learning_rate', type=float, default=2e-05,
@@ -146,7 +145,7 @@ if __name__ == "__main__":
             padding="max_length",
             truncation=True,
             return_tensors="pt",
-            max_length=512,
+            max_length=256,
         ).to(DEVICE)
 
     tokenized_dataset = dataset.map(tokenize_function, batched=True)
@@ -169,7 +168,7 @@ if __name__ == "__main__":
         num_train_epochs=input_args.epochs,
         torch_compile=True,
         save_strategy="no",
-        report_to=["wandb"]
+        # report_to=["wandb"]
     )
 
     trainer = Trainer(
