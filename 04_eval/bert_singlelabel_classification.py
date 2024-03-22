@@ -102,6 +102,8 @@ if __name__ == "__main__":
         / "evaluation_results"
         / f'classification_{input_args.dataset}_bert_{input_args.model.replace("/", "_")}.json'
     )
+    if not results_path.parent.exists():
+        results_path.parent.mkdir(parents=True)
 
     # Dataset
     print("Processing dataset", input_args.dataset)
