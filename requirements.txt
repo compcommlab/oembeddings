@@ -16,3 +16,4 @@ transformers
 evaluate
 torch
 accelerate
+sentencepiece

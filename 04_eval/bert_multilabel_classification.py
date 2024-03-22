@@ -187,7 +187,6 @@ if __name__ == "__main__":
         per_device_train_batch_size=input_args.batch_size,
         learning_rate=input_args.learning_rate,
         num_train_epochs=input_args.epochs,
-        torch_compile=True,
         save_strategy="no",
         # report_to=["wandb"]
     )
