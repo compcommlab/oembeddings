@@ -14,7 +14,7 @@ from transformers import (
     AutoModelForSequenceClassification,
     TrainingArguments,
     Trainer,
-    EvalPrediction
+    EvalPrediction,
 )
 import json
 import torch
@@ -35,6 +35,7 @@ DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 # models = ['xlm-roberta-base', 'distilbert-base-multilingual-cased', 'uklfr/gottbert-base', 'microsoft/mdeberta-v3-base']
 
+
 def multi_label_metrics(predictions, labels, threshold=0.5):
     # first, apply sigmoid on predictions which are of shape (batch_size, num_labels)
     sigmoid = torch.nn.Sigmoid()
@@ -43,20 +44,17 @@ def multi_label_metrics(predictions, labels, threshold=0.5):
     predictions = np.zeros(probs.shape)
     predictions[np.where(probs >= threshold)] = 1
 
-    f1_micro_average = f1_score(y_pred=predictions, y_true=labels, average='micro')
+    f1_micro_average = f1_score(y_pred=predictions, y_true=labels, average="micro")
     precision = precision_score(y_pred=predictions, y_true=labels, average="micro")
     recall = recall_score(y_pred=predictions, y_true=labels, average="micro")
-    return {'f1': f1_micro_average,
-               'precision': precision,
-               'recall': recall}
+    return {"f1": f1_micro_average, "precision": precision, "recall": recall}
+
 
 def compute_metrics(p: EvalPrediction):
-    preds = p.predictions[0] if isinstance(p.predictions, 
-            tuple) else p.predictions
-    result = multi_label_metrics(
-        predictions=preds, 
-        labels=p.label_ids)
+    preds = p.predictions[0] if isinstance(p.predictions, tuple) else p.predictions
+    result = multi_label_metrics(predictions=preds, labels=p.label_ids)
     return result
+
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
@@ -166,7 +164,7 @@ if __name__ == "__main__":
         labels_matrix = np.zeros((len(encoded["input_ids"]), len(labels)))
         for idx, label in enumerate(labels):
             labels_matrix[:, idx] = labels_batch[label]
-        encoded["labels"] = labels_matrix.astype(np.int32).tolist()
+        encoded["labels"] = labels_matrix.tolist()
         return encoded
 
     tokenized_dataset = dataset.map(
