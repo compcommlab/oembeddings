@@ -15,6 +15,7 @@ from transformers import (
     AutoModelForSequenceClassification,
     TrainingArguments,
     Trainer,
+    EvalPrediction
 )
 import json
 import torch
@@ -39,24 +40,34 @@ metric_recall = evaluate.load("recall")
 
 # models = ['xlm-roberta-base', 'distilbert-base-multilingual-cased', 'uklfr/gottbert-base', 'microsoft/mdeberta-v3-base']
 
-
-def compute_metrics(eval_pred):
-    logits, labels = eval_pred
-    predictions = np.argmax(logits, axis=-1)
-    f1 = metric_f1.compute(predictions=predictions, references=labels, average="macro")
+def multi_label_metrics(predictions, labels, threshold=0.5):
+    # first, apply sigmoid on predictions which are of shape (batch_size, num_labels)
+    sigmoid = torch.nn.Sigmoid()
+    probs = sigmoid(torch.Tensor(predictions))
+    # next, use threshold to turn them into integer predictions
+    predictions = np.zeros(probs.shape)
+    predictions[np.where(probs >= threshold)] = 1
+    # finally, compute metrics
+    f1_micro_average = metric_f1.compute(predictions=predictions, references=labels, average='micro')
     precision = metric_precision.compute(
-        predictions=predictions, references=labels, average="macro"
+        predictions=predictions, references=labels, average="micro"
     )
     recall = metric_recall.compute(
-        predictions=predictions, references=labels, average="macro"
+        predictions=predictions, references=labels, average="micro"
     )
-    results = {
-        "f1": f1["f1"],
-        "precision": precision["precision"],
-        "recall": recall["recall"],
-    }
-    return results
+    # return as dictionary
+    metrics = {'f1': f1_micro_average,
+               'precision': precision,
+               'recall': recall}
+    return metrics
 
+def compute_metrics(p: EvalPrediction):
+    preds = p.predictions[0] if isinstance(p.predictions, 
+            tuple) else p.predictions
+    result = multi_label_metrics(
+        predictions=preds, 
+        labels=p.label_ids)
+    return result
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
