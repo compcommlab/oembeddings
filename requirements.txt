@@ -9,6 +9,10 @@ tqdm
 pandas
 scipy
 gensim
-psycopg2
 scikit-learn
 num2words
+datasets
+transformers
+evaluate
+torch
+accelerate
