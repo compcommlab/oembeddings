@@ -83,7 +83,8 @@ if __name__ == "__main__":
             "facebook",
             "twitter",
             "nationalrat",
-            "pressreleases"        
+            "pressreleases",
+            "autnes_sentiment"
             ],
     )
 
