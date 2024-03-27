@@ -2,6 +2,7 @@ library(RcppSimdJson)
 library(dplyr)
 library(stringr)
 library(ggplot2)
+
 syntactic_files <- Sys.glob("evaluation_results/semantic_syntactic/*/*.json")
 
 
@@ -27,6 +28,8 @@ df_syntactic <- df_syntactic |>
 
 j <- c()
 
+classification_files <- Sys.glob("evaluation_results/classification/*.json")
+
 for (task in c("twitter", "nationalrat", "autnes_automated_2019", "pressreleases", "autnes_automated_2017", "facebook", "autnes_sentiment")) {
     query_pointer <- paste0("/", task, "/metrics")
     tmp_j <- RcppSimdJson::fload(classification_files, query = query_pointer)
@@ -51,20 +54,49 @@ df$lowercase <- grepl("training_data_lower", df$parameter_string)
 df$min_count <- ordered(df$min_count, levels = sort(as.integer(unique(df$min_count))))
 df$window_size <- ordered(df$window_size, levels = sort(as.integer(unique(df$window_size))))
 
+if (!dir.exists('plots')) {
+    dir.create('plots')
+}
 
 # impact of lowercasing
-df |> ggplot(aes(y=score, fill=lowercase)) +
+p <- df |> ggplot(aes(y=score, fill=lowercase)) +
     geom_boxplot() +
+    ggtitle("Impact of lowercasing on model performance") +
     facet_wrap(~task)
 
+ggsave("plots/impact_lowercasing.png", p, width = 16, height = 16, units = "cm", scale = 2)
+
 # impact of mincount
-df |> ggplot(aes(y=score, fill=min_count)) +
+p <- df |> ggplot(aes(y=score, fill=min_count)) +
     geom_boxplot() +
+    ggtitle("Impact of Minimum Word Count on model performance") +
     facet_wrap(~task)
+
+ggsave("plots/impact_mincount.png", p, width = 16, height = 16, units = "cm", scale = 2)
 
 
 # impact of window size
-df |> ggplot(aes(y=score, fill=window_size)) +
+p <- df |> ggplot(aes(y=score, fill=window_size)) +
+    geom_boxplot() +
+    ggtitle("Impact of Window Size on model performance") +
+    facet_wrap(~task)
+
+ggsave("plots/impact_windowsize.png", p, width = 16, height = 16, units = "cm", scale = 2)
+
+
+# impact of mincount only using best models
+df |> group_by(parameter_string, task) |> 
+    mutate(overall_score = sum(score)) |> 
+    filter(overall_score == max(overall_score)) |> 
+    ggplot(aes(y=score, fill=min_count)) +
+    geom_boxplot() +
+    facet_wrap(~task)
+
+# impact of window_size only using best models
+df |> group_by(model_name, task) |> 
+    mutate(overall_score = sum(score)) |> 
+    filter(overall_score == max(overall_score)) |> 
+    ggplot(aes(y=score, fill=window_size)) +
     geom_boxplot() +
     facet_wrap(~task)
 
