@@ -435,12 +435,15 @@ def evaluate_model(model_path: str,
                    lowercase = False,
                    meta: dict = None) -> None:
 
-    if not model_path.endswith('.vec'):
+    if not model_path.endswith('.vec') and not Path(model_path).exists():
         model_path = model_path + '.vec'
 
     assert Path(model_path).exists(), f"Cannot find model at path {model_path}"
 
-    model = gensim.models.KeyedVectors.load_word2vec_format(model_path)
+    if model_path.endswith('.vec'):
+        model = gensim.models.KeyedVectors.load_word2vec_format(model_path)
+    else:
+        model = gensim.models.KeyedVectors.load(model_path)
 
     # execute evaluation
     logging.info(f'Model: {model_path}')
