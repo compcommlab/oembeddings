@@ -105,7 +105,7 @@ for task in tasks:
         families.add(family)
         models.add(model_name + '_' + family)
     assert len(families) == total_family_count, f"Problem in Semantic syntactic: not all families tested: {task}. No. Tested: {len(families)}"
-    assert len(models) == total_model_count, f"Problem in Semantic syntactic: not all families tested: {task}. No. Tested: {len(models)}"
+    assert len(models) == total_model_count, f"Problem in Semantic syntactic: not all models tested: {task}. No. Tested: {len(models)}"
 
 
 print('Passed!')
