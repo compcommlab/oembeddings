@@ -536,7 +536,7 @@ if __name__ == '__main__':
         create_semantic_testset()
     
     if args.model:
-        evaluate_model(args.model, args.topn, umlauts=args.umlauts, lowercase= 'lower' in args.model)
+        evaluate_model(args.model, args.topn, umlauts=args.umlauts, lowercase= 'lower' in args.model or 'wiki' in args.model)
     else:
         model_dir = get_data_dir()
         models_meta = [json.load(f.open()) for f in model_dir.glob('tmp_models/*/*.json')]
