@@ -81,7 +81,8 @@ if __name__ == '__main__':
     arg_parser.add_argument('--replace_numbers', action='store_true', help='Replace numbers with words (1 -> "eins")')
     arg_parser.add_argument('--remove_quotations', action='store_true', help='Remove quotation marks')
     arg_parser.add_argument('--genderstar', action='store_true', help='Preserve genderstar (normalize with underscore)')
-
+    arg_parser.add_argument('--before', type=str, default=None, help='Only consider articles on and before the given date (YYYY-MM-DD)')
+    arg_parser.add_argument('--after', type=str, default=None, help='Only consider articles on and after the given date (YYYY-MM-DD)')
     
     input_args = arg_parser.parse_args()
 
@@ -94,7 +95,14 @@ if __name__ == '__main__':
     n_threads = input_args.threads
 
     # get all article ids and reformat to clean list
-    article_ids = session.query(Article.id).all()
+    q = session.query(Article.id)
+    if input_args.before:
+        print(f'Got input argument "before": {input_args.before}')
+        q = q.filter(Article.date_published <= input_args.before)
+    if input_args.after:
+        print(f'Got input argument "after": {input_args.after}')
+        q = q.filter(Article.date_published <= input_args.after)
+    article_ids = q.all()
     article_ids = [a[0] for a in article_ids]
     if input_args.debug:
         import random
