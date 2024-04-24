@@ -101,7 +101,7 @@ if __name__ == '__main__':
         q = q.filter(Article.date_published <= input_args.before)
     if input_args.after:
         print(f'Got input argument "after": {input_args.after}')
-        q = q.filter(Article.date_published <= input_args.after)
+        q = q.filter(Article.date_published >= input_args.after)
     article_ids = q.all()
     article_ids = [a[0] for a in article_ids]
     if input_args.debug:
