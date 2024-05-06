@@ -14,7 +14,7 @@ To install run:
 module load miniconda3
 eval "$(conda shell.bash hook)"
 
-conda env create -n env-oembeddings --file oembeddings/conda.yml
+conda env create -n oembeddings --file oembeddings/conda.yml
 ```
 
 This takes a while!
