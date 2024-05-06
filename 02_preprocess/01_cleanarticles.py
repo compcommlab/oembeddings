@@ -104,6 +104,7 @@ if __name__ == '__main__':
         q = q.filter(Article.date_published >= input_args.after)
     article_ids = q.all()
     article_ids = [a[0] for a in article_ids]
+    print(f"Got {len(article_ids)} articles to parse")
     if input_args.debug:
         import random
         article_ids = random.sample(article_ids, 1000)

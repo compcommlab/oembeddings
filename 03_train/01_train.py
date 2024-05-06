@@ -90,7 +90,10 @@ if __name__ == '__main__':
     print('Model name:', model_name)
     print('Model path:', model_path)
 
-    command = [os.environ.get('FASTTEXT_PATH'), 
+    fasttext_path = Path(os.environ.get('FASTTEXT_PATH'))
+    assert fasttext_path.exists(), f"Could not find fasttext at this path: {fasttext_path}"
+
+    command = [fasttext_path, 
                input_args.model_type, 
                '-input', str(training_corpus.absolute()), 
                '-output', str(model_path.absolute()),
