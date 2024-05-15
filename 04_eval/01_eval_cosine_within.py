@@ -35,7 +35,8 @@
 """
 
 import sys
-sys.path.append('.')
+
+sys.path.append(".")
 
 import typing
 import itertools
@@ -49,7 +50,8 @@ import fasttext
 
 # Supress Fasttext warnings when loading a model
 import warnings
-warnings.filterwarnings('ignore')
+
+warnings.filterwarnings("ignore")
 
 from evaluation_data.cues import CUES
 from utils.similarity import calc_correlation
@@ -63,76 +65,93 @@ def compare_models(models: typing.Tuple[Path]) -> typing.List[dict]:
     model_a_meta = json.load(models[0].open())
     model_b_meta = json.load(models[1].open())
 
-    model_a = fasttext.load_model(model_a_meta["model_path"] + '.bin')
-    model_b = fasttext.load_model(model_b_meta["model_path"] + '.bin')
+    model_a = fasttext.load_model(model_a_meta["model_path"] + ".bin")
+    model_b = fasttext.load_model(model_b_meta["model_path"] + ".bin")
 
     shared_vocabulary = set(model_a.words) & set(model_b.words)
 
     words_random = random.sample(shared_vocabulary, 100)
 
-    corr_random = calc_correlation(model_a, model_b,
-                                words_random, vocabulary=shared_vocabulary)
+    corr_random = calc_correlation(
+        model_a, model_b, words_random, vocabulary=shared_vocabulary
+    )
 
-    results_random = dict(model_a_name=model_a_meta['name'],
-                    model_b_name=model_b_meta['name'],
-                    parameter_string=model_a_meta["parameter_string"],
-                    cues='random',
-                    correlation=corr_random.mean(),
-                    correlation_sd=corr_random.std(),
-                    correlation_type="Pearson's Rho")
-    
+    results_random = dict(
+        model_a_name=model_a_meta["name"],
+        model_b_name=model_b_meta["name"],
+        parameter_string=model_a_meta["parameter_string"],
+        cues="random",
+        correlation=corr_random.mean(),
+        correlation_sd=corr_random.std(),
+        correlation_type="Pearson's Rho",
+    )
+
     results.append(results_random)
 
     for cue, wordlist in CUES.items():
 
-        if 'lower' in model_a_meta['parameter_string']:
+        if "lower" in model_a_meta["parameter_string"]:
             wordlist = [w.lower() for w in wordlist]
 
         shared_wordlist = set(wordlist) & shared_vocabulary
-        corr = calc_correlation(model_a, model_b,
-                                shared_wordlist, vocabulary=shared_vocabulary)
+        corr = calc_correlation(
+            model_a, model_b, shared_wordlist, vocabulary=shared_vocabulary
+        )
 
-        cue_results = dict(model_a_name=model_a_meta['name'],
-                    model_b_name=model_b_meta['name'],
-                    parameter_string=model_a_meta["parameter_string"],
-                    cues=cue,
-                    correlation=corr.mean(),
-                    correlation_sd=corr.std(),
-                    correlation_type="Pearson's Rho")
-        
+        cue_results = dict(
+            model_a_name=model_a_meta["name"],
+            model_b_name=model_b_meta["name"],
+            parameter_string=model_a_meta["parameter_string"],
+            cues=cue,
+            correlation=corr.mean(),
+            correlation_sd=corr.std(),
+            correlation_type="Pearson's Rho",
+        )
+
         results.append(cue_results)
     return results
 
 
+if __name__ == "__main__":
 
-if __name__ == '__main__':
-
-    arg_parser = ArgumentParser(description="Evaluate correlations within the same parameter settings")
-    arg_parser.add_argument('--debug', action='store_true', help='Debug flag')
-    arg_parser.add_argument('--threads', type=int, default=12, help='Number of parallel processes (default: 12)')
+    arg_parser = ArgumentParser(
+        description="Evaluate correlations within the same parameter settings"
+    )
+    arg_parser.add_argument("--debug", action="store_true", help="Debug flag")
+    arg_parser.add_argument(
+        "--glob",
+        type=str,
+        default="tmp_models/*",
+        help="glob pattern for models to evaluate.",
+    )
+    arg_parser.add_argument(
+        "--threads",
+        type=int,
+        default=12,
+        help="Number of parallel processes (default: 12)",
+    )
     input_args = arg_parser.parse_args()
 
-    print('Within Correlations')
+    print("Within Correlations")
 
-    results_dir = p / 'evaluation_results' / 'within_correlations'
+    results_dir = p / "evaluation_results" / "within_correlations"
     if not results_dir.exists():
         results_dir.mkdir(parents=True)
 
     # Get different kinds of parameter settings
     model_dir = get_data_dir()
-    parameter_groups = [d for d in model_dir.glob('tmp_models/*') if d.is_dir()]
+    parameter_groups = [d for d in model_dir.glob("tmp_models/*") if d.is_dir()]
     for group in parameter_groups:
-        print('Evaluating Group:', group.name)
-        model_meta = [m for m in group.glob('*.json')]
+        print("Evaluating Group:", group.name)
+        model_meta = [m for m in group.glob("*.json")]
         model_combinations = itertools.combinations(model_meta, 2)
 
-        results_name = results_dir / f'{group.name}.json'
+        results_name = results_dir / f"{group.name}.json"
 
         with Pool(input_args.threads) as pool:
             group_results = pool.map(compare_models, model_combinations)
-        
+
         group_results = list(itertools.chain(*group_results))
 
-        with open(results_name, 'w') as f:
+        with open(results_name, "w") as f:
             json.dump(group_results, f)
-
