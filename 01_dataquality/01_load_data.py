@@ -27,7 +27,8 @@ if __name__ == '__main__':
     arg_parser = ArgumentParser(description="Load all feather files in 'raw_data' to the SQL Databse")
     arg_parser.add_argument('--debug', action='store_true', help='Debug flag: only load a random sample')
     arg_parser.add_argument('--clean', action='store_true', help='Clean the database before loading (delete all articles)')
-    
+    arg_parser.add_argument("--wikipedia", action='store_true', help='Only load wikipedia data')
+
     input_args = arg_parser.parse_args()
     
     session, engine = start_sqlsession()
@@ -39,7 +40,12 @@ if __name__ == '__main__':
 
     p = Path.cwd() / "raw_data"
 
-    for feather in p.rglob('*.feather'):
+    if input_args.wikipedia:
+        glob_pattern = "wikipedia.sample"
+    else:
+        glob_pattern = "*.feather"
+
+    for feather in p.rglob(glob_pattern):
         # get exisiting Articles by md5 id
         article_md5 = session.query(Article.article_md5).all()
         article_md5 = [a[0] for a in article_md5]

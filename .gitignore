@@ -173,3 +173,4 @@ evaluation_data/classification/*
 evaluation_results/*
 wandb/
 .Rproj.user
+wikipedia/
