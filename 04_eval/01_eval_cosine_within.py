@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
     # Get different kinds of parameter settings
     model_dir = get_data_dir()
-    parameter_groups = [d for d in model_dir.glob("tmp_models/*") if d.is_dir()]
+    parameter_groups = [d for d in model_dir.glob(input_args.glob) if d.is_dir()]
     for group in parameter_groups:
         print("Evaluating Group:", group.name)
         model_meta = [m for m in group.glob("*.json")]
