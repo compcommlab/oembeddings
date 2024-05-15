@@ -6,10 +6,12 @@
 
 - Install `requirements.txt`
 - Drop raw feather files for training data into `raw_data`
+    - we provide a sample dataset of wikipedia articles for demonstration purposes (`raw_data/wikipedia.sample`, stored in IPC feather format)
 - Drop evaluation data files in `evaluation_data/classification`
 - Copy `.env.template` to `.env`
 - Set your SQL Connect string in the `.env`
     - For testing, just use the default which is a sqlite database with the filename `database.db`
+    - We recommend using PostgreSQL, because it can easily handle concurrent connections
 - Install latest version of [fasttext](https://github.com/facebookresearch/fastText/) (see their documetnation)
 - *Important*: Set the path to the `fasttext` binary in your `.env` file
 - *Optional*: Install spaCy for sentence splitting. Download spacy model: `python -m spacy download de_core_news_lg`
@@ -19,7 +21,7 @@
 
 ## 01_dataquality
 
-- Load raw data (news articles) from feather files into SQL database. Use the `--debug` flag to only load a small sample of the full dataset (1000 articles per feather file).
+- Load raw data (news articles) from feather files into SQL database. Use the `--debug` flag to only load a small sample of the full dataset (1000 articles per feather file). Use the `--wikipedia` flag to only load the wikipedia sample (skipped by default)
 - Plot descriptive statistics of raw data
 
 ## 02_preprocessing
@@ -71,7 +73,7 @@ All text cleaning is handled by the function `clean_text()` (`utils/cleaning.py`
 - Recommended settings: `python3 02_preprocess/01_cleanarticles.py --remove_links --remove_emails --remove_emojis --remove_punctuation --replace_numbers --genderstar --threads 12`
 - Parameters are documented, use `python3 02_preprocess/01_cleanarticles.py --help` to get a description of each parameter.
 
-### Use single sentences (unused)
+### Use single sentences (unused / experimental)
 
 `02_preprocess/x_01_splitsentences.py`: split articles into sentences (uses spacy) and store them as raw sentences. Ensures each sentence is unique.
 
