@@ -174,3 +174,4 @@ evaluation_results/*
 wandb/
 .Rproj.user
 wikipedia/
+!raw_data/wikipedia.sample.xz
