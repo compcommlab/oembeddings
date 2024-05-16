@@ -124,31 +124,32 @@ if __name__ == '__main__':
         for raw_id in tqdm(article_ids, desc="Processing", unit="articles"):
             pool.apply(process_article, (raw_id, ), kwds=settings)
 
-    print('Calculating token counts')
-    clear_table = r"""
-        DO $$ 
-        BEGIN
-            IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'token_counts') THEN
-                -- If it exists, delete the table
-                DROP TABLE token_counts;
-            END IF;
-        END $$;
-    """
+    if 'postgresql' in engine.dialect.name:
+        print('Calculating token counts')
+        clear_table = r"""
+            DO $$ 
+            BEGIN
+                IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'token_counts') THEN
+                    -- If it exists, delete the table
+                    DROP TABLE token_counts;
+                END IF;
+            END $$;
+        """
 
-    count_tokens = """
-        CREATE TABLE token_counts AS
-        SELECT
-            word,
-            COUNT(*) AS count
-        FROM (
-            SELECT regexp_split_to_table(text, E'\\s') AS word
-            FROM processed_articles
-        ) AS subquery
-        GROUP BY word;
-    """
+        count_tokens = """
+            CREATE TABLE token_counts AS
+            SELECT
+                word,
+                COUNT(*) AS count
+            FROM (
+                SELECT regexp_split_to_table(text, E'\\s') AS word
+                FROM processed_articles
+            ) AS subquery
+            GROUP BY word;
+        """
 
-    with engine.connect() as con:
-        con.begin()
-        r1 = con.execute(sqlalchemy.text(clear_table))
-        r2 = con.execute(sqlalchemy.text(count_tokens))
-        con.commit()
+        with engine.connect() as con:
+            con.begin()
+            r1 = con.execute(sqlalchemy.text(clear_table))
+            r2 = con.execute(sqlalchemy.text(count_tokens))
+            con.commit()
