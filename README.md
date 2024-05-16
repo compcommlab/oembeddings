@@ -6,8 +6,10 @@
 
 - Install `requirements.txt`
 - Drop raw feather files for training data into `raw_data`
-    - we provide a sample dataset of wikipedia articles for demonstration purposes (`raw_data/wikipedia.sample`, stored in IPC feather format)
+    - we provide a sample dataset of wikipedia articles for demonstration purposes (`raw_data/wikipedia.sample.xz`, stored in IPC feather format)
+    - You need to decompress the wikipedia sample data before loading it (using this command on linux: `xz -d -k raw_data/wikipedia.sample.xz`)
 - Drop evaluation data files in `evaluation_data/classification`
+    - we cannot share the evaluation data derived from the AUTNES studies due to copyright 
 - Copy `.env.template` to `.env`
 - Set your SQL Connect string in the `.env`
     - For testing, just use the default which is a sqlite database with the filename `database.db`
