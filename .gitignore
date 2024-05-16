@@ -160,7 +160,7 @@ cython_debug/
 #.idea/
 
 
-raw_data/
+raw_data/*
 database.db
 data/
 tmp_models/
