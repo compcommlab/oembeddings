@@ -1,4 +1,5 @@
 library(RcppSimdJson)
+library(arrow)
 library(dplyr)
 library(forcats)
 library(ggplot2)
@@ -12,39 +13,9 @@ if (!dir.exists("plots")) {
   dir.create("plots")
 }
 
-model_meta <- RcppSimdJson::fload(Sys.glob("tmp_models/*/*.json"))
-model_meta <- dplyr::bind_rows(model_meta)
 
-# keep only models trained on VSC
-
-filt <- grepl("fs72169", model_meta$model_path)
-model_meta <- model_meta[filt, ]
-
-model_meta$model_id <- paste(model_meta$name, model_meta$parameter_string, sep = "_")
-
-model_meta$lowercase <- grepl("_lower", model_meta$training_corpus)
-model_meta$computation_time_hours <- model_meta$computation_time / 60 / 60
-
-model_families <- model_meta |>
-  select(model_type, min_count, dimensions, window_size, word_ngrams, epochs, learning_rate, lowercase, parameter_string) |>
-  distinct()
-
-# Computation Time
-p <- model_meta |>
-  mutate(window_size = as.factor(window_size)) |>
-  rename(
-    `Window Size` = window_size,
-    `Computation Time (hours)` = computation_time_hours,
-    `Minimum Count` = min_count
-  ) |>
-  ggplot(aes(x = `Window Size`, y = `Computation Time (hours)`, fill = lowercase)) +
-  geom_boxplot() +
-  facet_wrap(~`Minimum Count`, labeller = "label_both") +
-  theme_clean() +
-  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.4, end = 0.6) +
-  ggtitle("Training Duration")
-
-ggsave("plots/training_duration.png", p, width = 1920, height = 1080, units = "px", scale = 2)
+model_meta <- read_feather("evaluation_results/fasttext_models_meta.feather")
+model_families <- read_feather("evaluation_results/fasttext_model_families.feather")
 
 # Correlations: Within
 
@@ -52,7 +23,7 @@ if (!dir.exists("plots/within_correlation")) {
   dir.create("plots/within_correlation")
 }
 
-correlations_within <- RcppSimdJson::fload(Sys.glob("evaluation_results/within_correlations/*.json"))
+correlations_within <- RcppSimdJson::fload(Sys.glob("evaluation_results/*/within_correlations/*.json"))
 correlations_within <- dplyr::bind_rows(correlations_within)
 correlations_within <- left_join(correlations_within, model_families, by = "parameter_string")
 
@@ -63,12 +34,12 @@ p <- correlations_within |>
     `Within-Correlation` = correlation,
     `Minimum Count` = min_count
   ) |>
-  ggplot(aes(y = `Within-Correlation`, x = `Window Size`, fill = lowercase)) +
+  ggplot(aes(y = `Within-Correlation`, x = `Window Size`, fill = `Training Data`)) +
   geom_boxplot() +
   coord_cartesian(ylim = c(0.93, 1.0)) +
   facet_wrap(~`Minimum Count`, labeller = "label_both") +
   theme_clean() +
-  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.4, end = 0.6) +
+  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
   ggtitle("Within Correlations (All Cues)")
 
 ggsave("plots/within_correlation/within_correlation.png", p, width = 1920, height = 1080, units = "px", scale = 2)
@@ -81,12 +52,12 @@ p <- correlations_within |>
     `Within-Correlation` = correlation,
     `Minimum Count` = min_count
   ) |>
-  ggplot(aes(y = `Within-Correlation`, x = `Window Size`, fill = lowercase)) +
+  ggplot(aes(y = `Within-Correlation`, x = `Window Size`, fill = `Training Data`)) +
   geom_boxplot() +
   coord_cartesian(ylim = c(0.93, 1.0)) +
   facet_wrap(~`cues`, labeller = "label_both") +
   theme_clean() +
-  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.4, end = 0.6) +
+  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
   ggtitle("Within Correlations")
 
 ggsave("plots/within_correlation/within_correlation_cues.png", p, width = 1920, height = 1080, units = "px", scale = 2)
@@ -108,22 +79,29 @@ add_flipped <- function(x) {
   return(x)
 }
 
-correlations_across <- RcppSimdJson::fload(Sys.glob("evaluation_results/across_correlations/*.json"),
+correlations_across <- RcppSimdJson::fload(Sys.glob("evaluation_results/*/across_correlations/*.json"),
   parse_error_ok = TRUE
 )
 
 correlations_across <- bind_rows(correlations_across)
 correlations_across$lowercase <- str_detect(correlations_across$model_a_family, "_lower_") | str_detect(correlations_across$model_b_family, "_lower_")
+correlations_across$facebook <- str_detect(correlations_across$model_a_family, "cc_de_") | str_detect(correlations_across$model_b_family, "cc_de_")
+
+correlations_across <- correlations_across |> 
+  mutate(`Training Data` = if_else(
+    facebook, "Common Crawl", 
+    if_else(lowercase, "Lowercase", "Cased")))
 
 # Boxplots of cues
 
 p <- correlations_across |>
   group_by(cues) |>
-  ggplot(aes(y = correlation, x = cues, fill = lowercase)) +
+  ggplot(aes(y = correlation, x = cues, fill = `Training Data`)) +
   geom_boxplot() +
+  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
   theme_clean() +
-  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.4, end = 0.6) +
-  ggtitle("Across Correlations")
+  ggtitle("Across Correlations", 
+          subtitle = "Common Crawl (Facebook) correlations with our Cased models")
 
 ggsave("plots/across_correlation/across_correlation_variation.png", p, width = 1920, height = 1080, units = "px", scale = 2)
 ggsave("plots/across_correlation/across_correlation_variation.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
@@ -243,64 +221,3 @@ for (cue in c("mean", unique(correlations_across$cues))) {
     )
   }
 }
-
-# syntactic / semantic
-
-if (!dir.exists("plots/semantic_syntactic")) {
-  dir.create("plots/semantic_syntactic")
-}
-
-syntactic <- RcppSimdJson::fload(Sys.glob("evaluation_results/semantic_syntactic/*/*.json"))
-syntactic <- dplyr::bind_rows(syntactic)
-
-syntactic$model_id <- paste(syntactic$name, syntactic$parameter_string, sep = "_")
-syntactic <- left_join(syntactic, model_meta, by = "model_id")
-syntactic$`Coverage (%)` <- round((syntactic$coverage / syntactic$total_questions) * 100, digits = 2)
-
-# All models achieved 100% coverage!
-
-syntactic$`Correct (%)` <- round((syntactic$correct / syntactic$coverage) * 100, digits = 2)
-syntactic$`Correct (Top 10, %)` <- round((syntactic$top_n / syntactic$coverage) * 100, digits = 2)
-syntactic$`Sub-Task` <- as.factor(syntactic$task)
-syntactic$`Task` <- as.factor(syntactic$task_group)
-syntactic$`Task` <- fct_recode(syntactic$`Task`, "Best match (Semantic)" = "most_similar", "Syntactic" = "most_similar_groups", "Word Intrusion (Semantic)" = "word intrusion")
-
-p <- syntactic |>
-  filter(task != "total") |>
-  filter(!is.na(name.x)) |>
-  mutate(window_size = as.factor(window_size)) |>
-  rename(
-    `Window Size` = window_size,
-    `Computation Time (hours)` = computation_time_hours,
-    `Minimum Count` = min_count
-  ) |>
-  ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = lowercase)) +
-  geom_boxplot() +
-  facet_wrap(~`Task`, labeller = "label_both", ncol = 3) +
-  theme_clean() +
-  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.4, end = 0.6) +
-  ggtitle("Syntactic / Semantic (strict)")
-
-ggsave("plots/semantic_syntactic/results_strict.png", p, width = 1920, height = 1080, units = "px", scale = 2)
-ggsave("plots/semantic_syntactic/results_strict.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
-
-
-p <- syntactic |>
-  filter(task != "total") |>
-  filter(!is.na(name.x)) |>
-  filter(!is.na(`Correct (Top 10, %)`)) |>
-  mutate(window_size = as.factor(window_size)) |>
-  rename(
-    `Window Size` = window_size,
-    `Computation Time (hours)` = computation_time_hours,
-    `Minimum Count` = min_count
-  ) |>
-  ggplot(aes(x = `Window Size`, y = `Correct (Top 10, %)`, fill = lowercase)) +
-  geom_boxplot() +
-  facet_wrap(~`Task`, labeller = "label_both") +
-  theme_clean() +
-  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.4, end = 0.6) +
-  ggtitle("Syntactic / Semantic (Top 10)")
-
-ggsave("plots/semantic_syntactic/results_top10.png", p, width = 1920, height = 1080, units = "px", scale = 2)
-ggsave("plots/semantic_syntactic/results_top10.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
