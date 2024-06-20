@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 333,
+ "top_n": 429,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.6180553436279297,
+ "name": "angeregter_lucca",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount100_ws5_dims300"
+}

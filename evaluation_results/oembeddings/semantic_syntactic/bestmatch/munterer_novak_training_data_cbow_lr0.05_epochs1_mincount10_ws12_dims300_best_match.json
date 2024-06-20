@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 269,
+ "top_n": 405,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 23.093480587005615,
+ "name": "munterer_novak",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws12_dims300"
+}

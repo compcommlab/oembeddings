@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 267,
+ "top_n": 396,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 36.520634174346924,
+ "name": "aktive_sibylle",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300"
+}

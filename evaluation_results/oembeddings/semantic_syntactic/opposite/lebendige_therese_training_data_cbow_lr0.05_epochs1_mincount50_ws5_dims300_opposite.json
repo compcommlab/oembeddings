@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 39,
+ "top_n": 132,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 2.769613027572632,
+ "name": "lebendige_therese",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount50_ws5_dims300"
+}

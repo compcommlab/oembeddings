@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.4108406603336334,
+    "eval_f1": 0.0,
+    "eval_precision": 0.0,
+    "eval_recall": 0.0,
+    "eval_runtime": 1.8999,
+    "eval_samples_per_second": 100.006,
+    "eval_steps_per_second": 12.632,
+    "epoch": 4.0,
+    "dataset": "autnes_automated_2019",
+    "model": "xlm-roberta-base"
+}

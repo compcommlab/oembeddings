@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.5653461813926697,
+    "eval_f1": 0.711684681790796,
+    "eval_precision": 0.6754585708521488,
+    "eval_recall": 0.780860079620853,
+    "eval_runtime": 104.1451,
+    "eval_samples_per_second": 288.511,
+    "eval_steps_per_second": 36.065,
+    "epoch": 2.0,
+    "dataset": "pressreleases",
+    "model": "deepset/gbert-base"
+}

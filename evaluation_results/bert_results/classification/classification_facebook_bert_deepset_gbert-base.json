@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.44478365778923035,
+    "eval_f1": 0.8550590774672141,
+    "eval_precision": 0.8692413415723894,
+    "eval_recall": 0.8435048179417051,
+    "eval_runtime": 75.5754,
+    "eval_samples_per_second": 278.662,
+    "eval_steps_per_second": 34.839,
+    "epoch": 2.0,
+    "dataset": "facebook",
+    "model": "deepset/gbert-base"
+}

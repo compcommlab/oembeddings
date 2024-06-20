@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 268,
+ "top_n": 404,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 22.935840606689453,
+ "name": "grandioser_christof",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws12_dims300"
+}

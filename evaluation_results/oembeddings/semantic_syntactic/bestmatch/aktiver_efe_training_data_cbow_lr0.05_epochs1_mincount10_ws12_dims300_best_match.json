@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 263,
+ "top_n": 409,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 23.20446014404297,
+ "name": "aktiver_efe",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws12_dims300"
+}

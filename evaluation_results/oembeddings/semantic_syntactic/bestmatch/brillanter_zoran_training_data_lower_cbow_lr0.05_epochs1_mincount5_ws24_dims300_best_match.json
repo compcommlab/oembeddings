@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 249,
+ "top_n": 398,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 36.44227910041809,
+ "name": "brillanter_zoran",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300"
+}

@@ -170,7 +170,6 @@ evaluation_data/devmount/*.questions*
 evaluation_data/classification/*
 !evaluation_data/classification/million_posts_sentiment.feather
 
-evaluation_results/*
 wandb/
 .Rproj.user
 wikipedia/

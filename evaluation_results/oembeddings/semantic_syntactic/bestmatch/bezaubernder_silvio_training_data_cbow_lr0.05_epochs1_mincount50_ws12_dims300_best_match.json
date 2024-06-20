@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 299,
+ "top_n": 425,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 4.489001035690308,
+ "name": "bezaubernder_silvio",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount50_ws12_dims300"
+}

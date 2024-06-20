@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.3802222013473511,
+    "eval_f1": 0.8875930144781806,
+    "eval_precision": 0.9032326823889966,
+    "eval_recall": 0.8740290006028442,
+    "eval_runtime": 96.4477,
+    "eval_samples_per_second": 513.18,
+    "eval_steps_per_second": 64.149,
+    "epoch": 2.0,
+    "dataset": "twitter",
+    "model": "distilbert-base-multilingual-cased"
+}

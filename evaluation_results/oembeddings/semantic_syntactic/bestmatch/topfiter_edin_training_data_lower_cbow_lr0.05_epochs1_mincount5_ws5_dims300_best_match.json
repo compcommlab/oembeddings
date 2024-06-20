@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 282,
+ "top_n": 380,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 38.255929470062256,
+ "name": "topfiter_edin",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws5_dims300"
+}

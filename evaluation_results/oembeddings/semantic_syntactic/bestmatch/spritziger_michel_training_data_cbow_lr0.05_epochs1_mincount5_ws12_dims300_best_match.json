@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 243,
+ "top_n": 383,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 39.971484422683716,
+ "name": "spritziger_michel",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws12_dims300"
+}

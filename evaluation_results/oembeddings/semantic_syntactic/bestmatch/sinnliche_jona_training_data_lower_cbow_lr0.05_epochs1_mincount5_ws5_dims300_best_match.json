@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 281,
+ "top_n": 382,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 38.261226654052734,
+ "name": "sinnliche_jona",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws5_dims300"
+}

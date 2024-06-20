@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 77,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.885866641998291,
+ "name": "distilbert-base-multilingual-cased",
+ "parameter_string": "distillbert"
+}

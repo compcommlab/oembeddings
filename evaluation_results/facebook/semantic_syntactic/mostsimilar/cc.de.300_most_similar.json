@@ -1,0 +1,275 @@
+[
+ {
+  "task_group": "most_similar_groups",
+  "task": "nouns: SI/PL",
+  "correct": 227,
+  "top_n": 436,
+  "n": 10,
+  "coverage": 500,
+  "total_questions": 500,
+  "duration": 81.38021230697632,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "nouns: PL/SI",
+  "correct": 175,
+  "top_n": 399,
+  "n": 10,
+  "coverage": 500,
+  "total_questions": 500,
+  "duration": 84.39322066307068,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "adjectives: GR/KOM",
+  "correct": 322,
+  "top_n": 420,
+  "n": 10,
+  "coverage": 490,
+  "total_questions": 500,
+  "duration": 85.92279028892517,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "adjectives: KOM/GR",
+  "correct": 298,
+  "top_n": 418,
+  "n": 10,
+  "coverage": 491,
+  "total_questions": 500,
+  "duration": 92.45520567893982,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "adjectives: GR/SUP",
+  "correct": 208,
+  "top_n": 325,
+  "n": 10,
+  "coverage": 405,
+  "total_questions": 500,
+  "duration": 80.95775961875916,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "adjectives: SUP/GR",
+  "correct": 177,
+  "top_n": 309,
+  "n": 10,
+  "coverage": 400,
+  "total_questions": 500,
+  "duration": 82.37776446342468,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "adjectives: KOM/SUP",
+  "correct": 248,
+  "top_n": 350,
+  "n": 10,
+  "coverage": 401,
+  "total_questions": 500,
+  "duration": 86.13322448730469,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "adjectives: SUP/KOM",
+  "correct": 205,
+  "top_n": 323,
+  "n": 10,
+  "coverage": 395,
+  "total_questions": 500,
+  "duration": 85.61519837379456,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "verbs (pres): INF/1SP",
+  "correct": 369,
+  "top_n": 474,
+  "n": 10,
+  "coverage": 500,
+  "total_questions": 500,
+  "duration": 82.81890416145325,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "verbs (pres): 1SP/INF",
+  "correct": 419,
+  "top_n": 486,
+  "n": 10,
+  "coverage": 500,
+  "total_questions": 500,
+  "duration": 79.51163029670715,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "verbs (pres): INF/2PP",
+  "correct": 288,
+  "top_n": 396,
+  "n": 10,
+  "coverage": 482,
+  "total_questions": 500,
+  "duration": 85.80673861503601,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "verbs (pres): 2PP/INF",
+  "correct": 360,
+  "top_n": 437,
+  "n": 10,
+  "coverage": 478,
+  "total_questions": 500,
+  "duration": 85.73036646842957,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "verbs (pres): 1SP/2PP",
+  "correct": 263,
+  "top_n": 358,
+  "n": 10,
+  "coverage": 479,
+  "total_questions": 500,
+  "duration": 86.88565325737,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "verbs (pres): 2PP/1SP",
+  "correct": 288,
+  "top_n": 415,
+  "n": 10,
+  "coverage": 483,
+  "total_questions": 500,
+  "duration": 84.95374822616577,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "verbs (past): INF/3SV",
+  "correct": 356,
+  "top_n": 470,
+  "n": 10,
+  "coverage": 500,
+  "total_questions": 500,
+  "duration": 84.58285355567932,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "verbs (past): 3SV/INF",
+  "correct": 311,
+  "top_n": 471,
+  "n": 10,
+  "coverage": 500,
+  "total_questions": 500,
+  "duration": 81.56184363365173,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "verbs (past): INF/3PV",
+  "correct": 411,
+  "top_n": 479,
+  "n": 10,
+  "coverage": 500,
+  "total_questions": 500,
+  "duration": 75.56194639205933,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "verbs (past): 3PV/INF",
+  "correct": 427,
+  "top_n": 477,
+  "n": 10,
+  "coverage": 500,
+  "total_questions": 500,
+  "duration": 74.31461119651794,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "verbs (past): 3SV/3PV",
+  "correct": 466,
+  "top_n": 497,
+  "n": 10,
+  "coverage": 500,
+  "total_questions": 500,
+  "duration": 74.02704644203186,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "verbs (past): 3PV/3SV",
+  "correct": 483,
+  "top_n": 500,
+  "n": 10,
+  "coverage": 500,
+  "total_questions": 500,
+  "duration": 72.94169235229492,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ },
+ {
+  "task_group": "most_similar_groups",
+  "task": "total",
+  "correct": 6301,
+  "top_n": 8440,
+  "n": 10,
+  "coverage": 9504,
+  "total_questions": 10000,
+  "duration": 1647.932410478592,
+  "name": "cc_de_300",
+  "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+ 
+ }
+]

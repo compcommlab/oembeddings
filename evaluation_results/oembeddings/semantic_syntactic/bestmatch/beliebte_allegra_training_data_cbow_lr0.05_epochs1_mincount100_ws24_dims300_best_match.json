@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 304,
+ "top_n": 437,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.747657537460327,
+ "name": "beliebte_allegra",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws24_dims300"
+}

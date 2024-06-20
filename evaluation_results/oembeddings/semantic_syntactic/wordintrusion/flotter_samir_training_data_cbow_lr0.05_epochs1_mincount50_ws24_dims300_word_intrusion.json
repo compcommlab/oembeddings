@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 99,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.03619861602783203,
+ "name": "flotter_samir",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount50_ws24_dims300"
+}

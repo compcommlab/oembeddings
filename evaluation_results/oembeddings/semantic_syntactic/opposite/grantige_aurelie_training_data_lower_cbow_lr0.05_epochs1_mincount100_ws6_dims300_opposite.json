@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 36,
+ "top_n": 116,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 1.3547706604003906,
+ "name": "grantige_aurelie",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount100_ws6_dims300"
+}

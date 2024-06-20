@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 36,
+ "top_n": 93,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 1.2866065502166748,
+ "name": "beliebte_sandrina",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount100_ws24_dims300"
+}

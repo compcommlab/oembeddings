@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 322,
+ "top_n": 435,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.6758644580841064,
+ "name": "vitaler_malek",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount100_ws5_dims300"
+}

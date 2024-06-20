@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.3731019198894501,
+    "eval_f1": 0.8951103004569934,
+    "eval_precision": 0.9062755910542719,
+    "eval_recall": 0.8850597299168166,
+    "eval_runtime": 171.6464,
+    "eval_samples_per_second": 288.354,
+    "eval_steps_per_second": 36.045,
+    "epoch": 2.0,
+    "dataset": "twitter",
+    "model": "uklfr/gottbert-base"
+}

@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 283,
+ "top_n": 383,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 38.2868332862854,
+ "name": "mutige_nele",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws5_dims300"
+}

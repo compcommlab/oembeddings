@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 29,
+ "top_n": 80,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 21.21744704246521,
+ "name": "aktive_tijana",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws6_dims300"
+}

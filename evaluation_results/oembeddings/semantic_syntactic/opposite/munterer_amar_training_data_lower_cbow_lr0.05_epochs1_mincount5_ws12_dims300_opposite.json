@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 17,
+ "top_n": 67,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 21.2854585647583,
+ "name": "munterer_amar",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws12_dims300"
+}

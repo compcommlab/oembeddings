@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 293,
+ "top_n": 430,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 3.510282516479492,
+ "name": "perfekte_hiranur",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount50_ws24_dims300"
+}

@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 32,
+ "top_n": 79,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 21.6791250705719,
+ "name": "fescher_emre",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws5_dims300"
+}

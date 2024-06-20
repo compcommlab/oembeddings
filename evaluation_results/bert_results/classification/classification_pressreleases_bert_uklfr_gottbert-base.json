@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.5650167465209961,
+    "eval_f1": 0.71261148612189,
+    "eval_precision": 0.6882646630212715,
+    "eval_recall": 0.768658969164185,
+    "eval_runtime": 104.7079,
+    "eval_samples_per_second": 286.96,
+    "eval_steps_per_second": 35.871,
+    "epoch": 2.0,
+    "dataset": "pressreleases",
+    "model": "uklfr/gottbert-base"
+}

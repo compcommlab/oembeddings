@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 99,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.026485919952392578,
+ "name": "stilvolle_katrin",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount10_ws12_dims300"
+}

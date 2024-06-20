@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 31,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 1.3117475509643555,
+ "name": "xlm-roberta-base",
+ "parameter_string": "xlm-roberta"
+}

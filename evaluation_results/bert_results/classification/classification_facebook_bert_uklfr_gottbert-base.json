@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.4359986186027527,
+    "eval_f1": 0.8565923070851416,
+    "eval_precision": 0.8722638398675878,
+    "eval_recall": 0.8446864157023942,
+    "eval_runtime": 73.5821,
+    "eval_samples_per_second": 286.211,
+    "eval_steps_per_second": 35.783,
+    "epoch": 2.0,
+    "dataset": "facebook",
+    "model": "uklfr/gottbert-base"
+}

@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 295,
+ "top_n": 423,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 4.6467673778533936,
+ "name": "mutige_dilan",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount50_ws5_dims300"
+}

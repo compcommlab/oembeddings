@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 325,
+ "top_n": 439,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.8557403087615967,
+ "name": "vitaler_moritz",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws12_dims300"
+}

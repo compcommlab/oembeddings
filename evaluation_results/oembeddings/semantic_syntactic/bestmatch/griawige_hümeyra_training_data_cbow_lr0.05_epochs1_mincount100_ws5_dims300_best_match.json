@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 317,
+ "top_n": 427,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.7916207313537598,
+ "name": "griawige_h\u00fcmeyra",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws5_dims300"
+}

@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 46,
+ "top_n": 139,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 1.453772783279419,
+ "name": "spontane_marietta",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws5_dims300"
+}

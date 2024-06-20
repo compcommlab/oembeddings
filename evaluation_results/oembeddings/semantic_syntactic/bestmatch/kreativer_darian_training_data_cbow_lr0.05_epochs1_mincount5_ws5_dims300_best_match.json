@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 258,
+ "top_n": 376,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 40.710549116134644,
+ "name": "kreativer_darian",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws5_dims300"
+}

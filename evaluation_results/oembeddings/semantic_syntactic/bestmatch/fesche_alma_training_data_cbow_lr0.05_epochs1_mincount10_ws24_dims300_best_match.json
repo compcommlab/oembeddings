@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 255,
+ "top_n": 408,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 22.26621675491333,
+ "name": "fesche_alma",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws24_dims300"
+}

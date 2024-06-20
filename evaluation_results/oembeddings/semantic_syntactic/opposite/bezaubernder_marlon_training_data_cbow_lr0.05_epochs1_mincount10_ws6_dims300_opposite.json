@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 33,
+ "top_n": 95,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 13.259111881256104,
+ "name": "bezaubernder_marlon",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws6_dims300"
+}

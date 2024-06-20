@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 101,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.025542020797729492,
+ "name": "bezaubernde_silvana",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount100_ws5_dims300"
+}

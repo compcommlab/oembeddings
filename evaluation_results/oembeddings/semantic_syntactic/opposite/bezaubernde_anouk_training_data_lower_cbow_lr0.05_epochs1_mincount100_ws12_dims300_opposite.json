@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 30,
+ "top_n": 104,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 1.433048963546753,
+ "name": "bezaubernde_anouk",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount100_ws12_dims300"
+}

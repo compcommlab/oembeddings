@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 21,
+ "top_n": 72,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 21.48289203643799,
+ "name": "uriger_alparslan",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws12_dims300"
+}

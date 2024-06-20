@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 96,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.02755427360534668,
+ "name": "freudige_jeannine",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws24_dims300"
+}

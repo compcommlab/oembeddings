@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 275,
+ "top_n": 406,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 20.273083448410034,
+ "name": "spritziger_islam",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount10_ws12_dims300"
+}

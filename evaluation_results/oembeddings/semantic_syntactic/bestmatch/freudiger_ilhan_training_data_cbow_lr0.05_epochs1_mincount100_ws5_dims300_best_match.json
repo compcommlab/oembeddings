@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 320,
+ "top_n": 435,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.819577217102051,
+ "name": "freudiger_ilhan",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws5_dims300"
+}

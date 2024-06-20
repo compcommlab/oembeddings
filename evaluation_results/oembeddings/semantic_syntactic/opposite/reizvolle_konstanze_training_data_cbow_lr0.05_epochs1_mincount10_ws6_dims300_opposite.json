@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 32,
+ "top_n": 104,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 13.02998971939087,
+ "name": "reizvolle_konstanze",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws6_dims300"
+}

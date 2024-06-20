@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.817516028881073,
+    "eval_f1": 0.649514046744769,
+    "eval_precision": 0.6577185374971893,
+    "eval_recall": 0.6441996093170231,
+    "eval_runtime": 3.4606,
+    "eval_samples_per_second": 265.847,
+    "eval_steps_per_second": 33.231,
+    "epoch": 2.0,
+    "dataset": "autnes_sentiment",
+    "model": "xlm-roberta-base"
+}

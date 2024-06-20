@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 414,
+ "top_n": 486,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 86.63532066345215,
+ "name": "cc_de_300",
+ "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+}

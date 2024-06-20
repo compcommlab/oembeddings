@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 321,
+ "top_n": 426,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 3.491093635559082,
+ "name": "mutige_julia",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount50_ws6_dims300"
+}

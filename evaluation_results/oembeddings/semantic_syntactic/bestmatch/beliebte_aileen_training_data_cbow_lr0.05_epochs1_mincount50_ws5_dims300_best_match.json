@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 298,
+ "top_n": 419,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 5.239021062850952,
+ "name": "beliebte_aileen",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount50_ws5_dims300"
+}

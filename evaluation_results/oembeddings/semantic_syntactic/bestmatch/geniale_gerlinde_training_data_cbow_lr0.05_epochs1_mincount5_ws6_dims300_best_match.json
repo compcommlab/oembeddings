@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 250,
+ "top_n": 373,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 41.48017477989197,
+ "name": "geniale_gerlinde",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws6_dims300"
+}

@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.4523039758205414,
+    "eval_f1": 0.836213851655085,
+    "eval_precision": 0.8464763956381715,
+    "eval_recall": 0.8295512029964744,
+    "eval_runtime": 71.665,
+    "eval_samples_per_second": 293.867,
+    "eval_steps_per_second": 36.74,
+    "epoch": 2.0,
+    "dataset": "facebook",
+    "model": "xlm-roberta-base"
+}

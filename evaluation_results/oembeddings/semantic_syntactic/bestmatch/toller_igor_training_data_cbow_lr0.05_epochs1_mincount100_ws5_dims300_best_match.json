@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 317,
+ "top_n": 434,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.87235164642334,
+ "name": "toller_igor",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws5_dims300"
+}

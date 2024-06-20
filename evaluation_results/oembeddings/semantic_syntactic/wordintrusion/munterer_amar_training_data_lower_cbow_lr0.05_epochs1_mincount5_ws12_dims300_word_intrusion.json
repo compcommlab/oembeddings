@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 94,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.026329994201660156,
+ "name": "munterer_amar",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws12_dims300"
+}

@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 40,
+ "top_n": 128,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 1.445967674255371,
+ "name": "toller_kai",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws12_dims300"
+}

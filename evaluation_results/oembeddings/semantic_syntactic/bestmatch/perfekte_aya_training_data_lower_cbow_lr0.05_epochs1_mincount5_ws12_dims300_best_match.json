@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 264,
+ "top_n": 387,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 39.42029118537903,
+ "name": "perfekte_aya",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws12_dims300"
+}

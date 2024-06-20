@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 283,
+ "top_n": 392,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 23.81059718132019,
+ "name": "gefinkelter_phillip",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws6_dims300"
+}

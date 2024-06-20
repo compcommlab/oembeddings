@@ -1,0 +1,26 @@
+[
+ {
+  "task_group": "most_similar_groups",
+  "task": "opposite",
+  "correct": 144,
+  "top_n": 291,
+  "n": 10,
+  "coverage": 300,
+  "total_questions": 300,
+  "duration": 4.186981201171875,
+  "name": "deepset_gbert-base",
+  "parameter_string": "deepset_gbert"
+ },
+ {
+  "task_group": "most_similar",
+  "task": "best match",
+  "correct": 85,
+  "top_n": 155,
+  "n": 10,
+  "coverage": 540,
+  "total_questions": 540,
+  "duration": 6.8285510540008545,
+  "name": "deepset_gbert-base",
+  "parameter_string": "deepset_gbert"
+ }
+]

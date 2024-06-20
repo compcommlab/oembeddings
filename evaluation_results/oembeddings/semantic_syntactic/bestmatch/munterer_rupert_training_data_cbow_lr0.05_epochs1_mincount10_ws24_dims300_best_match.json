@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 258,
+ "top_n": 415,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 22.562928915023804,
+ "name": "munterer_rupert",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws24_dims300"
+}

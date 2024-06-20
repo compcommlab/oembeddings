@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 326,
+ "top_n": 445,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.8126518726348877,
+ "name": "geniale_josefine",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws12_dims300"
+}

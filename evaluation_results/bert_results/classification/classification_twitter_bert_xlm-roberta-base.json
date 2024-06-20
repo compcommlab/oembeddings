@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.4032258689403534,
+    "eval_f1": 0.8799463345213285,
+    "eval_precision": 0.8981690885584559,
+    "eval_recall": 0.8650520804413881,
+    "eval_runtime": 176.5706,
+    "eval_samples_per_second": 280.313,
+    "eval_steps_per_second": 35.04,
+    "epoch": 2.0,
+    "dataset": "twitter",
+    "model": "xlm-roberta-base"
+}

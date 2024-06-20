@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 312,
+ "top_n": 421,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 4.641722679138184,
+ "name": "gescheite_lisa-marie",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount50_ws5_dims300"
+}

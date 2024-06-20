@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 289,
+ "top_n": 400,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 20.63076114654541,
+ "name": "tapferer_denny",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount10_ws6_dims300"
+}

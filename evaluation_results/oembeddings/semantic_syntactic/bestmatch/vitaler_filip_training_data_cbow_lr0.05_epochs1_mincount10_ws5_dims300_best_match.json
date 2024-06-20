@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 268,
+ "top_n": 393,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 23.324750661849976,
+ "name": "vitaler_filip",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws5_dims300"
+}

@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 102,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.025125980377197266,
+ "name": "reizvoller_khalid",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws6_dims300"
+}

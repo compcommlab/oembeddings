@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 319,
+ "top_n": 436,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.611410140991211,
+ "name": "gescheite_nele",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount100_ws24_dims300"
+}

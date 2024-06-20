@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 301,
+ "top_n": 425,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 4.651005029678345,
+ "name": "muntere_davina",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount50_ws6_dims300"
+}

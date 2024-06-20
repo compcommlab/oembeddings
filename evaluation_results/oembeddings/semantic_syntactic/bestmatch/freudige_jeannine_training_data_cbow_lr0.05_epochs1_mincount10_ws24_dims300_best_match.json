@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 260,
+ "top_n": 413,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 22.447874546051025,
+ "name": "freudige_jeannine",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws24_dims300"
+}

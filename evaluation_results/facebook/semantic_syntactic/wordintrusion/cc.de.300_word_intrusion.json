@@ -1,0 +1,11 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 105,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.09650111198425293,
+ "name": "cc_de_300",
+ "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300"
+
+}

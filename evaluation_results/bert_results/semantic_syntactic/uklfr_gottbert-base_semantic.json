@@ -1,0 +1,26 @@
+[
+ {
+  "task_group": "most_similar_groups",
+  "task": "opposite",
+  "correct": 114,
+  "top_n": 179,
+  "n": 10,
+  "coverage": 300,
+  "total_questions": 300,
+  "duration": 4.317717790603638,
+  "name": "uklfr_gottbert-base",
+  "parameter_string": "uklfr_gottbert"
+ },
+ {
+  "task_group": "most_similar",
+  "task": "best match",
+  "correct": 48,
+  "top_n": 144,
+  "n": 10,
+  "coverage": 540,
+  "total_questions": 540,
+  "duration": 7.445526838302612,
+  "name": "uklfr_gottbert-base",
+  "parameter_string": "uklfr_gottbert"
+ }
+]

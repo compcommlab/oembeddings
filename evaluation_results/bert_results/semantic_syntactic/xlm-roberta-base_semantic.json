@@ -1,0 +1,26 @@
+[
+ {
+  "task_group": "most_similar_groups",
+  "task": "opposite",
+  "correct": 101,
+  "top_n": 178,
+  "n": 10,
+  "coverage": 300,
+  "total_questions": 300,
+  "duration": 5.400507926940918,
+  "name": "xlm-roberta-base",
+  "parameter_string": "xlm-roberta"
+ },
+ {
+  "task_group": "most_similar",
+  "task": "best match",
+  "correct": 36,
+  "top_n": 126,
+  "n": 10,
+  "coverage": 540,
+  "total_questions": 540,
+  "duration": 10.973470211029053,
+  "name": "xlm-roberta-base",
+  "parameter_string": "xlm-roberta"
+ }
+]

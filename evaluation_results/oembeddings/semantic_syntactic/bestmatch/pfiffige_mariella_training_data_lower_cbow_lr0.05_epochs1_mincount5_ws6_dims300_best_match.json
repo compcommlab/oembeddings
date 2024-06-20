@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 268,
+ "top_n": 385,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 37.99844169616699,
+ "name": "pfiffige_mariella",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws6_dims300"
+}

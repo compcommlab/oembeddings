@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 99,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.026206016540527344,
+ "name": "angeregter_nicola",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount10_ws6_dims300"
+}
