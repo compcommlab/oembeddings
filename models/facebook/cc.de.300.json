@@ -1,0 +1,14 @@
+{
+    "name": "cc_de_300",
+    "training_corpus": "Common Crawl",
+    "model_type": "cbow",
+    "learning_rate": 0.1,
+    "epochs": 1,
+    "word_ngrams": 1,
+    "min_count": 5,
+    "window_size": 5,
+    "dimensions": 300,
+    "parameter_string": "commoncrawl_lr0.1_epochs5_mincount1_ws5_dims300",
+    "model_path": "/gpfs/data/fs72169/user/tmp_models/cc_de_300/cc.de.300",
+    "vocab_size": 2000000
+}

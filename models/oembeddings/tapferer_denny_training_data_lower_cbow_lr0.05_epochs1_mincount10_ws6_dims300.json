@@ -1,0 +1,16 @@
+{
+ "name": "tapferer_denny",
+ "training_corpus": "/home/fs72169/user/oembeddings/data/training_data_lower.txt",
+ "model_type": "cbow",
+ "learning_rate": 0.05,
+ "epochs": 1,
+ "word_ngrams": 1,
+ "min_count": 10,
+ "window_size": 6,
+ "dimensions": 300,
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount10_ws6_dims300",
+ "model_path": "/gpfs/data/fs72169/user/tmp_models/training_data_lower_cbow_lr0.05_epochs1_mincount10_ws6_dims300/tapferer_denny_training_data_lower_cbow_lr0.05_epochs1_mincount10_ws6_dims300",
+ "computation_time": 8084.110244035721,
+ "avg_loss": 1.390113,
+ "vocab_size": 966106
+}

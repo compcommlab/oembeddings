@@ -1,0 +1,14 @@
+{
+    "name": "wiki_de_300",
+    "training_corpus": "Wikipedia",
+    "model_type": "skipgram",
+    "learning_rate": 0.1,
+    "epochs": 1,
+    "word_ngrams": 1,
+    "min_count": 5,
+    "window_size": 5,
+    "dimensions": 300,
+    "parameter_string": "wikipedia_lr0.1_epochs5_mincount1_ws5_dims300",
+    "model_path": "/gpfs/data/fs72169/user/tmp_models/wiki_de_300/wiki.de",
+    "vocab_size": 2275233
+}

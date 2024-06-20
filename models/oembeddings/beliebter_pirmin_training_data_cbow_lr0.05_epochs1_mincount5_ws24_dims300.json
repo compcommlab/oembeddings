@@ -1,0 +1,16 @@
+{
+ "name": "beliebter_pirmin",
+ "training_corpus": "/home/fs72169/user/oembeddings/data/training_data.txt",
+ "model_type": "cbow",
+ "learning_rate": 0.05,
+ "epochs": 1,
+ "word_ngrams": 1,
+ "min_count": 5,
+ "window_size": 24,
+ "dimensions": 300,
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws24_dims300",
+ "model_path": "/gpfs/data/fs72169/user/tmp_models/training_data_cbow_lr0.05_epochs1_mincount5_ws24_dims300/beliebter_pirmin_training_data_cbow_lr0.05_epochs1_mincount5_ws24_dims300",
+ "computation_time": 28404.375603675842,
+ "avg_loss": 1.64757,
+ "vocab_size": 1588979
+}

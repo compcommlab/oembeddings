@@ -1,0 +1,16 @@
+{
+ "name": "tolle_greta",
+ "training_corpus": "/home/fs72169/user/oembeddings/data/training_data.txt",
+ "model_type": "cbow",
+ "learning_rate": 0.05,
+ "epochs": 1,
+ "word_ngrams": 1,
+ "min_count": 10,
+ "window_size": 12,
+ "dimensions": 300,
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws12_dims300",
+ "model_path": "/gpfs/data/fs72169/user/tmp_models/training_data_cbow_lr0.05_epochs1_mincount10_ws12_dims300/tolle_greta_training_data_cbow_lr0.05_epochs1_mincount10_ws12_dims300",
+ "computation_time": 14723.785200595856,
+ "avg_loss": 1.61311,
+ "vocab_size": 1036155
+}
