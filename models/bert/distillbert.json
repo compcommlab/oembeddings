@@ -1,0 +1,9 @@
+{
+    "name": "distilbert-base-multilingual-cased",
+    "training_corpus": "Wikipedia",
+    "model_type": "bert",
+    "dimensions": 768,
+    "parameter_string": "distillbert",
+    "model_path": "distilbert/distilbert-base-multilingual-cased",
+    "vocab_size": 119547
+}

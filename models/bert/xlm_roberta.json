@@ -1,0 +1,9 @@
+{
+    "name": "xlm-roberta-base",
+    "training_corpus": "Common Crawl",
+    "model_type": "bert",
+    "dimensions": 768,
+    "parameter_string": "xlm-roberta",
+    "model_path": "FacebookAI/xlm-roberta-base",
+    "vocab_size": 250002
+}
