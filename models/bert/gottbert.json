@@ -1,0 +1,9 @@
+{
+    "name": "uklfr_gottbert-base",
+    "training_corpus": "OSCAR (CC)",
+    "model_type": "bert",
+    "dimensions": 768,
+    "parameter_string": "uklfr_gottbert",
+    "model_path": "uklfr/gottbert-base",
+    "vocab_size": 52009
+}
