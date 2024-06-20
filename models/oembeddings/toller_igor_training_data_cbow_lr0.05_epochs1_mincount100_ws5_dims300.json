@@ -1,0 +1,16 @@
+{
+ "name": "toller_igor",
+ "training_corpus": "/home/fs72169/user/oembeddings/data/training_data.txt",
+ "model_type": "cbow",
+ "learning_rate": 0.05,
+ "epochs": 1,
+ "word_ngrams": 1,
+ "min_count": 100,
+ "window_size": 5,
+ "dimensions": 300,
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws5_dims300",
+ "model_path": "/gpfs/data/fs72169/user/tmp_models/training_data_cbow_lr0.05_epochs1_mincount100_ws5_dims300/toller_igor_training_data_cbow_lr0.05_epochs1_mincount100_ws5_dims300",
+ "computation_time": 6774.552654266357,
+ "avg_loss": 1.64535,
+ "vocab_size": 278792
+}

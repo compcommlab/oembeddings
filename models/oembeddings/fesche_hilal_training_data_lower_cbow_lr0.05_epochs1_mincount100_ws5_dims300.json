@@ -1,0 +1,16 @@
+{
+ "name": "fesche_hilal",
+ "training_corpus": "/home/fs72169/user/oembeddings/data/training_data_lower.txt",
+ "model_type": "cbow",
+ "learning_rate": 0.05,
+ "epochs": 1,
+ "word_ngrams": 1,
+ "min_count": 100,
+ "window_size": 5,
+ "dimensions": 300,
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount100_ws5_dims300",
+ "model_path": "/gpfs/data/fs72169/user/tmp_models/training_data_lower_cbow_lr0.05_epochs1_mincount100_ws5_dims300/fesche_hilal_training_data_lower_cbow_lr0.05_epochs1_mincount100_ws5_dims300",
+ "computation_time": 6853.536039590836,
+ "avg_loss": 1.791778,
+ "vocab_size": 262233
+}

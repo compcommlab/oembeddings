@@ -1,0 +1,16 @@
+{
+ "name": "stilvoller_luan",
+ "training_corpus": "/home/fs72169/user/oembeddings/data/training_data_lower.txt",
+ "model_type": "cbow",
+ "learning_rate": 0.05,
+ "epochs": 1,
+ "word_ngrams": 1,
+ "min_count": 100,
+ "window_size": 24,
+ "dimensions": 300,
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount100_ws24_dims300",
+ "model_path": "/gpfs/data/fs72169/user/tmp_models/training_data_lower_cbow_lr0.05_epochs1_mincount100_ws24_dims300/stilvoller_luan_training_data_lower_cbow_lr0.05_epochs1_mincount100_ws24_dims300",
+ "computation_time": 28536.227073669434,
+ "avg_loss": 1.631984,
+ "vocab_size": 262233
+}
