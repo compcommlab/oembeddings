@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 304,
+ "top_n": 421,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 4.9281651973724365,
+ "name": "grandioser_fabrizio",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount50_ws5_dims300"
+}

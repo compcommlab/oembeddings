@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.5720877647399902,
+    "eval_f1": 0.7103410023445351,
+    "eval_precision": 0.6753233997817498,
+    "eval_recall": 0.7844144983753679,
+    "eval_runtime": 58.4076,
+    "eval_samples_per_second": 514.436,
+    "eval_steps_per_second": 64.307,
+    "epoch": 2.0,
+    "dataset": "pressreleases",
+    "model": "distilbert-base-multilingual-cased"
+}

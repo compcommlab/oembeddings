@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 308,
+ "top_n": 430,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 3.617933988571167,
+ "name": "freudige_karla",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount50_ws24_dims300"
+}

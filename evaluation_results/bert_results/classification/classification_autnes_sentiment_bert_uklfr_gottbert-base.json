@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.7864001989364624,
+    "eval_f1": 0.6703847455659818,
+    "eval_precision": 0.6736979554771699,
+    "eval_recall": 0.6688671983354796,
+    "eval_runtime": 3.5946,
+    "eval_samples_per_second": 255.94,
+    "eval_steps_per_second": 31.992,
+    "epoch": 2.0,
+    "dataset": "autnes_sentiment",
+    "model": "uklfr/gottbert-base"
+}

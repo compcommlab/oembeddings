@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 35,
+ "top_n": 111,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 2.056269645690918,
+ "name": "vitaler_kay",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount50_ws24_dims300"
+}

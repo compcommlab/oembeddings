@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 330,
+ "top_n": 435,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.7590394020080566,
+ "name": "grantige_margarethe",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws5_dims300"
+}

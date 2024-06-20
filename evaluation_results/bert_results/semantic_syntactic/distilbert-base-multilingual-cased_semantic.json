@@ -1,0 +1,26 @@
+[
+ {
+  "task_group": "most_similar_groups",
+  "task": "opposite",
+  "correct": 19,
+  "top_n": 111,
+  "n": 10,
+  "coverage": 300,
+  "total_questions": 300,
+  "duration": 3.679966926574707,
+  "name": "distilbert-base-multilingual-cased",
+  "parameter_string": "distillbert"
+ },
+ {
+  "task_group": "most_similar",
+  "task": "best match",
+  "correct": 23,
+  "top_n": 224,
+  "n": 10,
+  "coverage": 540,
+  "total_questions": 540,
+  "duration": 5.375614166259766,
+  "name": "distilbert-base-multilingual-cased",
+  "parameter_string": "distillbert"
+ }
+]

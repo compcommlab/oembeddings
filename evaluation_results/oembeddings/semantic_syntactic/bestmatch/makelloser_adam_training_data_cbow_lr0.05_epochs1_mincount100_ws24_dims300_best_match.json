@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 316,
+ "top_n": 435,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.7847812175750732,
+ "name": "makelloser_adam",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws24_dims300"
+}

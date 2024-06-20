@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 314,
+ "top_n": 439,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.6343307495117188,
+ "name": "makellose_mara",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws24_dims300"
+}

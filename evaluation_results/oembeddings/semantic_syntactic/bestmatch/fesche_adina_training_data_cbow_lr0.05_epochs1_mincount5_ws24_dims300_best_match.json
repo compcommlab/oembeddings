@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 240,
+ "top_n": 395,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 31.24102210998535,
+ "name": "fesche_adina",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws24_dims300"
+}

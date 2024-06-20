@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 305,
+ "top_n": 426,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 4.611129283905029,
+ "name": "freudiger_morris",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount50_ws6_dims300"
+}

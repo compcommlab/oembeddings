@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 278,
+ "top_n": 396,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 23.06887912750244,
+ "name": "bezaubernder_vincenz",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws12_dims300"
+}

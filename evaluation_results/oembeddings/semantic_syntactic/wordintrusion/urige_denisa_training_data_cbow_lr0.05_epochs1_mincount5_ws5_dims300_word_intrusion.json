@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 98,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.027544498443603516,
+ "name": "urige_denisa",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws5_dims300"
+}

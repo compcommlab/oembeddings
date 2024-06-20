@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 262,
+ "top_n": 404,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 22.895854949951172,
+ "name": "tolle_greta",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws12_dims300"
+}

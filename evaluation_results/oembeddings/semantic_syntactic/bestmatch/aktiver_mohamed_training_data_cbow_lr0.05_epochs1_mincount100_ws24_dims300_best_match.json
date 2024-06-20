@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 312,
+ "top_n": 441,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.784787893295288,
+ "name": "aktiver_mohamed",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws24_dims300"
+}

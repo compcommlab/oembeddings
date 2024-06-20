@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.46123185753822327,
+    "eval_f1": 0.8355350254726291,
+    "eval_precision": 0.8483497268679965,
+    "eval_recall": 0.8250340057965758,
+    "eval_runtime": 40.8176,
+    "eval_samples_per_second": 515.954,
+    "eval_steps_per_second": 64.507,
+    "epoch": 2.0,
+    "dataset": "facebook",
+    "model": "distilbert-base-multilingual-cased"
+}

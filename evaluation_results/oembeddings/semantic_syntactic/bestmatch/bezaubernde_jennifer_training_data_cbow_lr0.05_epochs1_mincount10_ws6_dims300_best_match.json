@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 279,
+ "top_n": 394,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 24.187015295028687,
+ "name": "bezaubernde_jennifer",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws6_dims300"
+}

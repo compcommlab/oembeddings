@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 61,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 1.3780593872070312,
+ "name": "uklfr_gottbert-base",
+ "parameter_string": "uklfr_gottbert"
+}

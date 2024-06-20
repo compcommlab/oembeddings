@@ -1,0 +1,12 @@
+{
+    "eval_loss": 1.0673834085464478,
+    "eval_f1": 0.5633887582846702,
+    "eval_precision": 0.5840800910201414,
+    "eval_recall": 0.5501632210046916,
+    "eval_runtime": 10.0586,
+    "eval_samples_per_second": 498.579,
+    "eval_steps_per_second": 62.335,
+    "epoch": 2.0,
+    "dataset": "nationalrat",
+    "model": "distilbert-base-multilingual-cased"
+}

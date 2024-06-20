@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 275,
+ "top_n": 398,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 23.389705896377563,
+ "name": "entz\u00fcckende_klaudia",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws5_dims300"
+}

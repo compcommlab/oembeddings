@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.902183473110199,
+    "eval_f1": 0.6523025259659346,
+    "eval_precision": 0.668895257846108,
+    "eval_recall": 0.6417440146353608,
+    "eval_runtime": 18.3366,
+    "eval_samples_per_second": 273.496,
+    "eval_steps_per_second": 34.194,
+    "epoch": 2.0,
+    "dataset": "nationalrat",
+    "model": "deepset/gbert-base"
+}

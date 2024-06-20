@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 270,
+ "top_n": 417,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 22.58696222305298,
+ "name": "angeregter_finley",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws24_dims300"
+}

@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 39,
+ "top_n": 129,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 2.614992380142212,
+ "name": "bezaubernder_tarik",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount50_ws5_dims300"
+}

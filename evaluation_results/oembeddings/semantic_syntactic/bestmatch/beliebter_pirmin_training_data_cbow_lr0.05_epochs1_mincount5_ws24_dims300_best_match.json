@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 238,
+ "top_n": 396,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 38.88382840156555,
+ "name": "beliebter_pirmin",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws24_dims300"
+}

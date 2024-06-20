@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 34,
+ "top_n": 100,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 1.732581377029419,
+ "name": "vitaler_nelio",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount50_ws12_dims300"
+}

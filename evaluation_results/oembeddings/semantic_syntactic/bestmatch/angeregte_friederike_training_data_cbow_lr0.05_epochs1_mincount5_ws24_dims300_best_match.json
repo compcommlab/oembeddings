@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 246,
+ "top_n": 391,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 39.58426833152771,
+ "name": "angeregte_friederike",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws24_dims300"
+}

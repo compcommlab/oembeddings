@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 41,
+ "top_n": 131,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 2.862291097640991,
+ "name": "griawiger_guido",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount50_ws5_dims300"
+}

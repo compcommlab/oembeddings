@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 324,
+ "top_n": 428,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.5906357765197754,
+ "name": "spannender_uros",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount100_ws6_dims300"
+}

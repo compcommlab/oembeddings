@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 18,
+ "top_n": 73,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 21.10004425048828,
+ "name": "grandioser_yagiz",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws6_dims300"
+}

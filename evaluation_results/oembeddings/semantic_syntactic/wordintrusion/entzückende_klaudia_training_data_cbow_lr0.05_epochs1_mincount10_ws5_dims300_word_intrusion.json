@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 101,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.02710580825805664,
+ "name": "entz\u00fcckende_klaudia",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount10_ws5_dims300"
+}

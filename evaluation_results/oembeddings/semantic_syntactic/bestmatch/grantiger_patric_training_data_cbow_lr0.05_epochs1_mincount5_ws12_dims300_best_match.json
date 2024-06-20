@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 249,
+ "top_n": 386,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 41.97518992424011,
+ "name": "grantiger_patric",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws12_dims300"
+}

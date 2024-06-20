@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 101,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.02652120590209961,
+ "name": "brillanter_valentino",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws12_dims300"
+}

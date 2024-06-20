@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 255,
+ "top_n": 378,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 41.178329944610596,
+ "name": "uriger_raphael",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws5_dims300"
+}

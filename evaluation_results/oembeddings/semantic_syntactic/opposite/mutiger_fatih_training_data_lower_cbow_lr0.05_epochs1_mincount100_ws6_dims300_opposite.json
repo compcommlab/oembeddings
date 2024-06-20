@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 44,
+ "top_n": 119,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 1.347841501235962,
+ "name": "mutiger_fatih",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount100_ws6_dims300"
+}

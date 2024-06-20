@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "opposite",
+ "correct": 42,
+ "top_n": 141,
+ "n": 10,
+ "coverage": 300,
+ "total_questions": 300,
+ "duration": 1.4525260925292969,
+ "name": "beliebte_fabienne",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws6_dims300"
+}

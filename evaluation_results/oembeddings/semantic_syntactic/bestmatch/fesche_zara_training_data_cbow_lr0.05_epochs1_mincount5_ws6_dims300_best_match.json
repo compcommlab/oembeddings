@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 253,
+ "top_n": 380,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 41.438894510269165,
+ "name": "fesche_zara",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws6_dims300"
+}

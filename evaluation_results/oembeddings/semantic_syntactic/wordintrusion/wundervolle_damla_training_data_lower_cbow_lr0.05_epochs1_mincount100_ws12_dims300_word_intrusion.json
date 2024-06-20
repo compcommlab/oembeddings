@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 102,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.023846149444580078,
+ "name": "wundervolle_damla",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount100_ws12_dims300"
+}

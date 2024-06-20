@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 301,
+ "top_n": 435,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 3.5820133686065674,
+ "name": "wundervolle_elli",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount50_ws12_dims300"
+}

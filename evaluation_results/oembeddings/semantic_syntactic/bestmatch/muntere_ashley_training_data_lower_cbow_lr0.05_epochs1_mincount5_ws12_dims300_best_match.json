@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 264,
+ "top_n": 394,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 30.50111985206604,
+ "name": "muntere_ashley",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws12_dims300"
+}

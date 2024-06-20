@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 244,
+ "top_n": 395,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 36.86174821853638,
+ "name": "stilvoller_jayden",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300"
+}

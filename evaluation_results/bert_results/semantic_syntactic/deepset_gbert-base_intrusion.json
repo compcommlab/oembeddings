@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 53,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 1.2849476337432861,
+ "name": "deepset_gbert-base",
+ "parameter_string": "deepset_gbert"
+}

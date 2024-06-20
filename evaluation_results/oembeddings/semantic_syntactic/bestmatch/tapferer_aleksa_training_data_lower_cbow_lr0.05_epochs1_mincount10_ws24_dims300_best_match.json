@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 268,
+ "top_n": 411,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 19.581247329711914,
+ "name": "tapferer_aleksa",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount10_ws24_dims300"
+}

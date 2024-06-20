@@ -1,0 +1,12 @@
+{
+    "eval_loss": 1.0901434421539307,
+    "eval_f1": 0.5554502950071145,
+    "eval_precision": 0.5810043538001025,
+    "eval_recall": 0.5407332281704529,
+    "eval_runtime": 17.9548,
+    "eval_samples_per_second": 279.312,
+    "eval_steps_per_second": 34.921,
+    "epoch": 2.0,
+    "dataset": "nationalrat",
+    "model": "xlm-roberta-base"
+}

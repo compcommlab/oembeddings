@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 313,
+ "top_n": 439,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 2.7549123764038086,
+ "name": "spritzige_cecilia",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount100_ws24_dims300"
+}

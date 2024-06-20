@@ -1,0 +1,10 @@
+{
+ "task_group": "word intrusion",
+ "task": "doesnt fit",
+ "correct": 99,
+ "coverage": 110,
+ "total_questions": 110,
+ "duration": 0.024381637573242188,
+ "name": "wachsamer_nathan",
+ "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount100_ws5_dims300"
+}

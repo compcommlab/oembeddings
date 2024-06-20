@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.5945306420326233,
+    "eval_f1": 0.7093035659983111,
+    "eval_precision": 0.6862059286063646,
+    "eval_recall": 0.7635970055776299,
+    "eval_runtime": 105.0379,
+    "eval_samples_per_second": 286.059,
+    "eval_steps_per_second": 35.759,
+    "epoch": 2.0,
+    "dataset": "pressreleases",
+    "model": "xlm-roberta-base"
+}

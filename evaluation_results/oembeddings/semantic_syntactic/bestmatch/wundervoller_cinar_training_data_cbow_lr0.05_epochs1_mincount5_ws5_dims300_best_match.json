@@ -1,0 +1,12 @@
+{
+ "task_group": "most_similar",
+ "task": "best match",
+ "correct": 260,
+ "top_n": 371,
+ "n": 10,
+ "coverage": 540,
+ "total_questions": 540,
+ "duration": 40.594059467315674,
+ "name": "wundervoller_cinar",
+ "parameter_string": "training_data_cbow_lr0.05_epochs1_mincount5_ws5_dims300"
+}
