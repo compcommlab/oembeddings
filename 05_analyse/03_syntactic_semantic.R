@@ -53,12 +53,7 @@ ggsave("plots/semantic_syntactic/coverage.pdf", p, width = 1920, height = 1080, 
 p <- syntactic |>
   filter(task != "total") |>
   filter(!is.na(name.x)) |>
-  mutate(window_size = as.factor(window_size)) |>
-  rename(
-    `Window Size` = window_size,
-    `Computation Time (hours)` = computation_time_hours,
-    `Minimum Count` = min_count
-  ) |>
+  mutate(`Window Size` = as.factor(window_size)) |>
   ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Model Group`)) +
   geom_boxplot() +
   facet_wrap(~`Task`, labeller = "label_both", ncol = 3) +
@@ -68,6 +63,63 @@ p <- syntactic |>
 
 ggsave("plots/semantic_syntactic/results_strict.png", p, width = 1920, height = 1080, units = "px", scale = 2)
 ggsave("plots/semantic_syntactic/results_strict.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
+
+
+p <- syntactic |>
+  filter(task == "best match") |>
+  filter(!is.na(name.x)) |>
+  filter(`Model Group` %in% c("OEmbeddings Cased", "OEmbeddings Lowercase")) |> 
+  mutate(`Window Size` = as.factor(window_size),
+         `Minimum Count` = as.factor(min_count)) |>
+  ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Minimum Count`)) +
+  geom_boxplot() +
+  facet_wrap(~`Model Group`, labeller = "label_both", ncol = 3) +
+  theme_clean() +
+  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
+  ggtitle("Intrinsic Task: Best Match (strict)")
+
+
+ggsave("plots/semantic_syntactic/oembeddings_best_match.png", p, width = 1920, height = 1080, units = "px", scale = 2)
+ggsave("plots/semantic_syntactic/oembeddings_best_match.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
+
+
+p <- syntactic |>
+  filter(task == "opposite") |>
+  filter(!is.na(name.x)) |>
+  filter(`Model Group` %in% c("OEmbeddings Cased", "OEmbeddings Lowercase")) |> 
+  mutate(`Window Size` = as.factor(window_size),
+         `Minimum Count` = as.factor(min_count)) |>
+  ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Minimum Count`)) +
+  geom_boxplot() +
+  ylim(c(0, 20)) +
+  facet_wrap(~`Model Group`, labeller = "label_both", ncol = 3) +
+  theme_clean() +
+  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
+  ggtitle("Intrinsic Task: Opposite (strict)")
+
+
+ggsave("plots/semantic_syntactic/oembeddings_opposite.png", p, width = 1920, height = 1080, units = "px", scale = 2)
+ggsave("plots/semantic_syntactic/oembeddings_opposite.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
+
+
+p <- syntactic |>
+  filter(task == "doesnt fit") |>
+  filter(!is.na(name.x)) |>
+  filter(`Model Group` %in% c("OEmbeddings Cased", "OEmbeddings Lowercase")) |> 
+  mutate(`Window Size` = as.factor(window_size),
+         `Minimum Count` = as.factor(min_count)) |>
+  ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Minimum Count`)) +
+  geom_boxplot() +
+  ylim(c(80, 100)) +
+  facet_wrap(~`Model Group`, labeller = "label_both", ncol = 3) +
+  theme_clean() +
+  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
+  ggtitle("Intrinsic Task: Intrusion (strict)")
+
+
+ggsave("plots/semantic_syntactic/oembeddings_intrusion.png", p, width = 1920, height = 1080, units = "px", scale = 2)
+ggsave("plots/semantic_syntactic/oembeddings_intrusion.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
+
 
 
 p <- syntactic |>
