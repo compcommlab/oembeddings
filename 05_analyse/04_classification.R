@@ -49,7 +49,7 @@ classification$Task <- case_match(classification$task,
   "twitter" ~ "Party Prediction: Twitter",
   "nationalrat" ~ "Party Prediction: Parliament",
   "pressreleases" ~ "Party Prediction: Press Releases",
-  "facebook" ~ "Party Prediction: Facebbok",
+  "facebook" ~ "Party Prediction: Facebook",
   "autnes_automated_2017" ~ "AUTNES Topics 2017",
   "autnes_automated_2019" ~ "AUTNES Topics 2019",
   "autnes_sentiment" ~ "AUTNES Sentiment")
@@ -65,9 +65,16 @@ p <- classification |>
   ggplot(aes(x = `Window Size`, y = `F1 Score`, color = `Model Group`))+
   geom_point(position = position_dodge(width = 0.5), size = 3) +
   theme_clean() +
+  theme(legend.position = "top") +
   scale_color_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
   facet_wrap(~Task, axes = "all") +
   ggtitle("Classification")
 
 ggsave("plots/classification/classification.png", p, width = 1920, height = 1080, units = "px", scale = 2)
 ggsave("plots/classification/classification.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
+
+classification |> 
+  filter(!grepl("OEmbeddings", `Model Group`)) |> 
+  select(`Task`, `name`, `F1 Score`) |> 
+  tidyr::pivot_wider(names_from = `name`, values_from = `F1 Score`) |> 
+  readr::write_csv("plots/offtheshelf_classification.csv")
