@@ -1,0 +1,79 @@
+[
+    {
+        "task": "twitter",
+        "label": "overall (macro)",
+        "precision": 0.42791803698654685,
+        "recall": 0.4247337198301155,
+        "f1score": 0.4239580678057357,
+        "duration": 149.76837396621704,
+        "model_name": "aktive_sibylle",
+        "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300",
+        "model_path": "/gpfs/data/fs72169/user/tmp_models/training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300/aktive_sibylle_training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300"
+    },
+    {
+        "task": "nationalrat",
+        "label": "overall (macro)",
+        "precision": 0.524381356765369,
+        "recall": 0.5245879764128468,
+        "f1score": 0.513237173157941,
+        "duration": 152.61592149734497,
+        "model_name": "aktive_sibylle",
+        "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300",
+        "model_path": "/gpfs/data/fs72169/user/tmp_models/training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300/aktive_sibylle_training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300"
+    },
+    {
+        "task": "autnes_automated_2019",
+        "label": "overall (macro)",
+        "precision": 0.5784400740837429,
+        "recall": 0.3718627678322625,
+        "f1score": 0.4380988459936279,
+        "duration": 145.5272557735443,
+        "model_name": "aktive_sibylle",
+        "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300",
+        "model_path": "/gpfs/data/fs72169/user/tmp_models/training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300/aktive_sibylle_training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300"
+    },
+    {
+        "task": "pressreleases",
+        "label": "overall (macro)",
+        "precision": 0.5871196210377453,
+        "recall": 0.5495070193568188,
+        "f1score": 0.5013488174933743,
+        "duration": 166.80983233451843,
+        "model_name": "aktive_sibylle",
+        "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300",
+        "model_path": "/gpfs/data/fs72169/user/tmp_models/training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300/aktive_sibylle_training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300"
+    },
+    {
+        "task": "autnes_automated_2017",
+        "label": "overall (macro)",
+        "precision": 0.7834942084942085,
+        "recall": 0.49458228905597323,
+        "f1score": 0.5840205711371796,
+        "duration": 145.58004021644592,
+        "model_name": "aktive_sibylle",
+        "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300",
+        "model_path": "/gpfs/data/fs72169/user/tmp_models/training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300/aktive_sibylle_training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300"
+    },
+    {
+        "task": "facebook",
+        "label": "overall (macro)",
+        "precision": 0.622596714195746,
+        "recall": 0.6227564349077757,
+        "f1score": 0.6225905839976442,
+        "duration": 148.13520979881287,
+        "model_name": "aktive_sibylle",
+        "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300",
+        "model_path": "/gpfs/data/fs72169/user/tmp_models/training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300/aktive_sibylle_training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300"
+    },
+    {
+        "task": "autnes_sentiment",
+        "label": "overall (macro)",
+        "precision": 0.5255827284862048,
+        "recall": 0.5066819312495537,
+        "f1score": 0.5113138926518848,
+        "duration": 145.5678210258484,
+        "model_name": "aktive_sibylle",
+        "parameter_string": "training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300",
+        "model_path": "/gpfs/data/fs72169/user/tmp_models/training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300/aktive_sibylle_training_data_lower_cbow_lr0.05_epochs1_mincount5_ws24_dims300"
+    }
+]
