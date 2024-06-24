@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.26933494210243225,
+    "eval_f1": 0.6141732283464567,
+    "eval_precision": 0.7452229299363057,
+    "eval_recall": 0.5223214285714286,
+    "eval_runtime": 3.6709, 
+    "eval_samples_per_second": 51.758, 
+    "eval_steps_per_second": 6.538, 
+    "epoch": 4.0, 
+    "dataset": "autnes_automated_2019",
+    "model": "deepset/gbert-base"
+}

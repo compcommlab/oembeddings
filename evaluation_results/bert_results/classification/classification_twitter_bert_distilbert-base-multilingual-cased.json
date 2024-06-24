@@ -8,5 +8,5 @@
     "eval_steps_per_second": 64.149,
     "epoch": 2.0,
     "dataset": "twitter",
-    "model": "distilbert-base-multilingual-cased"
+    "model": "distilbert/distilbert-base-multilingual-cased"
 }
