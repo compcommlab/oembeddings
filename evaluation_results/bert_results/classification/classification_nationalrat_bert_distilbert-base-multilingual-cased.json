@@ -8,5 +8,5 @@
     "eval_steps_per_second": 62.335,
     "epoch": 2.0,
     "dataset": "nationalrat",
-    "model": "distilbert-base-multilingual-cased"
+    "model": "distilbert/distilbert-base-multilingual-cased"
 }

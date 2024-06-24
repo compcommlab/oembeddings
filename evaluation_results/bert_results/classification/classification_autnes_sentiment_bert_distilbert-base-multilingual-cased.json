@@ -8,5 +8,5 @@
     "eval_steps_per_second": 52.944,
     "epoch": 2.0,
     "dataset": "autnes_sentiment",
-    "model": "distilbert-base-multilingual-cased"
+    "model": "distilbert/distilbert-base-multilingual-cased"
 }

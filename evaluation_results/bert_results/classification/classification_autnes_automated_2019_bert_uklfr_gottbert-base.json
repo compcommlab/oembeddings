@@ -1,12 +1,12 @@
 {
-    "eval_loss": 0.39230042695999146,
-    "eval_f1": 0.19819819819819817,
-    "eval_precision": 0.7333333333333333,
-    "eval_recall": 0.11458333333333333,
-    "eval_runtime": 5.0235,
-    "eval_samples_per_second": 37.823,
-    "eval_steps_per_second": 4.778,
-    "epoch": 4.0,
+    "eval_loss": 0.28114089369773865,
+    "eval_f1": 0.5682656826568265,
+    "eval_precision": 0.7475728155339806,
+    "eval_recall": 0.4583333333333333,
+    "eval_runtime": 3.5273,
+    "eval_samples_per_second": 53.866,
+    "eval_steps_per_second": 6.804,
+    "epoch": 6.0,
     "dataset": "autnes_automated_2019",
     "model": "uklfr/gottbert-base"
 }

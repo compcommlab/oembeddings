@@ -8,5 +8,5 @@
     "eval_steps_per_second": 36.74,
     "epoch": 2.0,
     "dataset": "facebook",
-    "model": "xlm-roberta-base"
+    "model": "FacebookAI/xlm-roberta-base"
 }

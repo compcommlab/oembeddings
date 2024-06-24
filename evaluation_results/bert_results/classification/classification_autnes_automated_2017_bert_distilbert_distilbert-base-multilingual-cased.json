@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.40834519267082214,
+    "eval_f1": 0.5892351274787536,
+    "eval_precision": 0.6190476190476191,
+    "eval_recall": 0.5621621621621622,
+    "eval_runtime": 1.4824,
+    "eval_samples_per_second": 115.356,
+    "eval_steps_per_second": 14.841,
+    "epoch": 2.0,
+    "dataset": "autnes_automated_2017",
+    "model": "distilbert/distilbert-base-multilingual-cased"
+}

@@ -8,5 +8,5 @@
     "eval_steps_per_second": 34.921,
     "epoch": 2.0,
     "dataset": "nationalrat",
-    "model": "xlm-roberta-base"
+    "model": "FacebookAI/xlm-roberta-base"
 }

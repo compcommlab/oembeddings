@@ -1,0 +1,12 @@
+{
+    "eval_loss": 0.4024197459220886,
+    "eval_f1": 0.5739644970414202,
+    "eval_precision": 0.6339869281045751,
+    "eval_recall": 0.5243243243243243,
+    "eval_runtime": 3.1943,
+    "eval_samples_per_second": 53.533,
+    "eval_steps_per_second": 6.887,
+    "epoch": 2.0,
+    "dataset": "autnes_automated_2017",
+    "model": "FacebookAI/xlm-roberta-base"
+}
