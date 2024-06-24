@@ -31,8 +31,13 @@ syntactic$`Coverage (%)` <- round((syntactic$coverage / syntactic$total_question
 syntactic$`Correct (%)` <- round((syntactic$correct / syntactic$coverage) * 100, digits = 2)
 syntactic$`Correct (Top 10, %)` <- round((syntactic$top_n / syntactic$coverage) * 100, digits = 2)
 syntactic$`Sub-Task` <- as.factor(syntactic$task)
-syntactic$`Task` <- as.factor(syntactic$task_group)
-syntactic$`Task` <- forcats::fct_recode(syntactic$`Task`, "Best match (Semantic)" = "most_similar", "Syntactic" = "most_similar_groups", "Word Intrusion (Semantic)" = "word intrusion")
+syntactic$`Task` <- case_when(syntactic$task == "opposite" ~ "Opposite (Semantic)",
+                              .default = syntactic$task_group)
+syntactic$`Task` <- as.factor(syntactic$`Task`)
+syntactic$`Task` <- forcats::fct_recode(syntactic$`Task`, 
+                                        "Best match (Semantic)" = "most_similar", 
+                                        "Syntactic" = "most_similar_groups", 
+                                        "Word Intrusion (Semantic)" = "word intrusion")
 
 
 p <- syntactic |> 
@@ -56,10 +61,11 @@ p <- syntactic |>
   mutate(`Window Size` = as.factor(window_size)) |>
   ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Model Group`)) +
   geom_boxplot() +
-  facet_wrap(~`Task`, labeller = "label_both", ncol = 3) +
+  facet_wrap(~`Task`, labeller = "label_both", ncol = 4) +
   theme_clean() +
   scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
-  ggtitle("Syntactic / Semantic (strict)")
+  ggtitle("Syntactic / Semantic (strict)") + 
+  theme(legend.position = "top")
 
 ggsave("plots/semantic_syntactic/results_strict.png", p, width = 1920, height = 1080, units = "px", scale = 2)
 ggsave("plots/semantic_syntactic/results_strict.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
@@ -117,8 +123,23 @@ p <- syntactic |>
   ggtitle("Intrinsic Task: Intrusion (strict)")
 
 
-ggsave("plots/semantic_syntactic/oembeddings_intrusion.png", p, width = 1920, height = 1080, units = "px", scale = 2)
-ggsave("plots/semantic_syntactic/oembeddings_intrusion.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
+p <- syntactic |>
+  filter(task_group == "most_similar_groups") |>
+  filter(task != "total") |> 
+  filter(!is.na(name.x)) |>
+  filter(`Model Group` %in% c("OEmbeddings Cased", "OEmbeddings Lowercase")) |> 
+  mutate(`Window Size` = as.factor(window_size),
+         `Minimum Count` = as.factor(min_count)) |>
+  ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Minimum Count`)) +
+  geom_boxplot() +
+  facet_wrap(~`Model Group`, labeller = "label_both") +
+  theme_clean() +
+  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
+  ggtitle("Intrinsic Task: Syntactic")
+
+
+ggsave("plots/semantic_syntactic/oembeddings_syntactic.png", p, width = 1920, height = 1080, units = "px", scale = 2)
+ggsave("plots/semantic_syntactic/oembeddings_syntactic.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
 
 
 
@@ -141,3 +162,11 @@ p <- syntactic |>
 
 ggsave("plots/semantic_syntactic/results_top10.png", p, width = 1920, height = 1080, units = "px", scale = 2)
 ggsave("plots/semantic_syntactic/results_top10.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
+
+syntactic |> 
+  filter(!grepl("OEmbeddings", `Model Group`)) |> 
+  mutate(correct_percent = correct / coverage) |> 
+  group_by(`name.x`, `Task`) |> 
+  summarise(`Correct` = mean(correct_percent)) |> 
+  tidyr::pivot_wider(names_from = `name.x`, values_from = `Correct`) |> 
+  readr::write_csv("plots/offtheshelf_semantic_syntactic.csv")
