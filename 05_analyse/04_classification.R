@@ -66,9 +66,9 @@ p <- classification |>
   geom_point(position = position_dodge(width = 0.5), size = 3) +
   theme_clean() +
   theme(legend.position = "top") +
-  scale_color_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
+  scale_color_viridis(discrete = TRUE, option = "mako") +
   facet_wrap(~Task, axes = "all") +
-  ggtitle("Classification")
+  theme(legend.position = "top", plot.background = element_blank())
 
 ggsave("plots/classification/classification.png", p, width = 1920, height = 1080, units = "px", scale = 2)
 ggsave("plots/classification/classification.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)

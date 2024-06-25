@@ -63,9 +63,8 @@ p <- syntactic |>
   geom_boxplot() +
   facet_wrap(~`Task`, labeller = "label_both", ncol = 4) +
   theme_clean() +
-  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
-  ggtitle("Syntactic / Semantic (strict)") + 
-  theme(legend.position = "top")
+  scale_fill_viridis(discrete = TRUE, option = "mako") +
+  theme(legend.position = "top", plot.background = element_blank())
 
 ggsave("plots/semantic_syntactic/results_strict.png", p, width = 1920, height = 1080, units = "px", scale = 2)
 ggsave("plots/semantic_syntactic/results_strict.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
@@ -81,9 +80,8 @@ p <- syntactic |>
   geom_boxplot() +
   facet_wrap(~`Model Group`, labeller = "label_both", ncol = 3) +
   theme_clean() +
-  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
-  ggtitle("Intrinsic Task: Best Match (strict)")
-
+  scale_fill_viridis(discrete = TRUE, option = "mako") +
+  theme(legend.position = "top", plot.background = element_blank())
 
 ggsave("plots/semantic_syntactic/oembeddings_best_match.png", p, width = 1920, height = 1080, units = "px", scale = 2)
 ggsave("plots/semantic_syntactic/oembeddings_best_match.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
@@ -101,8 +99,7 @@ p <- syntactic |>
   facet_wrap(~`Model Group`, labeller = "label_both", ncol = 3) +
   theme_clean() +
   scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
-  ggtitle("Intrinsic Task: Opposite (strict)")
-
+  theme(legend.position = "top", plot.background = element_blank())
 
 ggsave("plots/semantic_syntactic/oembeddings_opposite.png", p, width = 1920, height = 1080, units = "px", scale = 2)
 ggsave("plots/semantic_syntactic/oembeddings_opposite.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
@@ -120,7 +117,7 @@ p <- syntactic |>
   facet_wrap(~`Model Group`, labeller = "label_both", ncol = 3) +
   theme_clean() +
   scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
-  ggtitle("Intrinsic Task: Intrusion (strict)")
+  theme(legend.position = "top", plot.background = element_blank())
 
 
 p <- syntactic |>
@@ -135,7 +132,7 @@ p <- syntactic |>
   facet_wrap(~`Model Group`, labeller = "label_both") +
   theme_clean() +
   scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
-  ggtitle("Intrinsic Task: Syntactic")
+  theme(legend.position = "top", plot.background = element_blank())
 
 
 ggsave("plots/semantic_syntactic/oembeddings_syntactic.png", p, width = 1920, height = 1080, units = "px", scale = 2)
@@ -157,8 +154,8 @@ p <- syntactic |>
   geom_boxplot() +
   facet_wrap(~`Task`, labeller = "label_both") +
   theme_clean() +
-  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
-  ggtitle("Syntactic / Semantic (Top 10)")
+  scale_fill_viridis(discrete = TRUE, option = "mako") +
+  theme(legend.position = "top", plot.background = element_blank())
 
 ggsave("plots/semantic_syntactic/results_top10.png", p, width = 1920, height = 1080, units = "px", scale = 2)
 ggsave("plots/semantic_syntactic/results_top10.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)

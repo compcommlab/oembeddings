@@ -26,6 +26,7 @@ if (!dir.exists("plots/within_correlation")) {
 correlations_within <- RcppSimdJson::fload(Sys.glob("evaluation_results/*/within_correlations/*.json"))
 correlations_within <- dplyr::bind_rows(correlations_within)
 correlations_within <- left_join(correlations_within, model_families, by = "parameter_string")
+correlations_within$Cues <- tools::toTitleCase(gsub("_", " ", correlations_within$cues))
 
 p <- correlations_within |>
   mutate(window_size = as.factor(window_size)) |>
@@ -37,10 +38,10 @@ p <- correlations_within |>
   ggplot(aes(y = `Within-Correlation`, x = `Window Size`, fill = `Training Data`)) +
   geom_boxplot() +
   coord_cartesian(ylim = c(0.93, 1.0)) +
-  facet_wrap(~`Minimum Count`, labeller = "label_both") +
+  facet_wrap(~`Minimum Count`, labeller = "label_both", axes = "all") +
   theme_clean() +
-  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
-  ggtitle("Within Correlations (All Cues)")
+  theme(legend.position = "top", plot.background = element_blank()) +
+  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8)
 
 ggsave("plots/within_correlation/within_correlation.png", p, width = 1920, height = 1080, units = "px", scale = 2)
 ggsave("plots/within_correlation/within_correlation.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
@@ -55,13 +56,13 @@ p <- correlations_within |>
   ggplot(aes(y = `Within-Correlation`, x = `Window Size`, fill = `Training Data`)) +
   geom_boxplot() +
   coord_cartesian(ylim = c(0.93, 1.0)) +
-  facet_wrap(~`cues`, labeller = "label_both") +
+  facet_wrap(~`Cues`, labeller = "label_both", axes = "all", ncol = 2) +
   theme_clean() +
-  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
-  ggtitle("Within Correlations")
+  theme(legend.position = "top", plot.background = element_blank()) +
+  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8)
 
-ggsave("plots/within_correlation/within_correlation_cues.png", p, width = 1920, height = 1080, units = "px", scale = 2)
-ggsave("plots/within_correlation/within_correlation_cues.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
+ggsave("plots/within_correlation/within_correlation_cues.png", p, width = 1920, height = 1920, units = "px", scale = 2)
+ggsave("plots/within_correlation/within_correlation_cues.pdf", p, width = 1920, height = 1920, units = "px", scale = 1.5)
 
 
 # Correlations: Across
@@ -92,16 +93,17 @@ correlations_across <- correlations_across |>
     facebook, "Common Crawl", 
     if_else(lowercase, "Lowercase", "Cased")))
 
+correlations_across$Cues <- tools::toTitleCase(gsub("_", " ", correlations_across$cues))
+
+
 # Boxplots of cues
 
 p <- correlations_across |>
-  group_by(cues) |>
-  ggplot(aes(y = correlation, x = cues, fill = `Training Data`)) +
+  ggplot(aes(y = correlation, x = Cues, fill = `Training Data`)) +
   geom_boxplot() +
-  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
+  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.1, end = 0.9) +
   theme_clean() +
-  ggtitle("Across Correlations", 
-          subtitle = "Common Crawl (Facebook) correlations with our Cased models")
+  theme(legend.position = "top", plot.background = element_blank())
 
 ggsave("plots/across_correlation/across_correlation_variation.png", p, width = 1920, height = 1080, units = "px", scale = 2)
 ggsave("plots/across_correlation/across_correlation_variation.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
