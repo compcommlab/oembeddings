@@ -119,6 +119,8 @@ p <- syntactic |>
   scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
   theme(legend.position = "top", plot.background = element_blank())
 
+ggsave("plots/semantic_syntactic/oembeddings_intrusion.png", p, width = 1920, height = 1080, units = "px", scale = 2)
+ggsave("plots/semantic_syntactic/oembeddings_intrusion.pdf", p, width = 1920, height = 1080, units = "px", scale = 1.5)
 
 p <- syntactic |>
   filter(task_group == "most_similar_groups") |>
