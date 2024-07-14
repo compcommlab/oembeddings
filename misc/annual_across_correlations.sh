@@ -28,7 +28,6 @@ for ((i=0; i<${#directories[@]}; i++)); do
 #SBATCH --qos=zen3_0512
 #SBATCH --partition=zen3_0512
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=<paul.balluff@univie.ac.at> 
 
 module load miniconda3
 eval "\$(conda shell.bash hook)"

@@ -11,8 +11,8 @@
 #
 # Contributors:
 #  Michael Egger <michael.egger@tsn.at>
-# Adapted by:
-#  Jana Bernhard
+# Adapted by: the authors
+#  
 #
 # @example: python evaluation.py model/my.model -u -t 10
 # where model/my.model is the path to the model

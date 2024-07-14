@@ -27,7 +27,6 @@ for training_data_file in "${training_data_files[@]}"; do
 #SBATCH --qos=zen3_0512
 #SBATCH --partition=zen3_0512
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=<paul.balluff@univie.ac.at> 
 
 echo "start"
 

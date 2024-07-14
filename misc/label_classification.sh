@@ -18,7 +18,6 @@ for dir in $DATA/tmp_models/*; do
 #SBATCH --qos=zen3_0512
 #SBATCH --partition=zen3_0512
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=<paul.balluff@univie.ac.at> 
 
 
 module load miniconda3

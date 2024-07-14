@@ -1,6 +1,4 @@
-![ömbeddings](misc/oembeddings-white.svg)
-
-ÖMbeddings (Österreichische Media Embeddings)
+*Replication Materials for Manuscript: Comprehensive Validation of Word Embeddings for Social Science Research*
 
 # Configuration & Installation
 
@@ -16,7 +14,6 @@
     - We recommend using PostgreSQL, because it can easily handle concurrent connections
 - Install latest version of [fasttext](https://github.com/facebookresearch/fastText/) (see their documetnation)
 - *Important*: Set the path to the `fasttext` binary in your `.env` file
-- *Optional*: Install spaCy for sentence splitting. Download spacy model: `python -m spacy download de_core_news_lg`
 
 
 # Scripts
@@ -28,10 +25,7 @@
 
 ## 02_preprocessing
 
-There are different ways to segment the corpus into training units for fasttext:
-
-- ✅ Retain whole articles / paragraphs (minimal segmentation; this is the default approach for fasttext)
-- 🧪 Split articles into sentences (smaller training units)
+We retain whole articles / paragraphs (minimal segmentation; this is the default approach for fasttext)
 
 ### General Notes for Text Cleaning
 
@@ -65,7 +59,7 @@ All text cleaning is handled by the function `clean_text()` (`utils/cleaning.py`
     - "F1" -> "F eins"
 
 
-### Retain Whole Articles
+### Scripts and Settings
 
 `02_preprocess/01_cleanarticles.py`: take a whole article, clean it and add each paragraph as separate row to the DB (table `processed_articles`). 
 
@@ -74,15 +68,6 @@ All text cleaning is handled by the function `clean_text()` (`utils/cleaning.py`
 - Paragraph splitting by double line break characters (`\n\n`)
 - Recommended settings: `python3 02_preprocess/01_cleanarticles.py --remove_links --remove_emails --remove_emojis --remove_punctuation --replace_numbers --genderstar --threads 12`
 - Parameters are documented, use `python3 02_preprocess/01_cleanarticles.py --help` to get a description of each parameter.
-
-### Use single sentences (unused / experimental)
-
-`02_preprocess/x_01_splitsentences.py`: split articles into sentences (uses spacy) and store them as raw sentences. Ensures each sentence is unique.
-
-`02_preprocess/x_02_cleansentences.py`: clean every sentence; runs all kinds of text cleaning. Each cleaning parameter can be controlled with arguments. E.g., `--lowercase` makes all text lowercase. Use `--help` for a complete list of parameters.
-
-- Example usage: `python3 02_preprocess/02_cleansentences.py --remove_links --remove_emails --remove_emojis --remove_punctuation --remove_numbers --threads 8`
-- use `clean_database` to delete all previously processed sentences (deletes all rows from table `sentences`).
 
 ### Generate Training Corpus
 

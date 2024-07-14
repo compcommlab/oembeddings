@@ -25,7 +25,6 @@ for year in {2012..2022}; do
 #SBATCH --qos=zen3_0512
 #SBATCH --partition=zen3_0512
 #SBATCH --mail-type=ALL
-#SBATCH --mail-user=<paul.balluff@univie.ac.at> 
 
 echo "start"
 
