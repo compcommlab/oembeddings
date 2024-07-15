@@ -1,3 +1,6 @@
+ipykernel
+scipy>1.7, <1.13
+numpy<2.0
 seaborn
 SQLAlchemy
 python-dotenv
@@ -7,7 +10,6 @@ ftfy
 swifter
 tqdm
 pandas
-scipy
 gensim
 scikit-learn
 num2words
