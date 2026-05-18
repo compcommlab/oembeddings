@@ -1,36 +1,36 @@
 """
-    Based on replication files for the publication:
-    Rodriguez, P. L., & Spirling, A. (2022). Word Embeddings: 
-        What Works, What Doesn't, and How to Tell the Difference for Applied Research. 
-        In The Journal of Politics (Vol. 84, Issue 1, pp. 101-115). 
-        https://doi.org/10.1086/715162
+Based on replication files for the publication:
+Rodriguez, P. L., & Spirling, A. (2022). Word Embeddings:
+    What Works, What Doesn't, and How to Tell the Difference for Applied Research.
+    In The Journal of Politics (Vol. 84, Issue 1, pp. 101-115).
+    https://doi.org/10.1086/715162
 
-    R implementation by Rodriguez & Spirling available here:
-        https://github.com/prodriguezsosa/EmbeddingsPaperReplication
+R implementation by Rodriguez & Spirling available here:
+    https://github.com/prodriguezsosa/EmbeddingsPaperReplication
 
-    We have two evaluations here:
-        1. How stable are the embeddings with each initialization?
-            (Compare each model with the same parameters with each other)
-        2. How stable are the embeddings across initializations?
-            (Compare each parameter setting with each other)
+We have two evaluations here:
+    1. How stable are the embeddings with each initialization?
+        (Compare each model with the same parameters with each other)
+    2. How stable are the embeddings across initializations?
+        (Compare each parameter setting with each other)
 
-    We use a selection of words (cues) to compare the models with each other.
-    One pre-defined set of words that we are interested in (politics), and one
-    random set of words (we draw 100 random words from the vocabularly list of the model)
-            
-    We calculate the cosine distance for each word embedding against every other 
-    word embedding in the model.
+We use a selection of words (cues) to compare the models with each other.
+One pre-defined set of words that we are interested in (politics), and one
+random set of words (we draw 100 random words from the vocabularly list of the model)
 
-    For 1., we then take the distance measures and pairwise compare them by calculating
-    Pearson's Rho. Next, we take the mean and standard deviation of all pairwise combinations.
+We calculate the cosine distance for each word embedding against every other
+word embedding in the model.
 
-    For 2., we take all cosine distances from models with the same initialisation 
-    (i.e., one set of parameters) and calculate their mean. This means, we get one representation
-    for the entire "model family". We then use this mean representation to pairwise compare it
-    to initializations with different parameters.
+For 1., we then take the distance measures and pairwise compare them by calculating
+Pearson's R. Next, we take the mean and standard deviation of all pairwise combinations.
 
-    In 1. all models should have the same vocabulary, but 2. not. 
-    Therefore, we need to account for that.
+For 2., we take all cosine distances from models with the same initialisation
+(i.e., one set of parameters) and calculate their mean. This means, we get one representation
+for the entire "model family". We then use this mean representation to pairwise compare it
+to initializations with different parameters.
+
+In 1. all models should have the same vocabulary, but 2. not.
+Therefore, we need to account for that.
 
 """
 
@@ -38,24 +38,24 @@ import sys
 
 sys.path.append(".")
 
-import typing
 import itertools
-from multiprocessing import Pool
-from argparse import ArgumentParser
-
 import json
 import random
-from pathlib import Path
-import fasttext
+import typing
 
 # Supress Fasttext warnings when loading a model
 import warnings
+from argparse import ArgumentParser
+from multiprocessing import Pool
+from pathlib import Path
+
+import fasttext
 
 warnings.filterwarnings("ignore")
 
 from evaluation_data.cues import CUES
-from utils.similarity import calc_correlation
 from utils.misc import get_data_dir
+from utils.similarity import calc_correlation
 
 p = Path.cwd()
 
@@ -89,7 +89,6 @@ def compare_models(models: typing.Tuple[Path]) -> typing.List[dict]:
     results.append(results_random)
 
     for cue, wordlist in CUES.items():
-
         if "lower" in model_a_meta["parameter_string"]:
             wordlist = [w.lower() for w in wordlist]
 
@@ -113,7 +112,6 @@ def compare_models(models: typing.Tuple[Path]) -> typing.List[dict]:
 
 
 if __name__ == "__main__":
-
     arg_parser = ArgumentParser(
         description="Evaluate correlations within the same parameter settings"
     )
