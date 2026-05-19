@@ -43,14 +43,25 @@ syntactic$`Coverage (%)` <- round(
   digits = 2
 )
 
-syntactic$`Correct (%)` <- round(
+syntactic$`Adjusted Correct (%)` <- round(
   (syntactic$correct / syntactic$coverage) * 100,
   digits = 2
 )
-syntactic$`Correct (Top 10, %)` <- round(
+syntactic$`Adjusted Correct (Top 10, %)` <- round(
   (syntactic$top_n / syntactic$coverage) * 100,
   digits = 2
 )
+
+
+syntactic$`Correct (%)` <- round(
+  (syntactic$correct / syntactic$total_questions) * 100,
+  digits = 2
+)
+syntactic$`Correct (Top 10, %)` <- round(
+  (syntactic$top_n / syntactic$total_questions) * 100,
+  digits = 2
+)
+
 syntactic$`Sub-Task` <- as.factor(syntactic$task)
 syntactic$`Task` <- case_when(
   syntactic$task == "opposite" ~ "Opposite (Semantic)",
@@ -125,6 +136,26 @@ ggsave(
   units = "px",
   scale = 1.5
 )
+
+
+p <- syntactic |>
+  filter(`Model Group` %in% c("OEmbeddings Lowercase", "OEmbeddings Cased")) |>
+  mutate(
+    window_size = as.factor(window_size),
+    vocab_size = as.factor(vocab_size)
+  ) |>
+  rename(
+    `Window Size` = window_size,
+    `Minimum Count` = min_count,
+    `Vocabulary Size` = vocab_size
+  ) |>
+  # filter(`Task` == "Syntactic") |>
+  ggplot(aes(x = `Vocabulary Size`, y = `Coverage (%)`, fill = `Model Group`)) +
+  geom_boxplot() +
+  theme_clean() +
+  scale_fill_viridis(discrete = TRUE, option = "mako", begin = 0.2, end = 0.8) +
+  ggtitle("Vocabulary coverage for Syntactic / Semantic Tasks") +
+  facet_wrap(~`Minimum Count`)
 
 
 p <- syntactic |>
