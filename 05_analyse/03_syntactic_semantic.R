@@ -5,6 +5,7 @@ library(ggplot2)
 library(ggthemes)
 library(viridis)
 library(forcats)
+library(cowplot)
 
 if (!dir.exists("plots")) {
   dir.create("plots")
@@ -75,13 +76,11 @@ syntactic$`Task` <- forcats::fct_recode(
   "Word Intrusion (Semantic)" = "word intrusion"
 )
 
+syntactic$`Window Size` = as.factor(syntactic$window_size)
+syntactic$`Minimum Count` = as.factor(syntactic$min_count)
+syntactic$`Vocabulary Size` = as.factor(syntactic$vocab_size)
 
 p <- syntactic |>
-  mutate(window_size = as.factor(window_size)) |>
-  rename(
-    `Window Size` = window_size,
-    `Minimum Count` = min_count
-  ) |>
   ggplot(aes(x = `Task`, y = `Coverage (%)`, fill = `Model Group`)) +
   geom_boxplot() +
   theme_clean() +
@@ -94,7 +93,8 @@ ggsave(
   width = 1920,
   height = 1080,
   units = "px",
-  scale = 2
+  scale = 2,
+  bg = "white"
 )
 ggsave(
   "plots/semantic_syntactic/coverage.pdf",
@@ -108,11 +108,6 @@ ggsave(
 
 p <- syntactic |>
   filter(`Model Group` %in% c("OEmbeddings Lowercase", "OEmbeddings Cased")) |>
-  mutate(window_size = as.factor(window_size)) |>
-  rename(
-    `Window Size` = window_size,
-    `Minimum Count` = min_count
-  ) |>
   ggplot(aes(x = `Task`, y = `Coverage (%)`, fill = `Model Group`)) +
   geom_boxplot() +
   theme_clean() +
@@ -126,7 +121,8 @@ ggsave(
   width = 1920,
   height = 1080,
   units = "px",
-  scale = 2
+  scale = 2,
+  bg = "white"
 )
 ggsave(
   "plots/semantic_syntactic/coverage_min_count.pdf",
@@ -140,15 +136,6 @@ ggsave(
 
 p <- syntactic |>
   filter(`Model Group` %in% c("OEmbeddings Lowercase", "OEmbeddings Cased")) |>
-  mutate(
-    window_size = as.factor(window_size),
-    vocab_size = as.factor(vocab_size)
-  ) |>
-  rename(
-    `Window Size` = window_size,
-    `Minimum Count` = min_count,
-    `Vocabulary Size` = vocab_size
-  ) |>
   # filter(`Task` == "Syntactic") |>
   ggplot(aes(x = `Vocabulary Size`, y = `Coverage (%)`, fill = `Model Group`)) +
   geom_boxplot() +
@@ -157,11 +144,9 @@ p <- syntactic |>
   ggtitle("Vocabulary coverage for Syntactic / Semantic Tasks") +
   facet_wrap(~`Minimum Count`)
 
-
 p <- syntactic |>
   filter(task != "total") |>
   filter(!is.na(name.x)) |>
-  mutate(`Window Size` = as.factor(window_size)) |>
   ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Model Group`)) +
   geom_boxplot() +
   facet_wrap(~`Task`, labeller = "label_both", ncol = 4) +
@@ -175,7 +160,8 @@ ggsave(
   width = 1920,
   height = 1080,
   units = "px",
-  scale = 2
+  scale = 2,
+  bg = "white"
 )
 ggsave(
   "plots/semantic_syntactic/results_strict.pdf",
@@ -187,14 +173,136 @@ ggsave(
 )
 
 
+p_syntactic <- syntactic |>
+  filter(Task == "Syntactic") |>
+  filter(!is.na(name.x)) |>
+  ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Model Group`)) +
+  geom_boxplot() +
+  theme_clean() +
+  scale_fill_viridis(discrete = TRUE, option = "mako") +
+  theme(
+    plot.background = element_blank(),
+    panel.grid.major.x = element_blank()
+  ) +
+  ggtitle("Syntactic")
+
+p_syntactic_actual <- p_syntactic + theme(legend.position = "none")
+
+p_best_match <- syntactic |>
+  filter(Task == "Best match (Semantic)") |>
+  filter(!is.na(name.x)) |>
+  ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Model Group`)) +
+  geom_boxplot() +
+  theme_clean() +
+  scale_fill_viridis(discrete = TRUE, option = "mako") +
+  theme(
+    legend.position = "none",
+    plot.background = element_blank(),
+    panel.grid.major.x = element_blank()
+  ) +
+  ggtitle("Semantic: Best Match")
+
+
+p_opposite <- syntactic |>
+  filter(Task == "Opposite (Semantic)") |>
+  filter(!is.na(name.x)) |>
+  ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Model Group`)) +
+  geom_boxplot() +
+  theme_clean() +
+  scale_fill_viridis(discrete = TRUE, option = "mako") +
+  theme(
+    legend.position = "none",
+    plot.background = element_blank(),
+    panel.grid.major.x = element_blank()
+  ) +
+  ggtitle("Semantic: Opposite")
+
+
+p_intrusion_all <- syntactic |>
+  filter(Task == "Word Intrusion (Semantic)") |>
+  filter(!is.na(name.x)) |>
+  ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Model Group`)) +
+  geom_boxplot() +
+  theme_clean() +
+  scale_fill_viridis(discrete = TRUE, option = "mako") +
+  theme(
+    legend.position = "none",
+    plot.background = element_blank(),
+    panel.grid.major.x = element_blank()
+  ) +
+  ggtitle("Semantic: Word Intrusion (all)")
+
+
+p_intrusion_embeddings <- syntactic |>
+  filter(Task == "Word Intrusion (Semantic)") |>
+  filter(`Model Group` != "BERT") |>
+  filter(!is.na(name.x)) |>
+  ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Model Group`)) +
+  geom_boxplot() +
+  theme_clean() +
+  scale_fill_viridis(discrete = TRUE, option = "mako") +
+  ylim(80, 100) +
+  theme(
+    legend.position = "none",
+    plot.background = element_blank(),
+    panel.grid.major.x = element_blank()
+  ) +
+  ggtitle("Semantic: Word Intrusion (embeddings)")
+
+
+legend <- get_legend(p_syntactic)
+
+plots <- align_plots(
+  p_syntactic_actual,
+  p_best_match,
+  p_opposite,
+  p_intrusion_all,
+  p_intrusion_embeddings,
+  align = 'v',
+  axis = 'l'
+)
+
+top_row <- plot_grid(
+  plots[[1]],
+  plots[[2]],
+  plots[[3]],
+  nrow = 1
+)
+
+bottom_row <- plot_grid(
+  plots[[4]],
+  plots[[5]],
+  legend,
+  # rel_widths = c(1, 1, .3),
+  nrow = 1
+)
+
+p <- plot_grid(top_row, bottom_row, ncol = 1)
+
+ggsave(
+  "plots/semantic_syntactic/big_plot.png",
+  p,
+  width = 15,
+  height = 15,
+  units = "cm",
+  scale = 2,
+  bg = "white",
+)
+
+ggsave(
+  "plots/semantic_syntactic/big_plot.pdf",
+  p,
+  width = 15,
+  height = 15,
+  units = "cm",
+  scale = 2,
+)
+
+
 p <- syntactic |>
   filter(task == "best match") |>
   filter(!is.na(name.x)) |>
   filter(`Model Group` %in% c("OEmbeddings Cased", "OEmbeddings Lowercase")) |>
-  mutate(
-    `Window Size` = as.factor(window_size),
-    `Minimum Count` = as.factor(min_count)
-  ) |>
   ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Minimum Count`)) +
   geom_boxplot() +
   facet_wrap(~`Model Group`, labeller = "label_both", ncol = 3) +
@@ -208,7 +316,8 @@ ggsave(
   width = 1920,
   height = 1080,
   units = "px",
-  scale = 2
+  scale = 2,
+  bg = "white"
 )
 ggsave(
   "plots/semantic_syntactic/oembeddings_best_match.pdf",
@@ -224,10 +333,6 @@ p <- syntactic |>
   filter(task == "opposite") |>
   filter(!is.na(name.x)) |>
   filter(`Model Group` %in% c("OEmbeddings Cased", "OEmbeddings Lowercase")) |>
-  mutate(
-    `Window Size` = as.factor(window_size),
-    `Minimum Count` = as.factor(min_count)
-  ) |>
   ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Minimum Count`)) +
   geom_boxplot() +
   ylim(c(0, 20)) +
@@ -242,7 +347,8 @@ ggsave(
   width = 1920,
   height = 1080,
   units = "px",
-  scale = 2
+  scale = 2,
+  bg = "white"
 )
 ggsave(
   "plots/semantic_syntactic/oembeddings_opposite.pdf",
@@ -258,10 +364,6 @@ p <- syntactic |>
   filter(task == "doesnt fit") |>
   filter(!is.na(name.x)) |>
   filter(`Model Group` %in% c("OEmbeddings Cased", "OEmbeddings Lowercase")) |>
-  mutate(
-    `Window Size` = as.factor(window_size),
-    `Minimum Count` = as.factor(min_count)
-  ) |>
   ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Minimum Count`)) +
   geom_boxplot() +
   ylim(c(80, 100)) +
@@ -276,7 +378,8 @@ ggsave(
   width = 1920,
   height = 1080,
   units = "px",
-  scale = 2
+  scale = 2,
+  bg = "white"
 )
 ggsave(
   "plots/semantic_syntactic/oembeddings_intrusion.pdf",
@@ -292,10 +395,6 @@ p <- syntactic |>
   filter(task != "total") |>
   filter(!is.na(name.x)) |>
   filter(`Model Group` %in% c("OEmbeddings Cased", "OEmbeddings Lowercase")) |>
-  mutate(
-    `Window Size` = as.factor(window_size),
-    `Minimum Count` = as.factor(min_count)
-  ) |>
   ggplot(aes(x = `Window Size`, y = `Correct (%)`, fill = `Minimum Count`)) +
   geom_boxplot() +
   facet_wrap(~`Model Group`, labeller = "label_both") +
@@ -310,7 +409,8 @@ ggsave(
   width = 1920,
   height = 1080,
   units = "px",
-  scale = 2
+  scale = 2,
+  bg = "white"
 )
 ggsave(
   "plots/semantic_syntactic/oembeddings_syntactic.pdf",
@@ -326,12 +426,6 @@ p <- syntactic |>
   filter(task != "total") |>
   filter(!is.na(name.x)) |>
   filter(!is.na(`Correct (Top 10, %)`)) |>
-  mutate(window_size = as.factor(window_size)) |>
-  rename(
-    `Window Size` = window_size,
-    `Computation Time (hours)` = computation_time_hours,
-    `Minimum Count` = min_count
-  ) |>
   ggplot(aes(
     x = `Window Size`,
     y = `Correct (Top 10, %)`,
@@ -349,7 +443,8 @@ ggsave(
   width = 1920,
   height = 1080,
   units = "px",
-  scale = 2
+  scale = 2,
+  bg = "white"
 )
 ggsave(
   "plots/semantic_syntactic/results_top10.pdf",
