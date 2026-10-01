@@ -28,6 +28,9 @@ syntactic <- RcppSimdJson::fload(c(
 ))
 syntactic <- dplyr::bind_rows(syntactic)
 
+sum(syntactic$duration, na.rm = TRUE) / 60 / 60
+mean(syntactic$duration, na.rm = TRUE)
+
 syntactic$model_id <- paste(
   syntactic$name,
   syntactic$parameter_string,
@@ -76,9 +79,9 @@ syntactic$`Task` <- forcats::fct_recode(
   "Word Intrusion (Semantic)" = "word intrusion"
 )
 
-syntactic$`Window Size` = as.factor(syntactic$window_size)
-syntactic$`Minimum Count` = as.factor(syntactic$min_count)
-syntactic$`Vocabulary Size` = as.factor(syntactic$vocab_size)
+syntactic$`Window Size` <- as.factor(syntactic$window_size)
+syntactic$`Minimum Count` <- as.factor(syntactic$min_count)
+syntactic$`Vocabulary Size` <- as.factor(syntactic$vocab_size)
 
 p <- syntactic |>
   ggplot(aes(x = `Task`, y = `Coverage (%)`, fill = `Model Group`)) +
