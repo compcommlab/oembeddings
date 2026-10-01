@@ -1,6 +1,4 @@
-![ömbeddings](misc/oembeddings-white.svg)
-
-ÖMbeddings (Österreichische Media Embeddings)
+# ÖMbeddings (Österreichische Media Embeddings)
 
 # Overview
 
