@@ -3,7 +3,7 @@ library(ggplot2)
 library(gridExtra)
 
 # Read in the dataset
-data <- read.csv("/Users/janabernhard/Documents/Projekte/2023_Embedding/analysis/validation_3_results_all_grouped.csv")  # Replace "your_dataset.csv" with the actual file path/name
+data <- read.csv("/validation_3_results_all_grouped.csv")
 
 # Define colors for different min counts
 mincount_colors <- c("5" = "#0063A6", "10" = "#A71C49", "50" = "#F6A800", "100" = "#94C154")
