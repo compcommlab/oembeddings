@@ -3,7 +3,7 @@ library(ggplot2)
 library(gridExtra)
 
 # Read in the dataset
-data <- read.csv("/Users/janabernhard/Documents/Projekte/2023_Embedding/analysis/validation_3_results_all_grouped.csv")  # Replace "your_dataset.csv" with the actual file path/name
+data <- read.csv("/validation_3_results_all_grouped.csv")
 
 # Define colors for different min counts
 mincount_colors <- c("5" = "#0063A6", "10" = "#A71C49", "50" = "#F6A800", "100" = "#94C154")
@@ -75,7 +75,7 @@ create_plot <- function(data, column_name) {
 performance_variables <- c("bestmatch", "opposite", "wordintrusion", "mostsimilar", "ffp", "topics", "sentiment")
 for (variable in performance_variables) {
   plots <- create_plot(data, variable)
-  filename <- paste0("/Users/janabernhard/Documents/Projekte/2023_Embedding/analysis/R_graphs/plot_", variable, "_pergroup")
+  filename <- paste0("R_graphs/plot_", variable, "_pergroup")
   ggsave(paste0(filename, ".svg"), arrangeGrob(plots[[1]], plots[[2]], nrow = 1), device = "svg", width = 210, height = 148, units = "mm")
   ggsave(paste0(filename, ".pdf"), arrangeGrob(plots[[1]], plots[[2]], nrow = 1), device = "pdf", width = 210, height = 148, units = "mm")
 }
