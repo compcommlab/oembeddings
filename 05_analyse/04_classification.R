@@ -26,6 +26,9 @@ classification <- RcppSimdJson::fload(c(
 ))
 classification <- dplyr::bind_rows(classification)
 
+sum(classification$duration, na.rm = TRUE) / 60 / 60
+mean(classification$duration, na.rm = TRUE)
+
 classification$model_id <- paste(
   classification$model_name,
   classification$parameter_string,
