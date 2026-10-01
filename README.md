@@ -46,12 +46,24 @@ Analogously we performed the evaluation of all models on the VSC as well:
 
 Unfortunately, exact timings for correlation calculation runs were not recorded.
 
+## Evaluation Data
+
+Data for syntactic and semantic evaluation was taken from project [GermanWordEmbeddings](https://github.com/devmount/GermanWordEmbeddings), Copyright (c) 2015 Andreas Müller. These files are licensed under the MIT license. See DEVMOUNT-LICENSE.md for additional details. Redistribution permitted by MIT license.
+
+Data for classification tasks cannot be shared publicly due to copyright issues. Data is part of the AUTNES project where media coverage as well as party messages are collected and manually coded. For access to the data please contact us.
+
+"One Million Posts" Corpus (`evaluation_data/classification/million_posts_sentiment.feather`) by Schabus et al (2017) available at: [https://ofai.github.io/million-post-corpus/](https://ofai.github.io/million-post-corpus/). Redistributed granted by Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (see: `MillionPosts-LICENSE.md`).
+
+For more details refer to `evaluation_data/README.md`
+
 ## References
 
 - Bojanowski, P., Grave, E., Joulin, A., & Mikolov, T. (2017). Enriching Word Vectors with Subword Information. Transactions of the Association for Computational Linguistics, 5, 135–146. https://doi.org/10.1162/tacl_a_00051
 - Mikolov, T., Chen, K., Corrado, G., & Dean, J. (2013, September). Efficient Estimation of Word Representations in Vector Space. https://doi.org/10.48550/arXiv.1301.3781
 - Pennington, J., Socher, R., & Manning, C. (2014). GloVe: Global Vectors for Word Representation. Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP), 1532–1543. https://doi.org/10.3115/v1/D14-1162
 - Rodriguez, P. L., Spirling, A., & Stewart, B. M. (2023). Embedding Regression: Models for Context-Specific Description and Inference. American Political Science Review, 117(4), 1255–1274. https://doi.org/10.1017/S0003055422001228
+- Dietmar Schabus, Marcin Skowron, Martin Trapp. One Million Posts: A Data Set of German Online Discussions. Proceedings of the 40th International ACM SIGIR Conference on Research and Development in Information Retrieval (SIGIR), pp. 1241-1244. Tokyo, Japan, August 2017. DOI: [10.1145/3077136.3080711](https://doi.org/10.1145/3077136.3080711)
+- Dietmar Schabus and Marcin Skowron. Academic-Industrial Perspective on the Development and Deployment of a Moderation System for a Newspaper Website. Proceedings of the 11th International Conference on Language Resources and Evaluation (LREC 2018), pp. 1602-1605. Miyazaki, Japan, May 2018. [Full paper available for download from LREC](http://www.lrec-conf.org/proceedings/lrec2018/summaries/8885.html)
 
 # Replication
 
