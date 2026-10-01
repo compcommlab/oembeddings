@@ -37,12 +37,12 @@ We ran the following preprocessing steps:
 
 ## Computation Time & Carbon Footprint
 
-Training all models took about 1335 hours (wall clock) of computation time (mean = 4.17 hours, see also "plots/training_duration.png") on the Vienna Scientific Cluster (VSC, see: https://asc.ac.at/systems/vsc-5/). The training ran on VSC-5 which is equipped where each node is equipped with with two AMD EPYC Milan 7713 processors (64 cores per CPU) with a base frequency of 2GHz and have 512GB of memory. Each training run was performed on one node, submitted to the VSC queue. According to estimations of [Green Algorithms calculator](https://calculator.green-algorithms.org/) the training emitted 64.43 kgCO2e and needed 518.23 kWh.
+Training all models took about 1335 hours (wall clock) of computation time (mean = 4.17 hours, see also "plots/training_duration.png") on the Vienna Scientific Cluster (VSC, see: https://asc.ac.at/systems/vsc-5/). The training ran on VSC-5 where each node is equipped with with two AMD EPYC Milan 7713 processors (64 cores per CPU) with a base frequency of 2GHz and have 512GB of memory. Each training run was performed on one node, submitted to the VSC queue. According to estimations of [Green Algorithms calculator](https://calculator.green-algorithms.org/) the training emitted 107.68 kgCO2e and needed 866.10 kWh.
 
 Analogously we performed the evaluation of all models on the VSC as well:
 
-- Syntactic / Semantic Evaluation: total 57.4 hours (wall clock, mean = 26 seconds); Carbon footprint 2.78 kgCO2e; Energy needed 22.32 kWh
-- Classification tasks: total 53.6 hours (wall clock, mean = 85 seconds); Carbon footprint, 2.58 kgCO2e; Energy needed 20.77 kWh
+- Syntactic / Semantic Evaluation: total 57.4 hours (wall clock, mean = 26 seconds); Carbon footprint 4.64 kgCO2e; Energy needed 37.29 kWh
+- Classification tasks: total 53.6 hours (wall clock, mean = 85 seconds); Carbon footprint, 4.31 kgCO2e; Energy needed 34.7 kWh
 
 Unfortunately, exact timings for correlation calculation runs were not recorded.
 
