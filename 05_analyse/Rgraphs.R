@@ -75,7 +75,7 @@ create_plot <- function(data, column_name) {
 performance_variables <- c("bestmatch", "opposite", "wordintrusion", "mostsimilar", "ffp", "topics", "sentiment")
 for (variable in performance_variables) {
   plots <- create_plot(data, variable)
-  filename <- paste0("/Users/janabernhard/Documents/Projekte/2023_Embedding/analysis/R_graphs/plot_", variable, "_pergroup")
+  filename <- paste0("R_graphs/plot_", variable, "_pergroup")
   ggsave(paste0(filename, ".svg"), arrangeGrob(plots[[1]], plots[[2]], nrow = 1), device = "svg", width = 210, height = 148, units = "mm")
   ggsave(paste0(filename, ".pdf"), arrangeGrob(plots[[1]], plots[[2]], nrow = 1), device = "pdf", width = 210, height = 148, units = "mm")
 }
