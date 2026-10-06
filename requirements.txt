@@ -19,3 +19,4 @@ evaluate
 torch
 accelerate
 sentencepiece
+openpyxl

@@ -232,7 +232,7 @@ combined_plot <- (p_density | p_taskwise) +
 
 # ── 4. Save to PDF ───────────────────────────────────────────────────
 ggsave(
-  filename = filename = "plots/regression/figure_combined_mincount_analysis.pdf",
+  filename = "plots/regression/figure_combined_mincount_analysis.pdf",
   plot     = combined_plot,
   device   = pdf,
   width    = 11,
