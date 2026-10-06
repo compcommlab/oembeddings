@@ -20,3 +20,4 @@ torch
 accelerate
 sentencepiece
 openpyxl
+fasttext
