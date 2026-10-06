@@ -13,6 +13,9 @@ df <- read.csv("evaluation_results/dataset_regression.csv")
 row.names(df) <- df$X
 df <- df[, -which(names(df) == "X")]
 
+df <- df %>% filter(group_number >= 2, group_number <= 33)
+stopifnot(nrow(df) == 320, length(unique(df$group_number)) == 32)
+
 # ── 1. Create df_long ───────────────────────────────────────────────────
 df_long <- df %>%
   rownames_to_column("model_id") %>%
@@ -231,6 +234,8 @@ combined_plot <- (p_density | p_taskwise) +
   )
 
 # ── 4. Save to PDF ───────────────────────────────────────────────────
+dir.create("plots/regression", recursive = TRUE, showWarnings = FALSE)
+
 ggsave(
   filename = "plots/regression/figure_combined_mincount_analysis.pdf",
   plot     = combined_plot,

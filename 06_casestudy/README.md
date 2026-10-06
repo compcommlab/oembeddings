@@ -28,7 +28,7 @@ Step 1 is run from the repository root or from `05_analyse/`. Steps 2–4 are ru
 
 ## Model selection
 
-The self-trained models were trained with 32 hyperparameter combinations (casing × minimum count 5/10/50/100 × window size 5/6/12/24), each estimated ten times (= one model family). For the case study we use one model per family: the one with the highest `mean_overall` (average across all seven validation tasks) in `../evaluation_results/dataset_regression.csv`. The selected models are listed in `selected_models.csv`.
+The self-trained models were trained with 32 hyperparameter combinations (casing × minimum count 5/10/50/100 × window size 5/6/12/24), each estimated ten times (= one model family). For the case study we use one model per family: the one with the highest `mean_overall` (average across all seven validation tasks) in `../evaluation_results/dataset_regression.csv`. The selected models are listed in `selected_models.csv`. Note: for the self-trained and fastText models, sentiment in this file is the mean of AUTNES Sentiment and the One Million Posts sentiment task. One Million Posts was dropped from all other analyses, which use autnes_sentiment, but it remained in this selection score. We kept the selection as originally made. The selected models are listed in selected_models.csv.
 
 For lowercased models the lowercase keyword is used (e.g. `frau`), for cased models the cased keyword (`Frau`). All neighbours are lowercased so that cased and lowercased models can be compared.
 

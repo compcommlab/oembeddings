@@ -12,9 +12,12 @@ library(bayestestR)   # ROPE, p_direction, p_significance
 # effectsize not needed: standardized betas are read directly from posterior_summary()
 library(corrplot)     # rank correlation heatmap
 
-df <- read.csv("evaluation_results/dataset_regression.csv")
+df <- read.csv("evaluation_results/dataset_regression_rebuilt.csv")
 row.names(df) <- df$X
 df <- df[, -which(names(df) == "X")]
+
+df <- df %>% filter(group_number >= 2, group_number <= 33)
+stopifnot(nrow(df) == 320, length(unique(df$group_number)) == 32)
 
 ####### REGRESSIONS
 # Define the list of dependent variable column names
@@ -542,7 +545,7 @@ master_table <- std_summary %>%
   arrange(Task, Hyperparameter)
 
 cat("Full effect size summary (one row per task × hyperparameter):\n\n")
-print(master_table, n = Inf)
+print(master_table)
 
 # Optionally write to CSV
 write.csv(master_table,

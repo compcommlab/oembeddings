@@ -8,8 +8,12 @@ over all models used in the red-flag analysis (same exclusions applied).
 import pandas as pd
 import numpy as np
 
-# ── CONFIG (keep in sync with red_flags_analysis.py) ──────────────────────────
-DATA_PATH = "/Users/janabernhard-harrer/Documents/Dokumente/4_projects/2023_Embedding/Round1/analysis/Regression/dataset_regression.csv"                      # ← path to your CSV
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]          # = the oembeddings folder
+DATA_PATH = ROOT / "evaluation_results" / "dataset_regression.csv"
+OUT_DIR = ROOT / "plots" / "regression"
+OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 HP_COLS  = ["lower", "mincount", "windows"]
 ID_VARS  = ["group_number"] + HP_COLS
@@ -72,5 +76,5 @@ print("  OUTCOME RANGES PER TASK")
 print("=" * 90)
 print(results.to_string(index=False))
 
-results.to_csv("task_outcome_ranges.csv", index=False)
+results.to_csv(OUT_DIR / "task_outcome_ranges.csv", index=False)
 print("\n→ Saved to task_outcome_ranges.csv")
