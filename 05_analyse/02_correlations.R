@@ -40,6 +40,8 @@ correlations_within$Cues <- tools::toTitleCase(gsub(
   correlations_within$cues
 ))
 
+correlations_within$Cues[correlations_within$Cues == "Environmnent"] <- "Environment"
+
 p <- correlations_within |>
   mutate(window_size = as.factor(window_size)) |>
   rename(
@@ -160,6 +162,7 @@ correlations_across$Cues <- tools::toTitleCase(gsub(
   correlations_across$cues
 ))
 
+correlations_across$Cues[correlations_across$Cues == "Environmnent"] <- "Environment"
 
 # Boxplots of cues
 
