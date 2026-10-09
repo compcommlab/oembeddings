@@ -1,0 +1,10 @@
+hyperparameter,subset,kw_statistic,kw_p,significant
+lower,all tasks,0.031,0.8600006986459978,False
+lower,intrinsic,2.551,0.1102372714575049,False
+lower,extrinsic,2.438,0.11841452831093846,False
+mincount,all tasks,21.834,7.06380020623793e-05,True
+mincount,intrinsic,83.687,4.965106517169185e-18,True
+mincount,extrinsic,13.575,0.003545271516476029,True
+windows,all tasks,11.605,0.008868160522440745,True
+windows,intrinsic,5.264,0.15342999621406891,False
+windows,extrinsic,6.865,0.07632158095491544,False

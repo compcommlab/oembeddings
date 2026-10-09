@@ -1,0 +1,13 @@
+hyperparameter,value,subset,p_vs_best,significantly_worse
+mincount,5.0,all tasks,0.0003,True
+mincount,10.0,all tasks,0.0,True
+mincount,50.0,all tasks,0.0127,True
+mincount,5.0,intrinsic,0.0,True
+mincount,10.0,intrinsic,0.0,True
+mincount,50.0,intrinsic,0.0,True
+mincount,10.0,extrinsic,0.0238,True
+mincount,50.0,extrinsic,0.003,True
+mincount,100.0,extrinsic,0.0008,True
+windows,6.0,all tasks,0.0874,False
+windows,12.0,all tasks,0.0234,True
+windows,24.0,all tasks,0.0009,True

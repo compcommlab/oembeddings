@@ -1,0 +1,5 @@
+windows,Intrinsic Task 1: Best Match,Intrinsic Task 2: Opposite,Intrinsic Task 3: Word Intrusion,Intrinsic Task 4: Grammar,Extrinsic Task 1: Author Prediction,Extrinsic Task 2: Topic Prediction,Extrinsic Task 3: Sentiment Prediction
+5.0,0.559,0.571,0.612,0.529,0.664,0.387,0.589
+6.0,0.549,0.54,0.537,0.532,0.591,0.399,0.509
+12.0,0.492,0.47,0.431,0.514,0.463,0.562,0.503
+24.0,0.407,0.426,0.426,0.431,0.288,0.658,0.405
