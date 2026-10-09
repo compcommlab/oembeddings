@@ -8,7 +8,7 @@ We trained embedding models on a large corpus of Austrian online news texts. We 
 
 ## Corpus
 
-The training data for our models consists of N = 5,495,185 online news articles from scraped from nine Austrian media outlets, collected between 2010 and 2022.
+The training data for our models consists of N = 5,495,185 online news articles from scraped from ten Austrian media outlets, collected between 2010 and 2022.
 
 *The original data cannot be shared due to copyright restrictions. However, we include a small wikipedia corpus for testing purposes.*
 
@@ -195,7 +195,7 @@ Model pairs where one model is lowercased and the other is not are not compared!
 
 Data files in the directory `evaluation_data/devmount` were taken from project [GermanWordEmbeddings](https://github.com/devmount/GermanWordEmbeddings), Copyright (c) 2015 Andreas Müller. These files are licensed under the MIT license. See DEVMOUNT-LICENSE.md for additional details.
 
-The script was enhanced to automatically scan the `tmp_models` directory for all models and to evaluate them one by one. The results are stored in `evaluation_results/semantic_syntactic` with subdirectories for each sub-task.
+The script was enhanced to automatically scan the `tmp_models` directory for all models and to evaluate them one by one. The results are stored in `evaluation_results/oembeddings/semantic_syntactic/` with subdirectories for each sub-task.
 
 The evaluation also handles models with lowercased training data automatically (as long as `lower` is in the training data file name)
 
@@ -204,10 +204,31 @@ The evaluation also handles models with lowercased training data automatically (
 Datasets for classification tasks cannot be shared because a) file size is too large, and b) copyright issues (e.g., press releases by parties).
 
 - Drop all feather files in the directory `evaluation_data/classification`
-- Run the script `04_eval/classification.py`
+- Run the script `04_eval/03_label_classification.py`
     - automatically generates data format required for fasttext
     - evaluates all models one by one
-    - stores results in `evaluation_results/classification`
+    - stores results in `evaluation_results/oembeddings/classification/`
+    
+#### Off-the-shelf transformer models (`04_eval/bert_*`)
+
+Evaluated models (Hugging Face IDs; metadata in `models/bert/`): `deepset/gbert-base`, `uklfr/gottbert-base`, `FacebookAI/xlm-roberta-base`, `distilbert-base-multilingual-cased`.
+
+**Intrinsic tasks**
+- `bert_semantic.py`: Best Match and Opposite (masked-word prediction with the `fill-mask` pipeline)
+- `bert_syntactic.py`: Grammar
+- `bert_intrusion.py`: Word Intrusion (word vector = mean of the last hidden layer)
+- The scripts read the `*.questions` files in `evaluation_data/devmount/`, which are created by `04_eval/02_fasttext_semantic_syntactic.py`. Run that script first.
+- Launch script: `misc/bert_syntactic.sh`
+
+**Extrinsic tasks**
+- `bert_singlelabel_classification.py`: author prediction (`facebook`, `twitter`, `nationalrat`, `pressreleases`) and AUTNES sentiment (`autnes_sentiment`)
+- `bert_multilabel_classification.py`: AUTNES topics (`autnes_automated_2017`, `autnes_automated_2019`)
+- Each model is fine-tuned with `AutoModelForSequenceClassification`: learning rate 2e-5, 2 epochs, batch size 8, max. 256 (single-label) / 512 (multi-label) tokens, 80/20 train/test split, seed 1234.
+- Metric: macro F1 (single-label), micro F1 with threshold 0.5 (multi-label).
+- Launch script: `misc/bert_classification.sh`
+- Example: `python3 04_eval/bert_singlelabel_classification.py --model deepset/gbert-base --dataset twitter`
+
+The scripts write their results to `evaluation_results/`; the results used in the paper are in `evaluation_results/bert_results/{classification,semantic_syntactic}/`. A CUDA GPU is used if available.
     
 ## Analysis and Reproduction of the Paper
 
@@ -215,7 +236,7 @@ The raw evaluation results of all models are included in `evaluation_results/` (
 
 ### Requirements
 
-- **R** (scripts in `05_analyse/*.R`): `tidyverse`, `dplyr`, `stringr`, `ggplot2`, `ggthemes`, `viridis`, `forcats`, `cowplot`, `patchwork`, `RcppSimdJson`, `arrow`, `brms`, `bayestestR`, `corrplot`, `data.table`, `reshape2`, `psych`, `car`, `openxlsx`, `Matrix`. `brms` needs a working Stan installation (`rstan` or `cmdstanr`). Package versions: see *R session info* below.
+- **R** (scripts in `05_analyse/*.R`): `tidyverse`, `dplyr`, `stringr`, `ggplot2`, `ggthemes`, `viridis`, `forcats`, `cowplot`, `patchwork`, `RcppSimdJson`, `arrow`, `brms`, `bayestestR`, `corrplot`, `data.table`, `reshape2`, `psych`, `car`, `openxlsx`, `Matrix`. `brms` needs a working Stan installation (`rstan` or `cmdstanr`). Package versions: see *sessionInfo.txt*.
 - **Python** (`*.py`, `*.ipynb`): see `requirements.txt`.
 
 ### Working directory
@@ -277,6 +298,6 @@ All analyses (06–09) use `dataset_regression_rebuilt.csv`, which `00_create_da
 
 ### Utilities
 
-- `get_third_party_embeddings.py`: automatically downloads fastText pre-trained models (German)
-- `datamodel.py`: use SQLAlchemy to declare SQL tables
-- `sql.py`: helper functions to start SQL sessions automatically
+- `utils/get_third_party_embeddings.py`: automatically downloads fastText pre-trained models (German)
+- `utils/datamodel.py`: use SQLAlchemy to declare SQL tables
+- `utils/sql.py`: helper functions to start SQL sessions automatically
