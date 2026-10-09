@@ -275,11 +275,6 @@ See `06_casestudy/README.md` for the full pipeline. To reproduce Figures 8 and 9
 
 All analyses (06–09) use `dataset_regression_rebuilt.csv`, which `00_create_dataset_regression.py` builds from the raw results in this repository. The original `dataset_regression.csv` is kept because the case-study model selection (`06_casestudy/selected_models.csv`) is based on it. For the 320 self-trained models, both files contain the same task scores and hyperparameters. They differ in three respects: (1) the raw One Million Posts sentiment results are not included in the repository, so `sentiment`, `sum`, `overall_score_v2` and `mean_overall` (the case-study selection score) cannot be rebuilt; (2) the wiki.de fastText model is only in the original file, as it has no raw results in the repository; (3) the BERT topic scores differ in four rows. None of these columns or rows enter the analyses in 06–09.
 
-### R session info
-
-<!-- TODO: paste the output of sessionInfo() after running 06 and 07 -->
-
-
 ### Utilities
 
 - `get_third_party_embeddings.py`: automatically downloads fastText pre-trained models (German)
