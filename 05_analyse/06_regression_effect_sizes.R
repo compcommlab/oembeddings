@@ -123,6 +123,15 @@ ggplot(summary_list, aes(x = Estimate, y = parameter)) +
 # ------------------------------------------------------------------------------
 dir.create("plots/regression", recursive = TRUE, showWarnings = FALSE)
 
+# Table 4: posterior means and 95% credible intervals (incl. intercept)
+map2_dfr(fits_list, names(fits_list), function(m, dv) {
+  ps <- as.data.frame(posterior_summary(m))
+  ps$Parameter <- rownames(ps)
+  ps %>%
+    filter(str_detect(Parameter, "^b_")) %>%
+    transmute(Task = dv, Parameter, Estimate, Q2.5, Q97.5)
+}) %>%
+  write.csv("plots/regression/table4_posterior.csv", row.names = FALSE)
 intrinsic_tasks <- c("bestmatch", "opposite", "wordintrusion", "mostsimilar")
 extrinsic_tasks <- c("ffp", "topics", "autnes_sentiment")
 
@@ -182,7 +191,7 @@ section_header <- function(title) {
 # STEP 1 — ROPE (Region of Practical Equivalence)
 #   Threshold: ±10% of each task's observed performance range across the
 #              320 self-trained models (reference models excluded; same
-#              ranges as in 08_task_ranges.ipynb)
+#              ranges as in 08_task_ranges.py)
 #   Interpretation: % of posterior falling INSIDE the ROPE → negligible effect
 #                   % OUTSIDE the ROPE → practically meaningful effect
 # ==============================================================================
@@ -228,21 +237,23 @@ rope_results_all <- bind_rows(rope_results_list)
 
 
 # ==============================================================================
-# STEP 2 — Standardized Coefficients (Cohen's d-like effect sizes)
+# STEP 2 — Standardized Coefficients and effect-size labels
 #   Because predictors were z-scored into df_scaled before fitting, the
-#   posterior fixed-effect estimates ARE already standardized betas
-#   (change in outcome per 1 SD change in predictor). No refit needed —
-#   we read them directly from posterior_summary(), avoiding the
-#   "bogus results" warning that standardize_parameters() raises when
-#   priors were not scaled to match a re-standardization step.
+#   posterior fixed-effect estimates are standardized with respect to the
+#   predictors: change in the outcome (raw units: accuracy or F1) per 1 SD
+#   change in the predictor. No refit needed — we read them directly from
+#   posterior_summary(), avoiding the "bogus results" warning that
+#   standardize_parameters() raises when priors were not scaled to match a
+#   re-standardization step.
 #
-#   Benchmarks (Cohen, 1988):
-#     |β| < 0.20  → negligible
-#     |β| 0.20–0.50 → small
-#     |β| 0.50–0.80 → medium
-#     |β| > 0.80   → large
+#   The outcome is NOT standardized, so Cohen's benchmarks (|β| < 0.20 =
+#   negligible, ...) do not apply. Practical relevance is judged by the
+#   task-specific ROPE from Step 1 (share of the 95% HDI inside the ROPE):
+#     100% inside       → "negligible (entirely in ROPE)"
+#     50% to < 100%     → "mostly negligible"
+#     < 50% inside      → "practically relevant"
 # ==============================================================================
-section_header("STEP 2: Standardized Coefficients (Cohen's d-like)")
+section_header("STEP 2: Standardized Coefficients and ROPE-based effect-size labels")
 
 std_results_list <- list()
 
@@ -257,12 +268,19 @@ for (dep_var in dependent_vars_all) {
     rename(Std_Coefficient = Estimate, CI_low = Q2.5, CI_high = Q97.5) %>%
     mutate(
       dependent_variable = dep_var,
-      Parameter          = str_replace(Parameter, "b_", ""),
-      effect_size_label  = case_when(
-        abs(Std_Coefficient) < 0.20 ~ "negligible",
-        abs(Std_Coefficient) < 0.50 ~ "small",
-        abs(Std_Coefficient) < 0.80 ~ "medium",
-        TRUE                        ~ "large"
+      Parameter          = str_replace(Parameter, "b_", "")
+    ) %>%
+    left_join(
+      rope_results_all %>%
+        filter(dependent_variable == dep_var) %>%
+        transmute(Parameter = str_replace(Parameter, "b_", ""), ROPE_Percentage),
+      by = "Parameter"
+    ) %>%
+    mutate(
+      effect_size_label = case_when(
+        round(ROPE_Percentage, 3) == 1 ~ "negligible (entirely in ROPE)",
+        ROPE_Percentage >= 0.5         ~ "mostly negligible",
+        TRUE                           ~ "practically relevant"
       )
     ) %>%
     select(Parameter, Std_Coefficient, CI_low, CI_high,

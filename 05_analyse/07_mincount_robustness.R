@@ -9,7 +9,7 @@ library(car)
 library(brms)
 library(patchwork)
 
-df <- read.csv("evaluation_results/dataset_regression.csv")
+df <- read.csv("evaluation_results/dataset_regression_rebuilt.csv")
 row.names(df) <- df$X
 df <- df[, -which(names(df) == "X")]
 

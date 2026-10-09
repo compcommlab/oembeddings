@@ -208,6 +208,77 @@ Datasets for classification tasks cannot be shared because a) file size is too l
     - automatically generates data format required for fasttext
     - evaluates all models one by one
     - stores results in `evaluation_results/classification`
+    
+## Analysis and Reproduction of the Paper
+
+The raw evaluation results of all models are included in `evaluation_results/` (JSON files, one per model and task). All tables and figures in the paper can be reproduced from these files without the training corpus or the trained models. The only exceptions are Figure 1 / Table 2 (need the corpus database) and step 1 of the case study (needs the self-trained models); their outputs are included in the repository.
+
+### Requirements
+
+- **R** (scripts in `05_analyse/*.R`): `tidyverse`, `dplyr`, `stringr`, `ggplot2`, `ggthemes`, `viridis`, `forcats`, `cowplot`, `patchwork`, `RcppSimdJson`, `arrow`, `brms`, `bayestestR`, `corrplot`, `data.table`, `reshape2`, `psych`, `car`, `openxlsx`, `Matrix`. `brms` needs a working Stan installation (`rstan` or `cmdstanr`). Package versions: see *R session info* below.
+- **Python** (`*.py`, `*.ipynb`): see `requirements.txt`.
+
+### Working directory
+
+Unless stated otherwise, run all scripts **from the repository root**, e.g. `Rscript 05_analyse/06_regression_effect_sizes.R` or `python 05_analyse/08_task_ranges.py`. Exceptions: `05_analyse/09_red-flag-analysis.ipynb` is run from inside `05_analyse/`, and the case-study notebooks 00–02 from inside `06_casestudy/`.
+
+### Scripts in `05_analyse/`
+
+Run in this order (scripts 02–04 need the output of 01; 06–09 need the output of 00).
+
+| Script | What it does | Input | Output |
+|---|---|---|---|
+| `00_create_dataset_regression.py` | Builds the model-level results table (one row per model, one column per task) from the raw results; all analyses (06–09) use this file | `evaluation_results/{oembeddings,facebook,bert_results}/` | `evaluation_results/dataset_regression_rebuilt.csv` (compared with the original `dataset_regression.csv`, see *Known differences*) |
+| `01_model_meta.R` | Collects model metadata (hyperparameters, model families, training time) | `models/*/*.json` | `evaluation_results/fasttext_models_meta.feather`, `evaluation_results/fasttext_model_families.feather`, `plots/training_duration.pdf` |
+| `02_correlations.R` | Stability: within- and across-family correlations of cue-word similarities | `evaluation_results/*/within_correlations/`, `evaluation_results/*/across_correlations/` | `plots/within_correlation/`, `plots/across_correlation/` |
+| `03_syntactic_semantic.R` | Intrinsic tasks (Best Match, Opposite, Word Intrusion, Grammar) and vocabulary coverage | `evaluation_results/*/semantic_syntactic/` | `plots/semantic_syntactic/`, `plots/offtheshelf_semantic_syntactic.csv` |
+| `04_classification.R` | Extrinsic tasks (author, topic and sentiment prediction) | `evaluation_results/*/classification/` | `plots/classification/`, `plots/offtheshelf_classification.csv` |
+| `05_casestudy_replication.ipynb` | Case study step 1: 100 nearest neighbours per keyword in the 32 selected self-trained models (**needs the models, not shared**) | `models/oembeddings/`, `06_casestudy/selected_models.csv` | `06_casestudy/table_allneighbours_{Keyword}.csv` |
+| `06_regression_effect_sizes.R` | Bayesian multilevel regressions (320 self-trained models), ROPE, probability of direction, effect sizes, rank correlations between tasks | `evaluation_results/dataset_regression_rebuilt.csv` | `plots/regression/table4_posterior.csv`, `effect_size_summary.csv`, `plot_intrinsic_tasks.pdf`, `plot_extrinsic_tasks.pdf`, `rank_correlations.csv`, `fits_list.rds` (not committed) |
+| `07_mincount_robustness.R` | Robustness check for minimum count: interaction with task type and per-task models | `evaluation_results/dataset_regression_rebuilt.csv` | `plots/regression/figure_combined_mincount_analysis.pdf` |
+| `08_task_ranges.py` | Observed performance range per task (basis of the ROPE: ±10% of the range) | `evaluation_results/dataset_regression_rebuilt.csv` | `plots/regression/task_outcome_ranges.csv` |
+| `09_red-flag-analysis.ipynb` | Red-flag analysis (consistently underperforming hyperparameter values; Kruskal–Wallis and Mann–Whitney tests), once with all tasks and once without Grammar | `evaluation_results/dataset_regression_rebuilt.csv` | `plots/red_flags/all_tasks/`, `plots/red_flags/without_grammar/` |
+
+The regressions in 06 and 07 use the 320 self-trained models only (model families 2–33); the scripts check this with `stopifnot()`. Predictors are z-scored, outcomes are in raw units (accuracy or F1). Model fits use `seed = 42`.
+
+### Case study (`06_casestudy/`)
+
+See `06_casestudy/README.md` for the full pipeline. To reproduce Figures 8 and 9 and the overlap statistics without the models, run `06_casestudy/02_lemmatize_overlap.ipynb` once per keyword (Frau, Femizid, Mann, Mord, Opfer, Täter); the neighbour tables and the manual lemmatization dictionaries are included.
+
+### Reproducing the tables and figures
+
+| Paper | Script | Output file |
+|---|---|---|
+| Figure 1: Sources in the training data | `01_dataquality/02_descriptives.ipynb` (needs the corpus database) | `01_dataquality/article_descriptives.pdf` |
+| Table 2: Articles per year and outlet | `01_dataquality/02_descriptives.ipynb` (needs the corpus database) | `01_dataquality/article_descriptives.csv` |
+| Table 3: Cue words | – (defined in `evaluation_data/cues.py`) | – |
+| Figure 2: Within-family correlations | `05_analyse/02_correlations.R` | `plots/within_correlation/within_correlation_cues.pdf` |
+| Figure 3: Across-family correlations | `05_analyse/02_correlations.R` | `plots/across_correlation/across_correlation_variation.pdf` |
+| Figure 5: Intrinsic tasks | `05_analyse/03_syntactic_semantic.R` | `plots/semantic_syntactic/big_plot.pdf` |
+| Figure 10: Vocabulary coverage | `05_analyse/03_syntactic_semantic.R` | `plots/semantic_syntactic/coverage.pdf` |
+| Figure 7: Extrinsic tasks | `05_analyse/04_classification.R` | `plots/classification/classification.pdf` |
+| Table 5: Off-the-shelf models | `05_analyse/03_syntactic_semantic.R` (intrinsic rows), `05_analyse/04_classification.R` (extrinsic rows) | `plots/offtheshelf_semantic_syntactic.csv`, `plots/offtheshelf_classification.csv` |
+| Table 4: Posterior distributions | `05_analyse/06_regression_effect_sizes.R` | `plots/regression/table4_posterior.csv` |
+| Figure 4: Coefficients, intrinsic tasks | `05_analyse/06_regression_effect_sizes.R` | `plots/regression/plot_intrinsic_tasks.pdf` |
+| Figure 6: Coefficients, extrinsic tasks | `05_analyse/06_regression_effect_sizes.R` | `plots/regression/plot_extrinsic_tasks.pdf` |
+| ROPE, pd and effect sizes reported in *Results* | `05_analyse/06_regression_effect_sizes.R` | `plots/regression/effect_size_summary.csv` |
+| Task ranges and ROPE half-widths | `05_analyse/08_task_ranges.py` | `plots/regression/task_outcome_ranges.csv` |
+| Rank correlations between tasks (*Results*, *Discussion*) | `05_analyse/06_regression_effect_sizes.R` | `plots/regression/rank_correlations.csv` |
+| Red-flag analysis (*Results*) | `05_analyse/09_red-flag-analysis.ipynb` | `plots/red_flags/all_tasks/`, robustness check: `plots/red_flags/without_grammar/` |
+| Figure 8: Nearest-neighbour overlap, "Frau" | `06_casestudy/02_lemmatize_overlap.ipynb` (keyword = Frau) | `06_casestudy/heatmap_pct_overlap_Frau.pdf` |
+| Figure 9: Nearest-neighbour overlap, "Femizid" | `06_casestudy/02_lemmatize_overlap.ipynb` (keyword = Femizid) | `06_casestudy/heatmap_pct_overlap_Femizid.pdf` |
+| Overlap statistics for Mann, Mord, Opfer, Täter (*Qualitative Validation*) | `06_casestudy/02_lemmatize_overlap.ipynb` | printed in the notebook; `06_casestudy/heatmap_pct_overlap_{Keyword}.pdf` |
+| Figure 11: Robustness of the minimum-count effect (Appendix) | `05_analyse/07_mincount_robustness.R` | `plots/regression/figure_combined_mincount_analysis.pdf` |
+| Computation time (this README) | `05_analyse/01_model_meta.R` | `plots/training_duration.pdf` |
+
+### Known differences between `dataset_regression_rebuilt.csv` and `dataset_regression.csv`
+
+All analyses (06–09) use `dataset_regression_rebuilt.csv`, which `00_create_dataset_regression.py` builds from the raw results in this repository. The original `dataset_regression.csv` is kept because the case-study model selection (`06_casestudy/selected_models.csv`) is based on it. For the 320 self-trained models, both files contain the same task scores and hyperparameters. They differ in three respects: (1) the raw One Million Posts sentiment results are not included in the repository, so `sentiment`, `sum`, `overall_score_v2` and `mean_overall` (the case-study selection score) cannot be rebuilt; (2) the wiki.de fastText model is only in the original file, as it has no raw results in the repository; (3) the BERT topic scores differ in four rows. None of these columns or rows enter the analyses in 06–09.
+
+### R session info
+
+<!-- TODO: paste the output of sessionInfo() after running 06 and 07 -->
+
 
 ### Utilities
 

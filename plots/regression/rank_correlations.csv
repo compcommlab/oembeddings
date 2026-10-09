@@ -1,8 +1,8 @@
-"","Extrinsic Task 3: Sentiment Prediction","Extrinsic Task 1: Author Prediction","Extrinsic Task 2: Topic Prediction","Intrinsic Task 1: Best Match","Intrinsic Task 4: Grammar","Intrinsic Task 2: Opposite","Intrinsic Task 3: Word Intrusion"
-"Extrinsic Task 3: Sentiment Prediction",1,0.11,-0.073,0.159,-0.623,-0.415,0.32
-"Extrinsic Task 1: Author Prediction",0.11,1,-0.378,-0.03,0.243,0.204,0.132
-"Extrinsic Task 2: Topic Prediction",-0.073,-0.378,1,-0.863,-0.669,-0.79,-0.838
-"Intrinsic Task 1: Best Match",0.159,-0.03,-0.863,1,0.546,0.702,0.887
-"Intrinsic Task 4: Grammar",-0.623,0.243,-0.669,0.546,1,0.894,0.382
-"Intrinsic Task 2: Opposite",-0.415,0.204,-0.79,0.702,0.894,1,0.566
-"Intrinsic Task 3: Word Intrusion",0.32,0.132,-0.838,0.887,0.382,0.566,1
+"","autnes_sentiment","ffp","topics","bestmatch","mostsimilar","opposite","wordintrusion"
+"autnes_sentiment",1,0.11,-0.073,0.159,-0.623,-0.415,0.32
+"ffp",0.11,1,-0.378,-0.03,0.243,0.204,0.132
+"topics",-0.073,-0.378,1,-0.863,-0.669,-0.79,-0.838
+"bestmatch",0.159,-0.03,-0.863,1,0.546,0.702,0.887
+"mostsimilar",-0.623,0.243,-0.669,0.546,1,0.894,0.382
+"opposite",-0.415,0.204,-0.79,0.702,0.894,1,0.566
+"wordintrusion",0.32,0.132,-0.838,0.887,0.382,0.566,1

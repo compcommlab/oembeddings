@@ -40,6 +40,19 @@ Run from the repository root:
 By default the result is written to evaluation_results/dataset_regression_rebuilt.csv
 and compared with the published evaluation_results/dataset_regression.csv.
 Set OUT_PATH = PUBLISHED_PATH below to overwrite the published file.
+
+Known differences from the published file
+  Rebuilding dataset_regression.csv from the raw results reproduces all task scores
+  of the 320 self-trained models used in the analyses (06-09). Three things cannot
+  be rebuilt:
+  (1) the raw One Million Posts sentiment results are not included, so `sentiment`,
+      `sum`, `overall_score_v2` and `mean_overall` (the case-study selection score)
+      differ;
+  (2) the wiki.de fastText model has no raw results in the repository;
+  (3) the BERT topic scores (autnes_automated_2017/2019, topics) differ in four rows.
+All analyses (06-09) use the rebuilt file. The published file is kept because the
+case-study model selection (06_casestudy/selected_models.csv) is based on it; none
+of the differing columns or rows enter the analyses in 06-09.
 """
 
 import json
