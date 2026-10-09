@@ -65,10 +65,12 @@ for (dep_var in dependent_vars_all) {
     chains     = 4,
     iter       = 6000,
     warmup     = 1000,
+    seed       = 42
   )
   fits_list[[dep_var]] <- fit
 }
 
+saveRDS(fits_list, "plots/regression/fits_list.rds")
 
 # Extract summary statistics for the posterior distributions
 get_summary <- function(model, dep_var) {

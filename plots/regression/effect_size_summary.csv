@@ -1,22 +1,22 @@
 "Hyperparameter","Task","Std β","Effect size","% in ROPE","pd","pd label","p(significance)","Bayes R²"
-"lower","autnes_sentiment",0.004,"negligible",1,1,"extremely strong",0.008,0.21
+"lower","autnes_sentiment",0.004,"negligible",1,1,"extremely strong",0.007,0.21
 "mincount","autnes_sentiment",-0.001,"negligible",1,0.78,"weak",0,0.21
 "windows","autnes_sentiment",-0.002,"negligible",1,0.999,"strong (≈ p<0.05)",0,0.21
-"lower","bestmatch",0.012,"negligible",1,1,"extremely strong",0.006,0.964
+"lower","bestmatch",0.012,"negligible",1,1,"extremely strong",0.007,0.964
 "mincount","bestmatch",0.045,"negligible",0,1,"extremely strong",1,0.964
-"windows","bestmatch",-0.01,"negligible",1,0.999,"extremely strong",0.002,0.964
-"lower","ffp",-0.001,"negligible",1,0.996,"strong (≈ p<0.05)",0,0.303
-"mincount","ffp",0,"negligible",1,0.835,"weak",0,0.303
-"windows","ffp",-0.002,"negligible",0.848,1,"extremely strong",0.169,0.303
+"windows","bestmatch",-0.01,"negligible",1,0.998,"strong (≈ p<0.05)",0.001,0.964
+"lower","ffp",-0.001,"negligible",1,0.996,"strong (≈ p<0.05)",0,0.304
+"mincount","ffp",0,"negligible",1,0.833,"weak",0,0.304
+"windows","ffp",-0.002,"negligible",0.839,1,"extremely strong",0.178,0.304
 "lower","mostsimilar",-0.036,"negligible",0,1,"extremely strong",1,0.999
 "mincount","mostsimilar",0.036,"negligible",0,1,"extremely strong",1,0.999
-"windows","mostsimilar",-0.005,"negligible",1,0.946,"weak",0,0.999
-"lower","opposite",-0.011,"negligible",0.853,1,"extremely strong",0.164,0.894
+"windows","mostsimilar",-0.005,"negligible",1,0.945,"weak",0,0.999
+"lower","opposite",-0.011,"negligible",0.849,1,"extremely strong",0.169,0.894
 "mincount","opposite",0.024,"negligible",0,1,"extremely strong",1,0.894
 "windows","opposite",-0.007,"negligible",1,0.997,"strong (≈ p<0.05)",0.002,0.894
-"lower","topics",0,"negligible",1,0.586,"weak",0,0.647
-"mincount","topics",-0.016,"negligible",0.008,1,"extremely strong",0.968,0.647
-"windows","topics",0.009,"negligible",1,1,"extremely strong",0.002,0.647
+"lower","topics",0,"negligible",1,0.582,"weak",0,0.648
+"mincount","topics",-0.016,"negligible",0.009,1,"extremely strong",0.966,0.648
+"windows","topics",0.009,"negligible",1,1,"extremely strong",0.002,0.648
 "lower","wordintrusion",0.003,"negligible",1,0.994,"strong (≈ p<0.05)",0,0.511
-"mincount","wordintrusion",0.007,"negligible",0.751,1,"extremely strong",0.261,0.511
+"mincount","wordintrusion",0.007,"negligible",0.753,1,"extremely strong",0.26,0.511
 "windows","wordintrusion",-0.003,"negligible",1,0.998,"strong (≈ p<0.05)",0,0.511
