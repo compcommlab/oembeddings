@@ -453,6 +453,11 @@ cat("  ρ > 0.80 → tasks largely agree on best models\n")
 cat("  ρ 0.50–0.80 → moderate agreement\n")
 cat("  ρ < 0.50 → substantial disagreement (tasks capture different model properties)\n\n")
 
+
+# save the rank correlations
+write.csv(round(rank_cor_matrix, 3), "plots/regression/rank_correlations.csv")
+cat("Saved to: plots/regression/rank_correlations.csv\n")
+
 # Visualize as a heatmap
 corrplot(
   rank_cor_matrix,

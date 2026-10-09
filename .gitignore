@@ -177,7 +177,7 @@ wikipedia/
 
 06_casestudy/*.bin
 06_casestudy/*.bin.gz
-.DS_Store.RDataTmp*
+.DS_Store
 .RData
 .Rhistory
 
