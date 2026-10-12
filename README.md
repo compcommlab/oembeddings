@@ -223,10 +223,10 @@ Evaluated models (Hugging Face IDs; metadata in `models/bert/`): `deepset/gbert-
 **Extrinsic tasks**
 - `bert_singlelabel_classification.py`: author prediction (`facebook`, `twitter`, `nationalrat`, `pressreleases`) and AUTNES sentiment (`autnes_sentiment`)
 - `bert_multilabel_classification.py`: AUTNES topics (`autnes_automated_2017`, `autnes_automated_2019`)
-- Each model is fine-tuned with `AutoModelForSequenceClassification`: learning rate 2e-5, 2 epochs, batch size 8, max. 256 (single-label) / 512 (multi-label) tokens, 80/20 train/test split, seed 1234.
+- Each model is fine-tuned with `AutoModelForSequenceClassification`: learning rate 2e-5, 2 epochs, batch size 8, max. 256 (single-label) / 512 (multi-label) tokens. Using same 80/20 train/test split as for all other models (seed 1234).
 - Metric: macro F1 (single-label), micro F1 with threshold 0.5 (multi-label).
-- Launch script: `misc/bert_classification.sh`
-- Example: `python3 04_eval/bert_singlelabel_classification.py --model deepset/gbert-base --dataset twitter`
+- Running evaluation with a specific model and dataset use the script `04_eval/bert_singlelabel_classification.py`. For example this command: `python3 04_eval/bert_singlelabel_classification.py --model deepset/gbert-base --dataset twitter`
+- For fine-tuning all models you can launch the script: `misc/bert_classification.sh`
 
 The scripts write their results to `evaluation_results/`; the results used in the paper are in `evaluation_results/bert_results/{classification,semantic_syntactic}/`. A CUDA GPU is used if available.
     
