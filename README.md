@@ -1,5 +1,7 @@
 # ÖMbeddings (Österreichische Media Embeddings)
 
+[![DOI](https://zenodo.org/badge/656202794.svg)](https://doi.org/10.5281/zenodo.23389613)
+
 # Overview
 
 This repository contains the code used for the study *When Validation Disagrees: How Validation Choices Shape Word Embedding Selection in Computational Communication Science* published in *Computational Communication Research*. 
